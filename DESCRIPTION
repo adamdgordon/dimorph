@@ -23,3 +23,4 @@ Imports:
     gridExtra,
     pals,
     RcppAlgos
+License: GPL (>= 3)
