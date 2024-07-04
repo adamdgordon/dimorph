@@ -7,4 +7,4 @@ dimorph is a package for estimating size dimorphism based on metric data using m
 
 <code> install.packages("devtools")</code>
 
-<code> devtools::install_github("adamdgordon/dimorph"")</code>
+<code> devtools::install_github("adamdgordon/dimorph")</code>
