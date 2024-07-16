@@ -4,6 +4,29 @@
 #' for all samples to be included in a common resampling analysis.  This generates
 #' the \code{struc} component to be included in various functions in the \code{dimorph}
 #' package.
+#' @param x A list of one or more dataframes corresponding to samples of metric data where
+#'   rows are individual specimens and columns are variables.  Missing data are allowable
+#'   and should be indicated with \code{NA}s.
+#' @param forcematrix A logical flag specifying whether a dataframe (instead of a vector of
+#'   specimen counts) should be returned when \code{x} only contains a single dataset and 
+#'   that dataset has missing data.  See "Value" below for more details.
+#' @return If \code{x} is a list of one or more datasets with no missing data, a dataframe
+#'   filled with \code{1}s with a number of rows equal to the minimum number of specimens
+#'   across all datasets in \code{x}, and columns corresponding to each variable shared
+#'   by all datasets in \code{x}. If \code{x} contains one or more datasets with no missing data 
+#'   and only one dataset with missing data, \code{getstructure} returns a dataframe equal to
+#'   the dataset with missing data where all measurements are replaced with \code{1}, and only 
+#'   variables shared across all datasets in \code{x} are present.  If \code{x} contains one 
+#'   or more datasets with no missing data and two or more datasets with missing data, \code{getstructure} 
+#'   returns a vector of integers in which each entry corresponds to a variable shared by
+#'   all datasets in \code{x}, and the value of each entry is the minimum number of specimens with
+#'   data for that variable across all datasets in \code{x}.  If \code{x} contains only a single dataset
+#'   and that dataset has missing data, \code{getstructure} returns an integer vector as described above
+#'   unless \code{forcematrix} is set to \code{TRUE}, in which case a dataframe is returned which is
+#'   equal to the dataset in \code{x} where all measurements are replaced with \code{1}.  Note that
+#'   an error will be generated if one or more complete datasets are present in \code{x} and any of 
+#'   the complete datasets have fewer individuals than any datasets with missing data because the 
+#'   complete data cannot be sampled down to the size of the dataset(s) with missing data.
 #' @seealso \code{\link{SSDtest}}
 #' @examples
 #' SSDvars <- c("FHSI", "TPML", "TPMAP", "TPLAP", "HHMaj",
@@ -19,10 +42,11 @@
 #'                   fauxil[fauxil$Species=="Fauxil sp. 2", SSDvars]))
 #' getstructure(list(fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars]))
 #' getstructure(list(fauxil[fauxil$Species=="Fauxil sp. 2", SSDvars]))
-#' getstructure(list(fauxil[fauxil$Species=="Fauxil sp. 2", SSDvars]), forcematrix=T)
+#' getstructure(list(fauxil[fauxil$Species=="Fauxil sp. 2", SSDvars]), forcematrix=TRUE)
 #' @export
 getstructure <- function(x, forcematrix=F) {
-  if(class(x)!="list") stop("'x' must be a list of dataframes or matrices of samples to generate a shared structure from.")
+  if (!inherits(x, "list")) stop("'x' must be a list of dataframes or matrices of samples to generate a shared structure from.")
+  #if(class(x)!="list") stop("'x' must be a list of dataframes or matrices of samples to generate a shared structure from.")
   ndat <- length(x)
   if (ndat < 2) {
 	struc <- x[[1]]
@@ -48,7 +72,7 @@ getstructure <- function(x, forcematrix=F) {
   # remove any rows missing all data
   for (i in 1:ndat) x[[i]] <- x[[i]][apply(x[[i]], 1, function (x) return(sum(is.na(x)))) < length(sharedvars),,drop=F]
   # now identify complete and incomplete datasets
-  complete <- unlist(lapply(x, function(x) as.logical(prod(complete.cases(x)))))
+  complete <- unlist(lapply(x, function(x) as.logical(prod(stats::complete.cases(x)))))
   if (prod(complete)==0) { # if there are some datasets with missing data
     if (sum(!complete) > 1) { # more than one dataset with missing data
 	  nspecpervar <- do.call(rbind, lapply(x, function(x) apply(x, 2, function(x) sum(!is.na(x)))))
@@ -113,6 +137,8 @@ getstructure <- function(x, forcematrix=F) {
 #' @param compsex A vector indicating sex for the individuals in \code{comparative}.  Sex
 #'   information is not included in any calculations in this function but will be included
 #'   as a list element in the returned object.  Defaults to \code{NULL}.
+#' @param sex.female An integer scalar (1 or 2) specifying which level of \code{sex} 
+#'   corresponds to female.  Ignored if \code{sex} is \code{NULL}.  Defaults to 1.
 #' @param exact Logical scalar specifying whether or not to sample exactly once all possible 
 #'   unique combinations of the comparative data matching the pattern in \code{struc}.  This 
 #'   procedure takes into account any missing data pattern in \code{struc}.  For example, for 
@@ -138,33 +164,37 @@ getstructure <- function(x, forcematrix=F) {
 #' @examples
 #' ## Univariate addresses
 #' SSDvars <- c("HHMaj")
-#' addressesUni <- getsampleaddresses(comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars, drop=F],
-#'                                    struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars, drop=F],
-#'                                    compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-#'                                    exact=T, matchvars=T, replace=F)
+#' addressesUni <- getsampleaddresses(
+#'      comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars, drop=FALSE],
+#'      struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars, drop=FALSE],
+#'      compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+#'      exact=TRUE, matchvars=TRUE, replace=FALSE)
 #' addressesUni
 #' str(addressesUni)
 #' 
 #' ## Multivariate addresses
 #' SSDvars <- c("HHMaj","RHMaj","FHSI","TPML")
-#' addressesMulti1 <- getsampleaddresses(comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
-#'                                       struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars],
-#'                                       compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-#'                                       nResamp=10000, matchvars=T, replace=F)
+#' addressesMulti1 <- getsampleaddresses(
+#'      comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
+#'      struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars],
+#'      compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+#'      nResamp=10000, matchvars=TRUE, replace=FALSE)
 #' addressesMulti1
 #' str(addressesMulti1)
 #' 
-#' addressesMulti2 <- getsampleaddresses(comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
-#'                                       struc=setNames(c(2,2,4,5), SSDvars),
-#'                                       compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-#'                                       nResamp=10000, matchvars=T, replace=F)
+#' addressesMulti2 <- getsampleaddresses(
+#'      comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
+#'      struc=setNames(c(2,2,4,5), SSDvars),
+#'      compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+#'      nResamp=10000, matchvars=TRUE, replace=FALSE)
 #' addressesMulti2
 #' str(addressesMulti2)
 #' 
-#' addressesMulti3 <- getsampleaddresses(comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI"],
-#'                                       struc=setNames(4, "FHSI"),
-#'                                       compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-#'                                       nResamp=10000, matchvars=T, replace=F)
+#' addressesMulti3 <- getsampleaddresses(
+#'      comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI"],
+#'      struc=setNames(4, "FHSI"),
+#'      compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+#'      nResamp=10000, matchvars=TRUE, replace=FALSE)
 #' addressesMulti3
 #' str(addressesMulti3)
 #' 
@@ -178,25 +208,26 @@ getstructure <- function(x, forcematrix=F) {
 #' n.Fs1
 #' n.Fs2
 #' n.min <- apply(rbind(n.Fs1,n.Fs2), 2, min)
-#' gorAds <- getsampleaddresses(comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
-#'                              struc=Fs1,
-#'                              exact=T, limit=500000, replace=F)
+#' gorAds <- getsampleaddresses(
+#'      comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
+#'      struc=Fs1,
+#'      exact=TRUE, limit=500000, replace=FALSE)
 #' gorAds
 #' str(gorAds)
 #' 
 #' Fs1Ads <- getsampleaddresses(comparative=Fs1, struc=n.min,
-#'                              exact=T, limit=500000, replace=F)
+#'                              exact=TRUE, limit=500000, replace=FALSE)
 #' Fs1Ads
 #' str(Fs1Ads)
 #' 
 #' Fs1AdsReplace <- getsampleaddresses(comparative=Fs1, struc=n.min,
-#'                                     exact=T, limit=500000, nResamp=1000,
-#'                                     replace=T)
+#'                                     exact=TRUE, limit=500000, nResamp=1000,
+#'                                     replace=TRUE)
 #' Fs1AdsReplace
 #' str(Fs1AdsReplace)
 #' 
 #' Fs2Ads <- getsampleaddresses(comparative=Fs2, struc=n.min,
-#'                              exact=T, limit=500000, replace=F)
+#'                              exact=TRUE, limit=500000, replace=FALSE)
 #' Fs2Ads
 #' str(Fs2Ads)
 #' @export
@@ -211,7 +242,8 @@ getsampleaddresses <- function(comparative,
 							   replace=F) {
   # "struc" is either a matrix of measurement data (can have missing data) or a 
   # vector corresponding to sample sizes for each variable
-  if (class(comparative)=="numeric" | class(comparative)=="integer") comparative <- data.frame(VAR=comparative)
+  if (inherits(comparative, "numeric") | inherits(comparative, "integer")) comparative <- data.frame(VAR=comparative)
+  #if (class(comparative)=="numeric" | class(comparative)=="integer") comparative <- data.frame(VAR=comparative)
   { # if sex is present, make sure it matches nrow of comparative and set flag according to forcemixed
     if(!is.null(compsex)) {
       if (!length(compsex)==nrow(comparative)) stop("If present, 'compsex' must have a number of elements equal to the number of individuals in 'comparative'.")
@@ -222,15 +254,16 @@ getsampleaddresses <- function(comparative,
 	else sex.female <- NULL
   }
   if (!(is.data.frame(comparative)|is.matrix(comparative))) stop("Argument 'comparative' must be a vector, data frame, or matrix.")
-#  if(prod(complete.cases(comparative))==0) warning("The comparative data set is not complete for all specimens.  Resampling addresses will not be affected, but these addresses may generate errors when used by 'resampleSSD()'.")
-  if(prod(complete.cases(comparative))==0 & !(is.vector(struc))) stop("The comparative data set is not complete for all specimens.  'struc' should be provided as a vector of sample sizes per variable rather than a data matrix.  Type 'help(getsampleaddresses)' to see example.")
+#  if(prod(stats::complete.cases(comparative))==0) warning("The comparative data set is not complete for all specimens.  Resampling addresses will not be affected, but these addresses may generate errors when used by 'resampleSSD()'.")
+  if(prod(stats::complete.cases(comparative))==0 & !(is.vector(struc))) stop("The comparative data set is not complete for all specimens.  'struc' should be provided as a vector of sample sizes per variable rather than a data matrix.  Type 'help(getsampleaddresses)' to see example.")
   varsComp <- colnames(comparative)
   {
     if (is.vector(struc)) {
       snames <- names(struc)
       struc <- as.integer(struc)
       names(struc) <- snames
-      if(!class(struc)=="integer") stop("The structure object must either be (1) a matrix or dataframe of measurements (which can include NAs) or (2) a vector of integer sample sizes for each variable.")
+      if(!inherits(struc, "integer")) stop("The structure object must either be (1) a matrix or dataframe of measurements (which can include NAs) or (2) a vector of integer sample sizes for each variable.")
+      #if(!class(struc)=="integer") stop("The structure object must either be (1) a matrix or dataframe of measurements (which can include NAs) or (2) a vector of integer sample sizes for each variable.")
       varsStruc <- names(struc)
 	  if (is.null(varsStruc)) {
 	    {if (length(struc)==1) names(struc) <- "VAR"
@@ -361,7 +394,7 @@ getsampleaddresses <- function(comparative,
 				  strucClass=strucClass)
     } # end vector struc procedure
     else if (is.data.frame(struc)|is.matrix(struc)){ # matrix struc procedure
-	  if (length(varsStruc)==1) struc <- struc[complete.cases(struc), , drop=F]
+	  if (length(varsStruc)==1) struc <- struc[stats::complete.cases(struc), , drop=F]
 	  {if (exact) {
 	    # add exact section here - first count up number of different patterns
 	    n <- nrow(comparative)
@@ -526,25 +559,26 @@ getsampleaddresses <- function(comparative,
 #' data(apelimbart)
 #' gor <- apelimbart[apelimbart$Species=="Gorilla gorilla",]
 #' # this is effectively a bootstrap, although see 'bootdimorph'
-#' gorSSD <- resampleSSD(gor[,"FHSI", drop=F], methsUni=c("SSD", "MMR", "BDI"),
-#'                       compsex=gor$Sex, nResamp=100, replace=T)
+#' gorSSD <- resampleSSD(gor[,"FHSI", drop=FALSE], methsUni=c("SSD", "MMR", "BDI"),
+#'                       compsex=gor$Sex, nResamp=100, replace=TRUE)
 #' gorSSD
 #' plot(gorSSD)
 #' 
 #' # now downsample to fossil sample size and sample without replacement
 #' SSDvars <- c("HHMaj")
-#' gorSSD1 <- resampleSSD(x=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars, drop=F],
-#'                        struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars, drop=F],
+#' gorSSD1 <- resampleSSD(x=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars, drop=FALSE],
+#'                        struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars, drop=FALSE],
 #'                        compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-#'                        exact=T, matchvars=T, replace=F, methsUni=c("SSD", "MMR", "BDI"))
+#'                        exact=TRUE, matchvars=TRUE, replace=FALSE, methsUni=c("SSD", "MMR", "BDI"))
 #' gorSSD1
 #' plot(gorSSD1)
 #' 
 #' # or run 'getsampleaddresses' first
-#' addressesUni <- getsampleaddresses(comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars, drop=F],
-#'                                    struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars, drop=F],
-#'                                    compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-#'                                    exact=T, matchvars=T, replace=F)
+#' addressesUni <- getsampleaddresses(
+#'      comparative=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars, drop=FALSE],
+#'      struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars, drop=FALSE],
+#'      compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+#'      exact=TRUE, matchvars=TRUE, replace=FALSE)
 #' gorSSD2 <- resampleSSD(addressesUni, methsUni=c("SSD", "MMR", "BDI"))
 #' gorSSD2
 #' plot(gorSSD2)
@@ -558,8 +592,8 @@ getsampleaddresses <- function(comparative,
 #'                             datastruc="both",
 #'                             methsMulti = c("GMM"),
 #'                             methsUni = c("SSD", "MMR", "BDI"),
-#'                             matchvars=T,
-#'                             replace=F)
+#'                             matchvars=TRUE,
+#'                             replace=FALSE)
 #' gorSSDmulti1
 #' plot(gorSSDmulti1)
 #' 
@@ -568,7 +602,7 @@ getsampleaddresses <- function(comparative,
 #'                apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
 #'                struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars],
 #'                compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-#'                nResamp=100, matchvars=T, replace=F)
+#'                nResamp=100, matchvars=TRUE, replace=FALSE)
 #' gorSSDmulti2 <- resampleSSD(x=addresses,
 #'                             datastruc="both",
 #'                             methsMulti = c("GMM"),
@@ -594,9 +628,10 @@ resampleSSD <- function(x,
 						na.rm = T,
 						ncorrection=F,
 						details = F) {
-  if (class(x)=="dimorphAds") {
+  if (inherits(x, "dimorphAds")) {
+  #if (class(x)=="dimorphAds") {
     if (dim(x$comparative)[2] == 1) { # univariate
-	  out <- dimorph::resampleSSDuni(x,
+	  out <- dimorph:::resampleSSDuni(x,
 	                                 npersample=npersample,
 									 methsUni=methsUni,
 									 sex.female=sex.female,
@@ -604,12 +639,12 @@ resampleSSD <- function(x,
 									 na.rm=na.rm,
 									 ncorrection=ncorrection,
 									 details=details)
-	  out$estimates <- dimorph::logandcalcbiasUni(out$estimates)
+	  out$estimates <- dimorph:::logandcalcbiasUni(out$estimates)
 	}
 	else { #multivariate
 	  if (is.null(datastruc)) datastruc <- "missing"
 	  if (is.null(methsMulti)) methsMulti <- c("GMM")
-	  out <- dimorph::resampleSSDmulti(x,
+	  out <- dimorph:::resampleSSDmulti(x,
 	                                   datastruc=datastruc,
 									   methsMulti=methsMulti,
 									   methsUni=methsUni,
@@ -619,7 +654,7 @@ resampleSSD <- function(x,
 									   na.rm=na.rm,
 									   ncorrection=ncorrection,
 									   details=details)	  
-	  out$estimates <- dimorph::logandcalcbiasMulti(out$estimates)
+	  out$estimates <- dimorph:::logandcalcbiasMulti(out$estimates)
 	}
   }
   else { #x is comparative data set, not a dimorphAds object
@@ -634,11 +669,11 @@ resampleSSD <- function(x,
 	if (is.na(uni)) stop("'x' must be a numeric vector, matrix, dataframe, or 'dimorphAds' object.")
 	{if (uni) {
 	  if (!is.null(struc)) {
-	    struc <- struc[complete.cases(struc),,drop=F]
+	    struc <- struc[stats::complete.cases(struc),,drop=F]
 	    struc <- struc/struc
 		if (is.na(npersample)) npersample <- nrow(struc)
 	  }
-	  out <- dimorph::resampleSSDuni(x,
+	  out <- dimorph:::resampleSSDuni(x,
 	                                 compsex=compsex,
 									 npersample=npersample,
 									 nResamp=nResamp,
@@ -653,12 +688,12 @@ resampleSSD <- function(x,
 									 ncorrection=ncorrection,
 									 details=details)
 	  if (!is.null(struc)) out$sampleADS$struc <- struc
-	  out$estimates <- dimorph::logandcalcbiasUni(out$estimates)
+	  out$estimates <- dimorph:::logandcalcbiasUni(out$estimates)
 	}
 	else if (!uni) {
 	  if (is.null(datastruc)) datastruc <- "missing"
 	  if (is.null(methsMulti)) methsMulti <- c("GMM")
-	  out <- dimorph::resampleSSDmulti(x,
+	  out <- dimorph:::resampleSSDmulti(x,
 	                                   struc=struc,
 									   compsex=compsex,
 									   nResamp=nResamp,
@@ -675,7 +710,7 @@ resampleSSD <- function(x,
 									   na.rm=na.rm,
 									   ncorrection=ncorrection,
 									   details=details)	  
-	  out$estimates <- dimorph::logandcalcbiasMulti(out$estimates)
+	  out$estimates <- dimorph:::logandcalcbiasMulti(out$estimates)
 	}
     } # end if else if
   }
@@ -683,8 +718,7 @@ resampleSSD <- function(x,
   return(out)
 }
 
-
-#' @export
+#' @noRd
 resampleSSDuni <- function(x,
                            compsex=NULL,
 						   npersample=NA,
@@ -699,7 +733,8 @@ resampleSSDuni <- function(x,
 						   na.rm = T,
 						   ncorrection=F,
 						   details = F) {
-  {if (class(x)=="dimorphAds") {
+  {if (inherits(x, "dimorphAds")) {
+  #{if (class(x)=="dimorphAds") {
     comparative <- x$comparative
 	nResamp <- x$nResamp
     struc <- x$struc
@@ -717,7 +752,8 @@ resampleSSDuni <- function(x,
 	rm(x)
   }
   else {
-    if (class(x)=="numeric" | class(x)=="integer") x <- data.frame(VAR=x)
+    if (inherits(x, "numeric") | inherits(x, "integer")) x <- data.frame(VAR=x)
+    # if (class(x)=="numeric" | class(x)=="integer") x <- data.frame(VAR=x)
     if (ncol(x) > 1) stop("This function cannot be used for multivariate datasets.")
     n <- nrow(x)
     comparative <- x
@@ -810,8 +846,7 @@ resampleSSDuni <- function(x,
   return(out)
 }
 
-
-#' @export
+#' @noRd
 resampleSSDmulti <- function(x,
                              struc=NULL,
 							 compsex=NULL,
@@ -829,7 +864,8 @@ resampleSSDmulti <- function(x,
 							 na.rm = T,
 							 ncorrection=F,
 							 details = F) {
-  {if (class(x)=="dimorphAds") {
+  {if (inherits(x, "dimorphAds")) {
+  #{if (class(x)=="dimorphAds") {
     comparative <- x$comparative
 	nResamp <- x$nResamp
     struc <- x$struc
@@ -1100,193 +1136,14 @@ resampleSSDmulti <- function(x,
   return(out)
 }
 
-
-#' @export
-pDimorphResampledMultiOneFossil <- function(dRMcomparative, dRMfossil, fossilads=NULL, plt=T) {
-  if (!(class(dRMcomparative)=="dimorphResampledMulti" & class(dRMfossil)=="dimorphResampledMulti")) {
-    stop("This function requires two 'dimorphResampledMulti' objects.")
-  }
-  if (is.null(fossilads)) fossilads <- 1:nrow(dRMfossil$estimates)
-  nComp   <- nrow(dRMcomparative$estimates)
-  nFossil <- length(fossilads)
-  { # adjust fossilads if the two sample sizes differ 
-    if (nComp < nFossil) {
-      fossilads <- sample(nFossil, nComp, replace=F) # sample without replacement fossil addresses down to comparative size
-    }
-    else if (nComp > nFossil) {
-      nr   <- floor(nComp/nFossil)
-      rd   <- nComp-nr*nFossil
-      fossilads <- c(rep(fossilads, nr), sample(nFossil, rd)) # sample all an equal number of times, then sample without replacement a number of times equal to the remainder
-      fossilads <- sample(fossilads, nComp) # randomize the resulting addresses
-      rm(nr, rd)
-    }
-  } # end fossilads adjustment
-  dRMfossil$estimates <- dRMfossil$estimates[fossilads,]
-  estimatevars <- colnames(dRMcomparative$estimates)[colnames(dRMcomparative$estimates) %in% colnames(dRMfossil$estimates)]
-  estimatevars <- estimatevars[!(estimatevars %in% c("n", "nFem"))]
-  outvars <- c("p.one.sided", "p.two.sided", "mean.difference.fossil.minus.comparative", "median.difference.fossil.minus.comparative")
-  d <- data.frame(matrix(NA, nComp, length(estimatevars)))
-  colnames(d) <- estimatevars
-  for (i in estimatevars) {
-    d[,i] <- dRMfossil$estimates[,i] - dRMcomparative$estimates[,i]
-  }
-  out <- data.frame(matrix(NA, length(estimatevars), length(outvars)))
-  colnames(out) <- outvars
-  rownames(out) <- estimatevars
-  pcalc <- function(x) {
-    p1 <- sum(x<=0)/length(x)
-    if (p1 <= 0.5) p2 <- 2*p1
-    else p2 <- 2*(1-p1)
-    ret <- c(p1, p2, mean(x), median(x))
-    names(ret) <- c("p.one.sided", "p.two.sided",
-                    "mean.difference.fossil.minus.comparative",
-                    "median.difference.fossil.minus.comparative")
-    return(ret)
-  } # end pcalc
-  out <- data.frame(t(apply(d, 2, pcalc)))
-  out <- cbind(estimate=rownames(out), out)
-  attr(out, "fossilads") <- fossilads
-  # if 'plt'==T then plot grid of histograms
-  if (plt) {
-    ngridcol <- ceiling(sqrt(length(estimatevars)))
-    ngridrow <- ceiling(length(estimatevars)/ngridcol)
-    parOLD <- par(no.readonly=T)
-    par(mfrow=c(ngridrow, ngridcol))
-    nbins <- max(ceiling(nComp/100),20)
-    for (i in estimatevars) {
-      hist(d[,i], breaks=nbins, 
-           main=paste0(i, "\nfossil - comparative taxon\np (two-sided) = ", round(out[i,"p.two.sided"],3)),
-           xlab=i, cex.main=1)
-      abline(v=0, col="red")
-    }
-    par(parOLD) 
-  }
-  return(out)
-}
-
-#' @export
-pDimorphResampledMultiTwoFossil <- function(dRMfossil1, dRMfossil2, fossilads1=NULL, fossilads2=NULL, plt=T) {
-  if (!(class(dRMfossil1)=="dimorphResampledMulti" & class(dRMfossil2)=="dimorphResampledMulti")) {
-    stop("This function requires two 'dimorphResampledMulti' objects.")
-  }
-  if (is.null(fossilads1)) fossilads1 <- 1:nrow(dRMfossil1$estimates)
-  if (is.null(fossilads2)) fossilads2 <- 1:nrow(dRMfossil2$estimates)
-  nFossil1 <- length(fossilads1)
-  nFossil2 <- length(fossilads2)
-  { # adjust fossilads2 if the two sample sizes differ 
-    if (nFossil1 < nFossil2) {
-      fossilads2 <- sample(nFossil2, nFossil1, replace=F) # sample without replacement fossil addresses down to comparative size
-    }
-    else if (nFossil1 > nFossil2) {
-      nr   <- floor(nFossil1/nFossil2)
-      rd   <- nFossil1-nr*nFossil2
-      fossilads2 <- c(rep(fossilads2, nr), sample(nFossil2, rd)) # sample all an equal number of times, then sample without replacement a number of times equal to the remainder
-      fossilads2 <- sample(fossilads2, nFossil1) # randomize the resulting addresses
-      rm(nr, rd)
-    }
-  } # end fossilads adjustment
-  dRMfossil1$estimates <- dRMfossil1$estimates[fossilads1,]
-  dRMfossil2$estimates <- dRMfossil2$estimates[fossilads2,]
-  estimatevars <- colnames(dRMfossil1$estimates)[colnames(dRMfossil1$estimates) %in% colnames(dRMfossil2$estimates)]
-  estimatevars <- estimatevars[!(estimatevars %in% c("n", "nFem"))]
-  outvars <- c("p.one.sided", "p.two.sided", "mean.difference.fossil2.minus.fossil1", "median.difference.fossil.minus.comparative")
-  d <- data.frame(matrix(NA, nFossil1, length(estimatevars)))
-  colnames(d) <- estimatevars
-  for (i in estimatevars) {
-    d[,i] <- dRMfossil2$estimates[,i] - dRMfossil1$estimates[,i]
-  }
-  out <- data.frame(matrix(NA, length(estimatevars), length(outvars)))
-  colnames(out) <- outvars
-  rownames(out) <- estimatevars
-  pcalc <- function(x) {
-    p1 <- sum(x<=0)/length(x)
-    if (p1 <= 0.5) p2 <- 2*p1
-    else p2 <- 2*(1-p1)
-    ret <- c(p1, p2, mean(x), median(x))
-    names(ret) <- c("p.one.sided", "p.two.sided",
-                    "mean.difference.fossil.minus.comparative",
-                    "median.difference.fossil.minus.comparative")
-    return(ret)
-  } # end pcalc
-  out <- data.frame(t(apply(d, 2, pcalc)))
-  out <- cbind(estimate=rownames(out), out)
-  attr(out, "fossilads1") <- fossilads1
-  attr(out, "fossilads2") <- fossilads2
-  # if 'plt'==T then plot grid of histograms
-  if (plt) {
-    ngridcol <- ceiling(sqrt(length(estimatevars)))
-    ngridrow <- ceiling(length(estimatevars)/ngridcol)
-    parOLD <- par(no.readonly=T)
-    par(mfrow=c(ngridrow, ngridcol))
-    nbins <- max(ceiling(nFossil1/100),20)
-    for (i in estimatevars) {
-      hist(d[,i], breaks=nbins, 
-           main=paste0(i, "\nfossil2 - fossil1 taxon\np (two-sided) = ", round(out[i,"p.two.sided"],3)),
-           xlab=i, cex.main=1)
-      abline(v=0, col="red")
-    }
-    par(parOLD) 
-  }
-  return(out)
-}
-
-#' @export
-pDimorphResampledMultiPoint <- function(dRMcomparative, dvec, plt=T) {
-  if (!(class(dRMcomparative)=="dimorphResampledMulti")) {
-    stop("This function requires one 'dimorphResampledMulti' object.")
-  }
-  nComp   <- nrow(dRMcomparative$estimates)
-  estimatevars <- colnames(dRMcomparative$estimates)[colnames(dRMcomparative$estimates) %in% names(dvec)]
-  estimatevars <- estimatevars[!(estimatevars %in% c("n", "nFem"))]
-  outvars <- c("p.one.sided", "p.two.sided", "mean.difference.fossil.minus.comparative", "median.difference.fossil.minus.comparative")
-  d <- data.frame(matrix(NA, nComp, length(estimatevars)))
-  colnames(d) <- estimatevars
-  for (i in estimatevars) {
-    d[,i] <- dvec[i] - dRMcomparative$estimates[,i]
-  }
-  out <- data.frame(matrix(NA, length(estimatevars), length(outvars)))
-  colnames(out) <- outvars
-  rownames(out) <- estimatevars
-  pcalc <- function(x) {
-    p1 <- sum(x<=0)/length(x)
-    if (p1 <= 0.5) p2 <- 2*p1
-    else p2 <- 2*(1-p1)
-    ret <- c(p1, p2, mean(x), median(x))
-    names(ret) <- c("p.one.sided", "p.two.sided",
-                    "mean.difference.fossil.minus.comparative",
-                    "median.difference.fossil.minus.comparative")
-    return(ret)
-  } # end pcalc
-  out <- data.frame(t(apply(d, 2, pcalc)))
-  out <- cbind(estimate=rownames(out), out)
-  # if 'plt'==T then plot grid of histograms
-  if (plt) {
-    ngridcol <- ceiling(sqrt(length(estimatevars)))
-    ngridrow <- ceiling(length(estimatevars)/ngridcol)
-    parOLD <- par(no.readonly=T)
-    par(mfrow=c(ngridrow, ngridcol))
-    nbins <- max(ceiling(nComp/100),20)
-    for (i in estimatevars) {
-      hist(d[,i], breaks=nbins, 
-           main=paste0(i, "\nfossil - comparative taxon\np (two-sided) = ", round(out[i,"p.two.sided"],3)),
-           xlab=i, cex.main=1)
-      abline(v=0, col="red")
-    }
-    par(parOLD) 
-  }
-  return(out)
-}
-
-
-#' @export
+#' @noRd
 dimorphADS <- function(ads, x, method="SSD", methodMulti="GMM", sex=NULL, sex.female=1,
                        center="geomean", templatevar=NULL, na.rm=T, details=F, dfout=F) {
   return(dimorph(x=x, method=method, methodMulti=methodMulti, sex=sex, sex.female=sex.female,
                  center=center, templatevar=templatevar, ads=ads, na.rm=na.rm, details=details, dfout=dfout))
 }
 
-
-#' @export
+#' @noRd
 build_dimorphAds <- function(addresses, comparative, compsex, struc=NULL, replace) {
   nResamp <- ncol(addresses)
   adlist <- NULL
@@ -1305,7 +1162,7 @@ build_dimorphAds <- function(addresses, comparative, compsex, struc=NULL, replac
   return(out)
 }
 
-#' @export
+#' @noRd
 build_dimorphAdsStruc <- function(struc=NULL, addresses, comparative, compsex, replace) {
   nResamp <- ncol(addresses)
   adlist <- NULL
@@ -1324,7 +1181,7 @@ build_dimorphAdsStruc <- function(struc=NULL, addresses, comparative, compsex, r
   return(out)
 }
 
-#' @export
+#' @noRd
 logandcalcbiasUni <- function(resDF) {
   resDF$bias <- NA
   if (attr(resDF, "estvalues")=="raw") {
@@ -1352,16 +1209,18 @@ logandcalcbiasUni <- function(resDF) {
   return(resDF)
 }
 
-#' @export
+#' @noRd
 logandcalcbiasMulti <- function(resDF) {
   resDF$bias <- NA
-  if (class(resDF$methodUni)=="character") resDF$methodUni <- factor(resDF$methodUni,
+  if (inherits(resDF$methodUni, "character")) resDF$methodUni <- factor(resDF$methodUni,
+  #if (class(resDF$methodUni)=="character") resDF$methodUni <- factor(resDF$methodUni,
                 levels=c("SSD", "MMR", "BDI", "ERM", "MoM", "FMA", "BFM", "CV", "CVsex", "sdlog", "sdlogsex"))
-  if (class(resDF$center)=="character") resDF$center <- factor(resDF$center, levels=c("geomean", "mean"))
-  if (class(resDF$methodMulti)=="character") resDF$methodMulti <- factor(resDF$methodMulti,
-                                                                         levels=c("GMsize", "GMM", "TM"))
-  if (class(resDF$datastructure)=="character") resDF$datastructure <- factor(resDF$datastructure,
-                                                                             levels=c("complete", "missing"))
+  if (inherits(resDF$center, "character")) resDF$center <- factor(resDF$center, levels=c("geomean", "mean"))
+  #if (class(resDF$center)=="character") resDF$center <- factor(resDF$center, levels=c("geomean", "mean"))
+  if (inherits(resDF$methodMulti, "character")) resDF$methodMulti <- factor(resDF$methodMulti, levels=c("GMsize", "GMM", "TM"))
+  #if (class(resDF$methodMulti)=="character") resDF$methodMulti <- factor(resDF$methodMulti, levels=c("GMsize", "GMM", "TM"))
+  if (inherits(resDF$datastructure,"character")) resDF$datastructure <- factor(resDF$datastructure, levels=c("complete", "missing"))
+  #if (class(resDF$datastructure)=="character") resDF$datastructure <- factor(resDF$datastructure, levels=c("complete", "missing"))
   if (attr(resDF, "estvalues")=="raw") {
     resDF$estimate[resDF$methodUni %in% c("SSD", "MMR", "BDI", "ERM", "MoM", "FMA", "BFM")] <- 
        log(resDF$estimate[resDF$methodUni %in% c("SSD", "MMR", "BDI", "ERM", "MoM", "FMA", "BFM")])
@@ -1403,8 +1262,8 @@ logandcalcbiasMulti <- function(resDF) {
   return(resDF)
 }
 
-#' @export
-# Get confidence intervals for full ape data set
+#' Get confidence intervals for full ape data set
+#' @noRd
 getCI <- function(x, conf.level=0.95, alternative="two.sided", na.rm=T) {
   if (!na.rm & sum(is.na(x)) > 0) {
     warning("Resampled values contain NAs.  Set 'na.rm' to TRUE to calculate confidence interval.")

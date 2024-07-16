@@ -1,4 +1,4 @@
-#' @export
+#' @noRd
 get.objects <- function() {
   # returns table of objects in memory and their sizes in bytes
   object.sizes <- NULL
@@ -16,7 +16,8 @@ get.objects <- function() {
 #' Function for calculating the geometric mean of a set of positive numbers.
 #' @param x A vector of positive numbers.
 #' @param na.rm a logical value indicating whether NA values should be stripped before the computation proceeds.
-#' @return If all values of x are positive, the geometric mean is returned as a numeric vector of length one.  If any values are non-positive, NA is returned.
+#' @return If all values of x are positive, the geometric mean is returned as a numeric vector of length one.  If 
+#'    any values are non-positive, NA is returned.
 #' @examples
 #' x <- c(1, 10, 100)
 #' mean(x)
@@ -24,8 +25,9 @@ get.objects <- function() {
 #' geomean(c(-1,x))
 #' geomean(c(0,x))
 #' geomean(c(NA,x))
+#' geomean(c(NA,x), na.rm=TRUE)
 #' @export
-geomean <- function(x, na.rm=F) {
+geomean <- function(x, na.rm=FALSE) {
   if (!is.numeric(x)) {
     warning("argument is not numeric: returning NA")
 	return(NA)

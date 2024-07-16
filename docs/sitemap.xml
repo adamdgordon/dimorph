@@ -1,51 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>/reference/apelimbart.html</loc>
-  </url>
-  <url>
-    <loc>/reference/bootdimorph.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dimorph.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fauxil.html</loc>
-  </url>
-  <url>
-    <loc>/reference/FMAtable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/geomean.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getsampleaddresses.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getstructure.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot.SSDtest.html</loc>
-  </url>
-  <url>
-    <loc>/reference/resampleSSD.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SSDtest.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/reference/apelimbart.html</loc></url>
+<url><loc>/reference/bootdimorph.html</loc></url>
+<url><loc>/reference/dimorph.html</loc></url>
+<url><loc>/reference/fauxil.html</loc></url>
+<url><loc>/reference/FMAtable.html</loc></url>
+<url><loc>/reference/geomean.html</loc></url>
+<url><loc>/reference/getsampleaddresses.html</loc></url>
+<url><loc>/reference/getstructure.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/plot.SSDtest.html</loc></url>
+<url><loc>/reference/resampleSSD.html</loc></url>
+<url><loc>/reference/SSDtest.html</loc></url>
 </urlset>
+

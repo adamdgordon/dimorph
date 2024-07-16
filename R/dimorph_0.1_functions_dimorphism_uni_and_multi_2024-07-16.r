@@ -152,17 +152,18 @@
 #' ## Univariate estimates:
 #' data(apelimbart)
 #' gorillas <- apelimbart[apelimbart$Species=="Gorilla gorilla",]
-#' dimorph(x=gorillas$FHSI, method="SSD") # generates error: sex is required
+#' # Next line would generate an error: sex is required
+#' # dimorph(x=gorillas$FHSI, method="SSD") 
 #' gorSSD  <- dimorph(x=gorillas$FHSI, # variable and specimen names not preserved
-#'                    method="SSD", sex=gorillas$Sex, details=T)
-#' gorSSD2 <- dimorph(x=gorillas[,"FHSI",drop=F], # variable and specimen names preserved
-#'                    method="SSD", sex=gorillas$Sex, details=T)
+#'                    method="SSD", sex=gorillas$Sex, details=TRUE)
+#' gorSSD2 <- dimorph(x=gorillas[,"FHSI",drop=FALSE], # variable and specimen names preserved
+#'                    method="SSD", sex=gorillas$Sex, details=TRUE)
 #' gorSSD
 #' str(gorSSD)
 #' summary(gorSSD)
 #' summary(gorSSD2) # results are identical to 'gorSSD'
-#' summary(gorSSD, verbose=T)
-#' summary(gorSSD2, verbose=T) # variable and specimen names preserved
+#' summary(gorSSD, verbose=TRUE)
+#' summary(gorSSD2, verbose=TRUE) # variable and specimen names preserved
 #' # A subset of specimens can be specified for analysis using 'ads'
 #' summary(dimorph(x=gorillas$FHSI, method="SSD", sex=gorillas$Sex, ads=c(1:10, 51:60)))
 #' # Methods for estimating dimorphism:
@@ -173,47 +174,49 @@
 #' summary(dimorph(x=gorillas$FHSI, method="BFM"))
 #' summary(dimorph(x=gorillas$FHSI, method="ERM"))
 #' summary(dimorph(x=gorillas$FHSI, method="CV"))
-#' summary(dimorph(x=gorillas$FHSI, method="CV", ncorrection=T))
+#' summary(dimorph(x=gorillas$FHSI, method="CV", ncorrection=TRUE))
 #' summary(dimorph(x=gorillas$FHSI, method="CVsex", sex=gorillas$Sex))
-#' summary(dimorph(x=gorillas$FHSI, method="CVsex", sex=gorillas$Sex, ncorrection=T))
+#' summary(dimorph(x=gorillas$FHSI, method="CVsex", sex=gorillas$Sex, ncorrection=TRUE))
 #' summary(dimorph(x=gorillas$FHSI, method="sdlog"))
 #' summary(dimorph(x=gorillas$FHSI, method="sdlogsex", sex=gorillas$Sex))
 #'
 #' # Now setting 'dfout' to TRUE:
-#' allmethods <- rbind(dimorph(x=gorillas$FHSI, method="SSD", sex=gorillas$Sex, dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="MMR", dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="BDI", dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="MoM", dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="FMA", dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="BFM", dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="ERM", dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="CV", dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="CVsex", sex=gorillas$Sex, dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="sdlog", dfout=T),
-#'                     dimorph(x=gorillas$FHSI, method="sdlogsex", sex=gorillas$Sex, dfout=T))				
+#' allmethods <- rbind(dimorph(x=gorillas$FHSI, method="SSD", sex=gorillas$Sex, dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="MMR", dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="BDI", dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="MoM", dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="FMA", dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="BFM", dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="ERM", dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="CV", dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="CVsex", sex=gorillas$Sex, dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="sdlog", dfout=TRUE),
+#'                     dimorph(x=gorillas$FHSI, method="sdlogsex", sex=gorillas$Sex, dfout=TRUE))				
 #' allmethods
 #'
 #' # Alternatively, using apply
-#' res <- apply(data.frame(method=c("SSD","MMR","BDI","MoM","FMA","BFM","ERM","CV","CVsex","sdlog","sdlogsex")),
+#' res <- apply(data.frame(method=c("SSD","MMR","BDI","MoM","FMA","BFM",
+#'                                  "ERM","CV","CVsex","sdlog","sdlogsex")),
 #'              MARGIN=1,
-#'              FUN=function(method, ...) dimorph(x=gorillas$FHSI, method=method, sex=gorillas$Sex, dfout=T),
-#'              simplify=F)
+#'              FUN=function(method, ...) dimorph(x=gorillas$FHSI, method=method,
+#'                                                sex=gorillas$Sex, dfout=TRUE),
+#'              simplify=FALSE)
 #' as.data.frame(do.call(rbind, res))
 #' 
 #' ## Multivariate estimates:
 #' # GMsize (only usable for complete datasets)
 #' Gg.GMsize <- dimorph(x=gorillas[,c("FHSI","HHMaj","TPMAP","RHMaj")],
-#'                      method="SSD", methodMulti="GMsize", sex=gorillas$Sex, details=T)
+#'                      method="SSD", methodMulti="GMsize", sex=gorillas$Sex, details=TRUE)
 #' Gg.GMsize
 #' summary(Gg.GMsize)
 #' 
 #' # GMM (produces the same values for ratio estimators as GMsize when data are complete)
 #' Gg.GMM1 <- dimorph(x=gorillas[,c("FHSI","HHMaj","TPMAP","RHMaj")],
-#'                    method="SSD", methodMulti="GMM", sex=gorillas$Sex, details=T)
+#'                    method="SSD", methodMulti="GMM", sex=gorillas$Sex, details=TRUE)
 #' # now with subset of gorilla data
 #' Gg.GMM2 <- dimorph(x=gorillas[,c("FHSI","HHMaj","TPMAP","RHMaj")],
 #'                    method="SSD", methodMulti="GMM", sex=gorillas$Sex,
-#'                    ads=c(1:10, 51:60), details=T)
+#'                    ads=c(1:10, 51:60), details=TRUE)
 #' summary(Gg.GMM1)
 #' summary(Gg.GMM2)
 #' 
@@ -221,17 +224,17 @@
 #' SSDvars <- c("FHSI", "TPML", "TPMAP", "TPLAP", "HHMaj",
 #'              "HHMin", "RHMaj", "RHMin", "RDAP", "RDML")
 #' Fs1 <- fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars]
-#' Fs1GMM <- dimorph(x=Fs1, method="MMR", methodMulti="GMM", details=T)
+#' Fs1GMM <- dimorph(x=Fs1, method="MMR", methodMulti="GMM", details=TRUE)
 #' Fs1TM <- dimorph(x=Fs1, method="MMR", methodMulti="TM", 
-#'                  templatevar="FHSI", details=T)
+#'                  templatevar="FHSI", details=TRUE)
 #' Fs1GMM
 #' Fs1TM
 #' summary(Fs1GMM)
-#' summary(Fs1TM, verbose=T)
+#' summary(Fs1TM, verbose=TRUE)
 #' 
-#' Fs1Both <- rbind(dimorph(x=Fs1, method="MMR", methodMulti="GMM", details=T, dfout=T),
+#' Fs1Both <- rbind(dimorph(x=Fs1, method="MMR", methodMulti="GMM", details=TRUE, dfout=TRUE),
 #'                  dimorph(x=Fs1, method="MMR", methodMulti="TM", 
-#'                          templatevar="FHSI", details=T, dfout=T))
+#'                          templatevar="FHSI", details=TRUE, dfout=TRUE))
 #' Fs1Both
 #' @references Godfrey LR, Lyon SK, Sutherland MR. (1993) Sexual dimorphism in large-bodied 
 #'   primates: The case of the subfossil lemurs. \emph{American Journal of Physical 
@@ -261,7 +264,8 @@
 #'   Human Evolution}. 36:423-458. (\href{https://doi.org/10.1006/jhev.1998.0281}{https://doi.org/10.1006/jhev.1998.0281})
 #' @export
 dimorph <- function(x, method="SSD", methodMulti="GMM", sex=NULL, sex.female=1,
-                    center="geomean", ads=NULL, templatevar=NULL, na.rm=T, ncorrection=F, details=F, dfout=F) {
+                    center="geomean", ads=NULL, templatevar=NULL, na.rm=T, ncorrection=F,
+                    details=F, dfout=F) {
   uni <- NA
   {if (class(x)[1]=="data.frame" | class(x)[1]=="matrix") {
     {if (ncol(x)==1) uni <- T
@@ -270,14 +274,13 @@ dimorph <- function(x, method="SSD", methodMulti="GMM", sex=NULL, sex.female=1,
   else if (class(x)[1]=="numeric" | class(x)[1]=="integer") uni <- T
   else if (class(x)[1]=="list") uni <- F}
   if (is.na(uni)) stop("'x' must be a numeric vector, matrix, dataframe, or list.")
-  {if (uni) return(dimorph::dimorphUni(x=x, method=method, sex=sex, sex.female=sex.female, center=center, ads=ads, na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout))
-  else if (!uni) return(dimorph::dimorphMulti(x=x, methodUni=method, methodMulti=methodMulti, sex=sex, sex.female=sex.female, center=center, ads=ads, templatevar=templatevar, na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout))}
+  {if (uni) return(dimorph:::dimorphUni(x=x, method=method, sex=sex, sex.female=sex.female, center=center, ads=ads, na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout))
+  else if (!uni) return(dimorph:::dimorphMulti(x=x, methodUni=method, methodMulti=methodMulti, sex=sex, sex.female=sex.female, center=center, ads=ads, templatevar=templatevar, na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout))}
   return(NA)
 }
 
 
-
-#' @export
+#' @noRd
 dimorphUni <- function(x, method="SSD", sex=NULL, sex.female=1, center="geomean",
                        ads=NULL, na.rm=T, ncorrection=F, details=F, dfout=F) {
   method <- match.arg(method, choices=c("SSD", "MMR", "BDI", "MoM", "FMA", "BFM",
@@ -330,7 +333,8 @@ dimorphUni <- function(x, method="SSD", sex=NULL, sex.female=1, center="geomean"
   specnames <- NA
   if (class(x)[1]=="data.frame") x <- as.matrix(x)
   {if (class(x)[1]=="matrix") {
-    if (!(class(x[,1])=="numeric" | class(x[,1])=="integer")) stop("All data in 'x' must be real numbers.")
+    if (!inherits(x[,1], c("numeric", "integer"))) stop("All data in 'x' must be real numbers.")
+    #if (!(class(x[,1])=="numeric" | class(x[,1])=="integer")) stop("All data in 'x' must be real numbers.")
 	if (ncol(x) > 1) stop("dimorphUni can only accept one variable.")
 	if (!is.null(colnames(x))) varname <- colnames(x)[1]
 	if (is.null(rownames(x))) rownames(x) <- paste0("specimen_", 1:nrow(x))
@@ -366,7 +370,8 @@ dimorphUni <- function(x, method="SSD", sex=NULL, sex.female=1, center="geomean"
   modpar <- NA
   {
     if(!is.null(sex)) {
-      if(!class(sex)=="factor") sex <- droplevels(as.factor(sex))
+      if (!inherits(sex, "factor")) sex <- droplevels(as.factor(sex))
+      #if(!class(sex)=="factor") sex <- droplevels(as.factor(sex))
       if (!(nlevels(sex)==1|2)) stop("The sex variable can have no more than two levels.")
       if (nlevels(sex)==1 & method %in% c("SSD", "CVsex", "sdlogsex")) {
         warning(paste0(method, " can not be calculated when only one sex is present."))
@@ -377,7 +382,7 @@ dimorphUni <- function(x, method="SSD", sex=NULL, sex.female=1, center="geomean"
 	  propFoverall <- sum(sex==levels(sex)[sex.female]) / nspecoverall
       if (na.rm) {
         y <- data.frame(x=x, sex=sex)
-		cmplt <- complete.cases(y)
+		cmplt <- stats::complete.cases(y)
         y <- y[cmplt,]
         if (nrow(y) < 2) return(NA)
         x <- y$x
@@ -499,7 +504,8 @@ dimorphUni <- function(x, method="SSD", sex=NULL, sex.female=1, center="geomean"
         {
           if (R==0) est <- NA
           else {
-            k <- FMAtable$k[FMAtable$n==n]
+            k <- dimorph::FMAtable$k[dimorph::FMAtable$n==n]
+            #k <- FMAtable$k[FMAtable$n==n]
             sigma <- R/(k*sqrt(2))
             {
               if (center=="geomean") {
@@ -631,7 +637,7 @@ dimorphUni <- function(x, method="SSD", sex=NULL, sex.female=1, center="geomean"
 }
 
 
-#' @export
+#' @noRd
 dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL, 
                          sex.female=1, center="geomean", ads=NULL,
                          templatevar=NULL, na.rm=T, ncorrection=F, details=F, dfout=F) {
@@ -649,7 +655,8 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
   }
   if (class(x)[1]=="data.frame") x <- as.matrix(x)
   if (class(x)[1]=="matrix") {
-    if (class(x[,1])=="character") stop("All data in x must be numeric.")
+    if (inherits(x[,1], "character")) stop("All data in x must be numeric.")
+    #if (class(x[,1])=="character") stop("All data in x must be numeric.")
   }
   {if (class(x)[1]=="list") {
     sex <- NULL
@@ -666,9 +673,10 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
     # drop cases missing all measurements, and drop them from sex, too
     keep <- !(apply(is.na(x), prod, MARGIN=1))
     x <- x[keep,]
-    if(!is.null(sex)) {
+    if (!is.null(sex)) {
       sex <- sex[keep]
-      if(!class(sex)=="factor") sex <- as.factor(sex)
+      if (!inherits(sex, "factor")) sex <- as.factor(sex)
+      #if (!class(sex)=="factor") sex <- as.factor(sex)
       sex <- droplevels(sex)
       if (nlevels(sex)>2) stop("The sex variable must have exactly two levels.")
       if (!length(sex)==nrow(x)) stop("The number of rows in x and the length of the sex vector must be equal.")
@@ -683,9 +691,9 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
       if(sum(is.na(y)) > 0) warning("The geometric mean could not be calculated for all specimens.")
       if(sum(!is.na(y))==0) stop("No specimens are complete for all measurements.")
       if(sum(!is.na(y))< 2) stop("Fewer than two specimens are complete for all measurements.")
-      out <- dimorph::dimorphUni(y, method=methodUni, sex=sex, sex.female=sex.female, center=center,
+      out <- dimorph:::dimorphUni(y, method=methodUni, sex=sex, sex.female=sex.female, center=center,
                                  na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout)
-	  #if(!is.null(sex)) propF.realized <- sum(sex[complete.cases(y)]==levels(sex)[sex.female]) / sum(complete.cases(y))
+	  #if(!is.null(sex)) propF.realized <- sum(sex[stats::complete.cases(y)]==levels(sex)[sex.female]) / sum(stats::complete.cases(y))
 	  {if (!dfout) {
 	    names(out) <- paste0(methodMulti, ".", methodUni)
         attr(out, "details")$n.vars.overall <- nvarsoverall
@@ -749,7 +757,7 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
 	  }
 	  if(!is.null(sex)) propF.realized <- sum(sex==levels(sex)[sex.female]) / length(sex)
       #
-      ssd <- lapply(x, FUN=dimorph::dimorphUni, method=methodUni, sex=sex,
+      ssd <- lapply(x, FUN=dimorph:::dimorphUni, method=methodUni, sex=sex,
                     sex.female=sex.female, center=center,
                     na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=F)
       out <- dimorph::geomean(unlist(ssd), na.rm=F) # if some variables have NAs for estimates, no overall estimate should be returned
@@ -843,7 +851,7 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
 	else if(methodMulti=="TM") { # start methodMulti "TM"
       if (class(x)[1]=="list") stop("'x' must be formatted as a matrix or data frame to use method 'TM'.")
       if (class(x)[1]=="matrix") x <- data.frame(x)
-	  tmpEst <- dimorph::TM(x, templatevar=templatevar)
+	  tmpEst <- dimorph:::TM(x, templatevar=templatevar)
       varsmissing <- colnames(tmpEst$template)[is.na(tmpEst$template)]
       {if(length(varsmissing)==ncol(tmpEst$templat)) {
 	    warning("No specimen could act as template.")
@@ -857,7 +865,7 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
         warning(paste0("The following specimens(s) were removed because they\ndid not have templatable variables:\n",
                        paste(specmissing, collapse="\n")))
       }
-      out <- dimorph::dimorphUni(tmpEst$TM, method=methodUni, sex=sex,
+      out <- dimorph:::dimorphUni(tmpEst$TM, method=methodUni, sex=sex,
                     sex.female=sex.female, center=center, ads=ads,
                     na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout)
 	  x <- x[!is.na(tmpEst$template), !is.na(tmpEst$template)]
@@ -900,7 +908,7 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
   } # end if loops for specific methodMulti
 }
 
-#' @export
+#' @noRd
 checktemplate <- function(template.ad, dat, miss) { # required for template method
   vars <- colnames(dat)[!is.na(dat[template.ad,])]
   n <- 0
@@ -909,11 +917,12 @@ checktemplate <- function(template.ad, dat, miss) { # required for template meth
   return(n)
 }
 
-#' @export
+#' @noRd
 TM <- function(x, templatevar=NULL) { # template method
   if (is.null(templatevar)) stop("'templatevar' must be specified with the name or\ncolumn number of a variable to estimate.")
   if (is.null(colnames(x))) colnames(x) <- paste0("VAR_", 1:ncol(x))
-  if (class(templatevar)=="integer" | class(templatevar)=="numeric") templatevar <- colnames(x)[templatevar]
+  if (inherits(templatevar, c("integer", "numeric"))) templatevar <- colnames(x)[templatevar]
+  #if (class(templatevar)=="integer" | class(templatevar)=="numeric") templatevar <- colnames(x)[templatevar]
   x <- as.matrix(x)
   x.new <- x[,templatevar]
   n.templated <- 0
@@ -930,7 +939,7 @@ TM <- function(x, templatevar=NULL) { # template method
   # Find specimen(s) that can template the most unknown specimens
   possibles <- which(counts > 1)
   if (length(possibles)==0) return(NAout)
-  n.find <- apply(data.frame(possibles), 1, dimorph::checktemplate, dat=x, miss=miss)
+  n.find <- apply(data.frame(possibles), 1, dimorph:::checktemplate, dat=x, miss=miss)
   template.ad <- possibles[which(n.find==max(n.find))]
   n.templated <- max(n.find)
   # If a tie for the most specimens, randomly choose one template specimen

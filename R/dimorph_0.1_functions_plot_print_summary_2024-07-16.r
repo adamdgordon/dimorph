@@ -64,9 +64,9 @@ plot.dimorphResampledMulti <- function(x, plottype="draftsman", pch=21, pt.col=N
   } 
 }
 
-
 #' @export
-hist.dimorphResampledMulti <- function(x, nbins=100, colrat="blue", colCV="brown", colsd="orange", ...) {
+hist.dimorphResampledMulti <- function(x, nbins=100, colrat="blue", colCV="brown",
+                                       colsd="orange", ...) {
   tmp  <- x$estimates[,!colnames(x$estimates)%in%c("n", "nFem")]
   varsrat <- colnames(tmp)
   varsCV  <- colnames(tmp)[grep("CV", colnames(tmp))]
@@ -108,8 +108,8 @@ hist.dimorphResampledMulti <- function(x, nbins=100, colrat="blue", colCV="brown
   par(parOLD) 
 }
 
-##' @export
-print.dimorphEst <- function(x) {
+#' @export
+print.dimorphEst <- function(x, ...) {
   y <- x
   attributes(y) <- NULL
   names(y) <- names(x)
@@ -117,145 +117,144 @@ print.dimorphEst <- function(x) {
   print(y)
 }
 
-##' @export
-print.dimorphEstDF <- function(x) {
+#' @export
+print.dimorphEstDF <- function(x, ...) {
   attributes(x[[1]]) <- NULL
   class(x) <- "data.frame"
   print(x)
 }
 
 #' @export
-summary.dimorphEst <- function(x, verbose=F) {
-  txt <- paste0("estimate: ", round(x,5), "\n")
-  txt <- paste0(txt, "univariate method: ", attr(x,"details")$methodUni)
-  if (attr(x,"details")$methodUni=="CV" | attr(x,"details")$methodUni=="CVsex") if(attr(x, "details")$ncorrection)
-        txt <- paste0(txt, " (sample size correction factor applied)")
+summary.dimorphEst <- function(object, verbose=F, ...) {
+  txt <- paste0("estimate: ", round(object,5), "\n")
+  txt <- paste0(txt, "univariate method: ", attr(object,"details")$methodUni)
+  if (attr(object,"details")$methodUni=="CV" | attr(object,"details")$methodUni=="CVsex") if(attr(object, "details")$ncorrection)
+    txt <- paste0(txt, " (sample size correction factor applied)")
   txt <- paste0(txt, "\n")
-  if (!is.na(attr(x,"details")$methodMulti)) txt <- paste0(txt,"multivariate method: ",
-	   attr(x,"details")$methodMulti,"\n")
-  nvarsoveralltxt <- attr(x,"details")$n.vars.overall
-  nvarsrealizedtxt <- attr(x,"details")$n.vars.realized
-  if (!is.na(attr(x,"details")$methodMulti) & attr(x,"details")$methodMulti=="GMsize") {
+  if (!is.na(attr(object,"details")$methodMulti)) txt <- paste0(txt,"multivariate method: ",
+                                                                attr(object,"details")$methodMulti,"\n")
+  nvarsoveralltxt <- attr(object,"details")$n.vars.overall
+  nvarsrealizedtxt <- attr(object,"details")$n.vars.realized
+  if (!is.na(attr(object,"details")$methodMulti) & attr(object,"details")$methodMulti=="GMsize") {
     nvarsoveralltxt <- paste0("1 (geometric mean of ", nvarsoveralltxt, " variables)")
     nvarsrealizedtxt <- paste0("1 (geometric mean of ", nvarsrealizedtxt, " variables)")
   }
-  propFoveralltxt <- round(attr(x,"details")$proportion.female.overall,5)
-  propFrealizedtxt <- round(attr(x,"details")$proportion.female.realized,5)
+  propFoveralltxt <- round(attr(object,"details")$proportion.female.overall,5)
+  propFrealizedtxt <- round(attr(object,"details")$proportion.female.realized,5)
   if(is.na(propFoveralltxt)) propFoveralltxt <- "unknown"
   if(is.na(propFrealizedtxt)) propFrealizedtxt <- "unknown"
   txt <- paste0(txt, "no. of variables (overall): ", nvarsoveralltxt,"\n")
-  txt <- paste0(txt, "no. of specimens (overall): ", attr(x,"details")$n.specimens.overall,"\n")
+  txt <- paste0(txt, "no. of specimens (overall): ", attr(object,"details")$n.specimens.overall,"\n")
   txt <- paste0(txt, "female proportion of sample (overall): ", propFoveralltxt,"\n")
   txt <- paste0(txt, "no. of variables (realized): ", nvarsrealizedtxt,"\n")
-  txt <- paste0(txt, "no. of specimens (realized): ", attr(x,"details")$n.specimens.realized,"\n")
+  txt <- paste0(txt, "no. of specimens (realized): ", attr(object,"details")$n.specimens.realized,"\n")
   txt <- paste0(txt, "female proportion of sample (realized): ", propFrealizedtxt,"\n")
-  if(!is.na(attr(x,"details")$proportion.missingdata.overall))
-    txt <- paste0(txt, "proportion of missing data (overall): ", round(attr(x,"details")$proportion.missingdata.overall,5),"\n")
-  if(!is.na(attr(x,"details")$proportion.missingdata.realized))
-    txt <- paste0(txt, "proportion of missing data (realized): ", round(attr(x,"details")$proportion.missingdata.realized,5),"\n")
-  if(!is.na(attr(x,"details")$proportion.templated))
-    txt <- paste0(txt, "proportion of template variable data estimated: ", round(attr(x,"details")$proportion.templated,5),"\n")
-  centertxt <- attr(x,"details")$center
+  if(!is.na(attr(object,"details")$proportion.missingdata.overall))
+    txt <- paste0(txt, "proportion of missing data (overall): ", round(attr(object,"details")$proportion.missingdata.overall,5),"\n")
+  if(!is.na(attr(object,"details")$proportion.missingdata.realized))
+    txt <- paste0(txt, "proportion of missing data (realized): ", round(attr(object,"details")$proportion.missingdata.realized,5),"\n")
+  if(!is.na(attr(object,"details")$proportion.templated))
+    txt <- paste0(txt, "proportion of template variable data estimated: ", round(attr(object,"details")$proportion.templated,5),"\n")
+  centertxt <- attr(object,"details")$center
   if (!is.na(centertxt)) {
     if(centertxt=="geomean") centertxt <- "geometric mean"
     else if(centertxt=="mean") centertxt <- "arithmetic mean"
   }
   txt <- paste0(txt, "mean function: ", centertxt,"\n") 
-  if (!is.na(attr(x,"details")$ratio.means[1])) txt <- paste0(txt,"ratio numerator and denominator: ",
-	   paste(round(attr(x,"details")$ratio.means,2), collapse=", "),"\n")
-  if (!is.na(attr(x,"details")$model.parameters[1])) {
-    if (attr(x,"details")$methodUni=="BFM") {
+  if (!is.na(attr(object,"details")$ratio.means[1])) txt <- paste0(txt,"ratio numerator and denominator: ",
+                                                                   paste(round(attr(object,"details")$ratio.means,2), collapse=", "),"\n")
+  if (!is.na(attr(object,"details")$model.parameters[1])) {
+    if (attr(object,"details")$methodUni=="BFM") {
       txt <- paste0(txt,"BFM model parameters:\n")
-	  txt <- paste0(txt,"  BFM estimate of proportion of sample composed of smaller sex: ",
-	         round(attr(x,"details")$model.parameters$pro[1],5),"\n")
-	  modvar <- attr(x,"details")$model.parameters$variance$modelName
-	  {if(modvar=="E") modvar <- "equal for both sexes"
-	  else modvar <- "sex-specific"}
-	  txt <- paste0(txt,"  BFM model of variance: ", modvar,"\n")
-	  mvar <- round(attr(x,"details")$model.parameters$variance$sigmasq, 5)
-	  if (attr(x,"details")$model.parameters$variance$modelName=="V") {
-	    mvar <- paste0(mvar[1], " (smaller sex), ", mvar[2], " (larger sex)")
-	  }
-	  if (attr(x,"details")$center=="geomean") mvar <- paste0(mvar, " (logged data)")
-	  if (attr(x,"details")$center=="mean") mvar <- paste0(mvar, " (raw data)")
-	  txt <- paste0(txt,"  BFM estimate of variance: ", mvar,"\n")
-	}
+      txt <- paste0(txt,"  BFM estimate of proportion of sample composed of smaller sex: ",
+                    round(attr(object,"details")$model.parameters$pro[1],5),"\n")
+      modvar <- attr(object,"details")$model.parameters$variance$modelName
+      {if(modvar=="E") modvar <- "equal for both sexes"
+        else modvar <- "sex-specific"}
+      txt <- paste0(txt,"  BFM model of variance: ", modvar,"\n")
+      mvar <- round(attr(object,"details")$model.parameters$variance$sigmasq, 5)
+      if (attr(object,"details")$model.parameters$variance$modelName=="V") {
+        mvar <- paste0(mvar[1], " (smaller sex), ", mvar[2], " (larger sex)")
+      }
+      if (attr(object,"details")$center=="geomean") mvar <- paste0(mvar, " (logged data)")
+      if (attr(object,"details")$center=="mean") mvar <- paste0(mvar, " (raw data)")
+      txt <- paste0(txt,"  BFM estimate of variance: ", mvar,"\n")
+    }
   }
   if(verbose) {
-    if (!is.na(attr(x,"details")$vars.used[1])) txt <- paste0(txt, "\nIncluded variables:\n", 
-                  paste(attr(x,"details")$vars.used, collapse="\n"), "\n")
-    if (!is.na(attr(x,"details")$specimens.used[1])) txt <- paste0(txt, "\nIncluded specimens:\n", 
-                  paste(attr(x,"details")$specimens.used, collapse="\n"), "\n")
+    if (!is.na(attr(object,"details")$vars.used[1])) txt <- paste0(txt, "\nIncluded variables:\n", 
+                                                                   paste(attr(object,"details")$vars.used, collapse="\n"), "\n")
+    if (!is.na(attr(object,"details")$specimens.used[1])) txt <- paste0(txt, "\nIncluded specimens:\n", 
+                                                                        paste(attr(object,"details")$specimens.used, collapse="\n"), "\n")
   }
   cat(txt)
 }
 
 #' @export
-summary.dimorphEstDF <- function(x, verbose=F) {
-  txt <- paste0("estimate: ", round(x$estimate,5), "\n")
-  txt <- paste0(txt, "univariate method: ", x$methodUni,"\n")
-  if (!is.na(x$methodMulti)) txt <- paste0(txt,"multivariate method: ",
-	   x$methodMulti,"\n")
-  nvarsoveralltxt <- x$n.vars.overall
-  nvarsrealizedtxt <- x$n.vars.realized
-  if (!is.na(x$methodMulti) & x$methodMulti=="GMsize") {
+summary.dimorphEstDF <- function(object, verbose=F, ...) {
+  txt <- paste0("estimate: ", round(object$estimate,5), "\n")
+  txt <- paste0(txt, "univariate method: ", object$methodUni,"\n")
+  if (!is.na(object$methodMulti)) txt <- paste0(txt,"multivariate method: ",
+                                                object$methodMulti,"\n")
+  nvarsoveralltxt <- object$n.vars.overall
+  nvarsrealizedtxt <- object$n.vars.realized
+  if (!is.na(object$methodMulti) & object$methodMulti=="GMsize") {
     nvarsoveralltxt <- paste0("1 (geometric mean of ", nvarsoveralltxt, " variables)")
     nvarsrealizedtxt <- paste0("1 (geometric mean of ", nvarsrealizedtxt, " variables)")
   }
-  propFoveralltxt <- round(x$proportion.female.overall,5)
-  propFrealizedtxt <- round(x$proportion.female.realized,5)
+  propFoveralltxt <- round(object$proportion.female.overall,5)
+  propFrealizedtxt <- round(object$proportion.female.realized,5)
   if(is.na(propFoveralltxt)) propFoveralltxt <- "unknown"
   if(is.na(propFrealizedtxt)) propFrealizedtxt <- "unknown"
   txt <- paste0(txt, "no. of variables (overall): ", nvarsoveralltxt,"\n")
-  txt <- paste0(txt, "no. of specimens (overall): ", x$n.specimens.overall,"\n")
+  txt <- paste0(txt, "no. of specimens (overall): ", object$n.specimens.overall,"\n")
   txt <- paste0(txt, "female proportion of sample (overall): ", propFoveralltxt,"\n")
   txt <- paste0(txt, "no. of variables (realized): ", nvarsrealizedtxt,"\n")
-  txt <- paste0(txt, "no. of specimens (realized): ", x$n.specimens.realized,"\n")
+  txt <- paste0(txt, "no. of specimens (realized): ", object$n.specimens.realized,"\n")
   txt <- paste0(txt, "female proportion of sample (realized): ", propFrealizedtxt,"\n")
-  if(!is.na(x$proportion.missingdata.overall))
-    txt <- paste0(txt, "proportion of missing data (overall): ", round(x$proportion.missingdata.overall,5),"\n")
-  if(!is.na(x$proportion.missingdata.realized))
-    txt <- paste0(txt, "proportion of missing data (realized): ", round(x$proportion.missingdata.realized,5),"\n")
-  if(!is.na(x$proportion.templated))
-    txt <- paste0(txt, "proportion of template variable data estimated: ", round(x$proportion.templated,5),"\n")
-  centertxt <- x$center
+  if(!is.na(object$proportion.missingdata.overall))
+    txt <- paste0(txt, "proportion of missing data (overall): ", round(object$proportion.missingdata.overall,5),"\n")
+  if(!is.na(object$proportion.missingdata.realized))
+    txt <- paste0(txt, "proportion of missing data (realized): ", round(object$proportion.missingdata.realized,5),"\n")
+  if(!is.na(object$proportion.templated))
+    txt <- paste0(txt, "proportion of template variable data estimated: ", round(object$proportion.templated,5),"\n")
+  centertxt <- object$center
   if (!is.na(centertxt)) {
     if(centertxt=="geomean") centertxt <- "geometric mean"
     else if(centertxt=="mean") centertxt <- "arithmetic mean"
   }
   txt <- paste0(txt, "mean function: ", centertxt,"\n") 
-  if (!is.na(attr(x[[1]],"details")$ratio.means[1])) txt <- paste0(txt,"ratio numerator and denominator: ",
-	   paste(round(attr(x[[1]],"details")$ratio.means,2), collapse=", "),"\n")
-  if (!is.na(attr(x[[1]],"details")$model.parameters[1])) {
-    if (x$methodUni=="BFM") {
+  if (!is.na(attr(object[[1]],"details")$ratio.means[1])) txt <- paste0(txt,"ratio numerator and denominator: ",
+                                                                        paste(round(attr(object[[1]],"details")$ratio.means,2), collapse=", "),"\n")
+  if (!is.na(attr(object[[1]],"details")$model.parameters[1])) {
+    if (object$methodUni=="BFM") {
       txt <- paste0(txt,"BFM model parameters:\n")
-	  txt <- paste0(txt,"  BFM estimate of proportion of sample composed of smaller sex: ",
-	         round(attr(x[[1]],"details")$model.parameters$pro[1],5),"\n")
-	  modvar <- attr(x[[1]],"details")$model.parameters$variance$modelName
-	  {if(modvar=="E") modvar <- "equal for both sexes"
-	  else modvar <- "sex-specific"}
-	  txt <- paste0(txt,"  BFM model of variance: ", modvar,"\n")
-	  mvar <- round(attr(x[[1]],"details")$model.parameters$variance$sigmasq, 5)
-	  if (attr(x[[1]],"details")$model.parameters$variance$modelName=="V") {
-	    mvar <- paste0(mvar[1], " (smaller sex), ", mvar[2], " (larger sex)")
-	  }
-	  if (attr(x[[1]],"details")$center=="geomean") mvar <- paste0(mvar, " (logged data)")
-	  if (attr(x[[1]],"details")$center=="mean") mvar <- paste0(mvar, " (raw data)")
-	  txt <- paste0(txt,"  BFM estimate of variance: ", mvar,"\n")
-	}
+      txt <- paste0(txt,"  BFM estimate of proportion of sample composed of smaller sex: ",
+                    round(attr(object[[1]],"details")$model.parameters$pro[1],5),"\n")
+      modvar <- attr(object[[1]],"details")$model.parameters$variance$modelName
+      {if(modvar=="E") modvar <- "equal for both sexes"
+        else modvar <- "sex-specific"}
+      txt <- paste0(txt,"  BFM model of variance: ", modvar,"\n")
+      mvar <- round(attr(object[[1]],"details")$model.parameters$variance$sigmasq, 5)
+      if (attr(object[[1]],"details")$model.parameters$variance$modelName=="V") {
+        mvar <- paste0(mvar[1], " (smaller sex), ", mvar[2], " (larger sex)")
+      }
+      if (attr(object[[1]],"details")$center=="geomean") mvar <- paste0(mvar, " (logged data)")
+      if (attr(object[[1]],"details")$center=="mean") mvar <- paste0(mvar, " (raw data)")
+      txt <- paste0(txt,"  BFM estimate of variance: ", mvar,"\n")
+    }
   }
   if(verbose) {
-    if (!is.na(attr(x[[1]],"details")$vars.used[1])) txt <- paste0(txt, "\nIncluded variables:\n", 
-                  paste(attr(x[[1]],"details")$vars.used, collapse="\n"), "\n")
-    if (!is.na(attr(x[[1]],"details")$specimens.used[1])) txt <- paste0(txt, "\nIncluded specimens:\n", 
-                  paste(attr(x[[1]],"details")$specimens.used, collapse="\n"), "\n")
+    if (!is.na(attr(object[[1]],"details")$vars.used[1])) txt <- paste0(txt, "\nIncluded variables:\n", 
+                                                                        paste(attr(object[[1]],"details")$vars.used, collapse="\n"), "\n")
+    if (!is.na(attr(object[[1]],"details")$specimens.used[1])) txt <- paste0(txt, "\nIncluded specimens:\n", 
+                                                                             paste(attr(object[[1]],"details")$specimens.used, collapse="\n"), "\n")
   }
   cat(txt)
 }
 
-
 #' @export
-plot.dimorphResampledUni <- function(x, type="estimate") {
+plot.dimorphResampledUni <- function(x, type="estimate", ...) {
   CIheight <- 0.4
   type <- match.arg(type, choices=c("estimate", "bias"))
   if (type=="bias" & sum(is.na(x$estimates$bias))==length(x$estimates$bias)) stop("No bias data are present.")
@@ -467,7 +466,7 @@ plot.dimorphResampledUni <- function(x, type="estimate") {
 }
 
 #' @export
-plot.dimorphResampledMulti <- function(x, type="estimate") {
+plot.dimorphResampledMulti <- function(x, type="estimate", ...) {
   CIheight <- 0.4
   type <- match.arg(type, choices=c("estimate", "bias"))
   if (type=="bias" & sum(is.na(x$estimates$bias))==length(x$estimates$bias)) stop("No bias data are present.")
@@ -686,7 +685,7 @@ plot.dimorphResampledMulti <- function(x, type="estimate") {
 }
 
 #' @export
-print.dimorphResampledMulti <- function(x, verbose=F) {
+print.dimorphResampledMulti <- function(x, verbose=F, ...) {
   methsUni <- levels(droplevels(x$estimates$methodUni))
   methsMulti <- levels(droplevels(x$estimates$methodMulti))
   centers <- levels(droplevels(x$estimates$center))
@@ -802,7 +801,7 @@ print.dimorphResampledMulti <- function(x, verbose=F) {
 }
 
 #' @export
-print.dimorphResampledUni <- function(x, verbose=F) {
+print.dimorphResampledUni <- function(x, verbose=F, ...) {
   methsUni <- levels(droplevels(x$estimates$methodUni))
   centers <- levels(droplevels(x$estimates$center))
   centers[centers %in% "mean"] <- "arithmetic mean"
@@ -897,9 +896,8 @@ print.dimorphResampledUni <- function(x, verbose=F) {
   }
 }
 
-
 #' @export
-print.dimorphAds <- function(x, verbose=F) {
+print.dimorphAds <- function(x, verbose=F, ...) {
   #multivar <- F
   #if (dim(x$comparative)[2] > 1) multivar <- T
   txt <- "        dimorphAds Object\n\n"
@@ -978,9 +976,8 @@ print.dimorphAds <- function(x, verbose=F) {
   cat(txt)
 }
 
-
 #' @export
-print.SSDtest <- function(x, verbose=F, central="median") {
+print.SSDtest <- function(x, verbose=F, central="median", ...) {
   central <- match.arg(arg=central, choices=c("median", "mean"))
   groups <- names(x$estimates)
   methcombos <- x$methcombos
@@ -1139,10 +1136,10 @@ print.SSDtest <- function(x, verbose=F, central="median") {
     #  print(x$CIbias)
     #}
   }
-  if (!is.null(x$H0)) {
-  cat(paste0("\n", cnt, " resampled estimates:\n"))
-  print(H0)  
-  }
+  #if (!is.null(x$H0)) {
+  #cat(paste0("\n", cnt, " resampled estimates:\n"))
+  #print(H0)  
+  #}
   cat("\np-values (one-sided; null: first sample less or equally dimorphic as second sample):\n")
   pone <- round(x$pvalues$p.onesided,4)
   print(pone)
@@ -1206,38 +1203,45 @@ print.SSDtest <- function(x, verbose=F, central="median") {
 #'   \code{ylim} is \code{NULL}, default values generated by \code{\link[ggplot2]{ggplot}} are used.
 #' @param diffcol A color used to fill in histogram bars for differences in parameter values between two samples. 
 #'   defaults to \code{"#CCB03D"}.
+#' @param ... Arguments to be passed to other functions.  Not currently used.
 #' @examples
 #' SSDvars <- c("FHSI", "TPML", "TPMAP", "TPLAP", "HHMaj", "HHMin", "RHMaj", "RHMin", "RDAP", "RDML")
-#' test_faux_multi1 <- SSDtest(fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars]),
-#'                             comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
-#'                                       "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", SSDvars],
-#'                                       "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", SSDvars],
-#'                                       "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", SSDvars]),
-#'                             fossilsex=NULL,
-#'                             compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-#'                                          "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
-#'                                          "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
-#'                                          "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-#'                             methsUni=c("SSD", "MMR", "BDI"),
-#'                             methsMulti=c("GMM"),
-#'                             datastruc="both",
-#'                             nResamp=100,
-#'                             templatevar="FHSI")
+#' test_faux_multi1 <- SSDtest(
+#'      fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars]),
+#'      comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
+#'                "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", SSDvars],
+#'                "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", SSDvars],
+#'                "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", SSDvars]),
+#'      fossilsex=NULL,
+#'      compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+#'                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+#'                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+#'                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+#'      methsUni=c("SSD", "MMR", "BDI"),
+#'      methsMulti=c("GMM"),
+#'      datastruc="both",
+#'      nResamp=100,
+#'      templatevar="FHSI")
 #' test_faux_multi1
 #' plot(test_faux_multi1)
 #' speciescolors <- c("Fauxil sp. 1"="#352A87", "G. gorilla"="#EABA4B",
 #'                    "H. sapiens"="#09A9C0", "P. troglodytes"="#78BE7C",
 #'                    "H. lar"="#0D77DA")
-#' plot(test_faux_multi1, groupcols=speciescolors) # change colors of sample distributions
-#' plot(test_faux_multi1, est=4, groupcols=speciescolors) # plot estimates for the fourth methcombo (GMM and MMR)
-#' plot(test_faux_multi1, est=4, groupcols=speciescolors, invert=c(2,4)) # invert second and fourth sample distributions
-#' plot(test_faux_multi1, est=4, type="diff") # plot distributions of differences among sample estimates for methocombo 4
-#' plot(test_faux_multi1, est=4, type="diff", diffs=c(2,3)) # plots differences between second and third samples
+#' # change colors of sample distributions                   
+#' plot(test_faux_multi1, groupcols=speciescolors)
+#' # plot estimates for the fourth methcombo (GMM and MMR)
+#' plot(test_faux_multi1, est=4, groupcols=speciescolors)
+#' # invert second and fourth sample distributions
+#' plot(test_faux_multi1, est=4, groupcols=speciescolors, invert=c(2,4))
+#' # plot distributions of differences among sample estimates for method combination 4
+#' plot(test_faux_multi1, est=4, type="diff")
+#' # plot differences between second and third samples
+#' plot(test_faux_multi1, est=4, type="diff", diffs=c(2,3)) 
 #' @export
-plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100, plottitle=NULL,
-                         groupcols=NULL, leg=T, legpos=NULL, legsize=1, legtitle="", titlesize=2,
-						 invert=NULL, xlim=NULL, ylim=NULL,
-						 diffcol="#CCB03D") {
+plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100, 
+                         plottitle=NULL, groupcols=NULL, leg=T, legpos=NULL,
+                         legsize=1, legtitle="", titlesize=2, invert=NULL,
+                         xlim=NULL, ylim=NULL, diffcol="#CCB03D", ...) {
   type <- match.arg(type, choices=c("est", "diff"))
   ndat <- length(x$estimates)
   groups <- names(x$estimates)
@@ -1375,7 +1379,8 @@ plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100, plottitle=
     # remove components of dat that are not called for by user
 	if (is.null(diffs)) diffs <- "all"
 	differrortxt <- "'diffs' must either be 'all' or a vector of integers specifying the samples to be included."
-	{if (class(diffs)=="numeric"|class(diffs)=="integer") {
+	{if (inherits(diffs, c("numeric", "integer"))) {
+	#{if (class(diffs)=="numeric"|class(diffs)=="integer") {
 	  if(prod(diffs==as.integer(diffs))==0) stop(differrortxt)
       diffsnew <- diffs[diffs %in% 1:ndat]
 	  if (length(diffsnew)==0) stop(differrortxt)

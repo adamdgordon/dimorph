@@ -70,8 +70,8 @@
 #'   with some data removed.
 #' @format A data frame with 35 rows and 13 variables:
 #' \describe{
-#'   \item{\code{Species}}{\code{factor} Species name, with four possible levels (in decreasing order
-#'         of postcranial dimorphism: \code{\emph{Fauxil} sp. 1} and \code{\emph{Fauxil} sp. 2})}
+#'   \item{\code{Species}}{\code{factor} Species name, with two possible levels (in decreasing order
+#'         of postcranial dimorphism: \emph{\code{Fauxil}} \code{sp. 1} and \emph{\code{Fauxil}} \code{sp. 2})}
 #'   \item{\code{Museum}}{\code{factor} Collection housing each specimen}
 #'   \item{\code{Collection.ID}}{\code{character} Unique specimen identifier within each collection}
 #'   \item{\code{FHSI}}{\code{numeric} Femoral head superoinferior diameter: the maximum superoinferior diameter of 

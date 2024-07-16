@@ -1,7 +1,7 @@
 Package: dimorph
 Type: Package
 Title: Dimorphism Calculation and Estimation
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     person("Adam", "Gordon",
            email = "agordon@albany.edu",
@@ -14,7 +14,7 @@ Description: A system for estimating size dimorphism based on metric data using
     estimates, and performing resampling-based significance tests for pairwise 
     comparison of dimorphism estimates.
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Depends: 
     R (>= 4.3.1)
 Imports:
