@@ -16,16 +16,17 @@
 
 
 #' @title Long bone articular dimensions for four hominoid taxa
-#' @description Postcranial metric data collected for western lowland gorillas, modern humans, common chimpanzees, and lar gibbons.  Further details can be found in Gordon (in review).
+#' @description Postcranial metric data collected for western lowland gorillas, modern humans, common chimpanzees, and lar 
+#'   gibbons.  Further details can be found in Gordon (2025).
 #' @format A data frame with 376 rows and 15 variables:
 #' \describe{
 #'   \item{\code{Species}}{\code{factor} Species name, with four possible levels (in decreasing order
-#'         of postcranial dimorphism: \emph{\code{Gorilla gorilla}}, \emph{\code{Homo sapiens}}, 
-#'         \emph{\code{Pan troglodytes}}, and \emph{\code{Hylobates lar}})}
+#'         of postcranial dimorphism: \code{"Gorilla gorilla"}, \code{"Homo sapiens"}, 
+#'         \code{"Pan troglodytes"}, and \code{"Hylobates lar"})}
 #'   \item{\code{Museum}}{\code{factor} Collection housing each specimen}
 #'   \item{\code{Collection.ID}}{\code{character} Unique specimen identifier within each collection}
-#'   \item{\code{Sex}}{\code{factor} two possible levels: \code{F} and \code{M}}
-#'   \item{\code{Wild}}{\code{factor} four possible levels: \code{Yes}, \code{Unknown}, \code{Died in captivity}, \code{No}}
+#'   \item{\code{Sex}}{\code{factor} two possible levels: \code{"F"} and \code{"M"}}
+#'   \item{\code{Wild}}{\code{factor} four possible levels: \code{"Yes"}, \code{"Unknown"}, \code{"Died in captivity"}, \code{"No"}}
 #'   \item{\code{Mass.kg}}{\code{numeric} Body mass in kilograms when recorded in museum records.  Collections often record
 #'      weight in pounds, in which case data were converted to mass in kilograms.}
 #'   \item{\code{FHSI}}{\code{numeric} Femoral head superoinferior diameter: the maximum superoinferior diameter of 
@@ -52,7 +53,10 @@
 #'         articular surface of the radius when the medial point of this dimension is constrained to 
 #'         the midpoint of the curve of the articulation with the distal ulna.}
 #'}
-#' @references Gordon AD (in review) Interpreting statistical significance in hominin dimorphism: Power and Type I error rates for resampling tests of univariate and missing-data multivariate size dimorphism estimation methods in the fossil record. \emph{Journal of Human Evolution}.
+#' @references Gordon AD. (2025) Interpreting statistical significance in hominin dimorphism: Power and Type I error 
+#'   rates for resampling tests of univariate and missing-data multivariate size dimorphism estimation methods in the 
+#'   fossil record. \emph{Journal of Human Evolution}. 199:103630. 
+#'   (\href{https://doi.org/10.1016/j.jhevol.2024.103630}{https://doi.org/10.1016/j.jhevol.2024.103630})
 #' @examples
 #' data(apelimbart)
 #' plot(log10(HHMaj) ~ log10(FHSI), data=apelimbart, 
@@ -71,7 +75,7 @@
 #' @format A data frame with 35 rows and 13 variables:
 #' \describe{
 #'   \item{\code{Species}}{\code{factor} Species name, with two possible levels (in decreasing order
-#'         of postcranial dimorphism: \emph{\code{Fauxil}} \code{sp. 1} and \emph{\code{Fauxil}} \code{sp. 2})}
+#'         of postcranial dimorphism: \code{"Fauxil sp. 1"} and \code{"Fauxil sp. 2"})}
 #'   \item{\code{Museum}}{\code{factor} Collection housing each specimen}
 #'   \item{\code{Collection.ID}}{\code{character} Unique specimen identifier within each collection}
 #'   \item{\code{FHSI}}{\code{numeric} Femoral head superoinferior diameter: the maximum superoinferior diameter of 

@@ -46,7 +46,8 @@ dimorph(
     \code{center}, means are calculated either as geometric means or arithmetic 
     means.  Ignores \code{sex}.
   \item \code{"ERM"}: \bold{Exact Resampling Method}.  Modification of Lee's (2001) Assigned Resampling 
-    Method (ARM).  ARM is a resampling-based estimate of dimorphism that repeatedly samples two values
+    Method (ARM) following Gordon (2025).  ARM is a resampling-based estimate of dimorphism that repeatedly 
+    samples two values
     with replacement from \code{x}, then calculates their ratio as long as both are neither more than 0.5 standard
     deviations above the mean or both 0.5 standard deviations below the mean (otherwise the pair is 
     rejected).  ARM typically oversamples the possible combination of two values sampled from a small sample 
@@ -68,7 +69,8 @@ dimorph(
     proportion of females and males and that those two subsamples have equal variance, then estimates the
     maximum separation of the two means. Depending on \code{center}, the underlying distributions are
     treated as either normal (\code{"mean"}) or lognormal (\code{"geomean"}).  Ignores \code{sex}.
-  \item \code{"BFM"}: \bold{Bayesian Finite Mixture}.  Assumes that the sample is a finite mixture of two 
+  \item \code{"BFM"}: \bold{Bayesian Finite Mixture}.  Follows Gordon (2025).  Assumes that the sample is a 
+    finite mixture of two 
     underlying normal or lognormal distributions.  Unlike \code{"FMA"} and \code{"MoM"}, estimates 
     the proportion of females and males assuming that they may not be equal, and uses a Bayesian Information 
     Criterion (BIC) approach to select between a model that estimates a single variance for both sexes and a 
@@ -277,6 +279,11 @@ Fs1Both
 Godfrey LR, Lyon SK, Sutherland MR. (1993) Sexual dimorphism in large-bodied 
   primates: The case of the subfossil lemurs. \emph{American Journal of Physical 
   Anthropology}. 90:315-334. (\href{https://doi.org/10.1002/ajpa.1330900306}{https://doi.org/10.1002/ajpa.1330900306})
+
+Gordon AD. (2025) Interpreting statistical significance in hominin dimorphism: Power and Type I error 
+  rates for resampling tests of univariate and missing-data multivariate size dimorphism estimation methods in the 
+  fossil record. \emph{Journal of Human Evolution}. 199:103630. 
+  (\href{https://doi.org/10.1016/j.jhevol.2024.103630}{https://doi.org/10.1016/j.jhevol.2024.103630})
 
 Gordon AD, Green DJ, Richmond BG. (2008) Strong postcranial size dimorphism in 
   \emph{Australopithecus afarensis}: Results from two new resampling methods for multivariate 

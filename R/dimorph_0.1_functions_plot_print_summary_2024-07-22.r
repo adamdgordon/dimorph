@@ -1192,6 +1192,8 @@ print.SSDtest <- function(x, verbose=F, central="median", ...) {
 #'   Defaults to \code{1}.
 #' @param legtitle A character string specifying a title to print at the top of the legend.  If \code{NULL}, no 
 #'   title is printed.  Defaults to \code{NULL}.
+#' @param lty Line type for plotting observed fossil value in scenario where a single point estimate is calculated
+#'   for a single fossil sample.  Defaults to \code{"dashed"}.
 #' @param titlesize A numeric scalar specifying a multiplier for the title font size relative to the default font size. 
 #'   Defaults to \code{2}.
 #' @param invert An integer vector specifying the group number of histograms to invert and project below the zero 
@@ -1240,7 +1242,7 @@ print.SSDtest <- function(x, verbose=F, central="median", ...) {
 #' @export
 plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100, 
                          plottitle=NULL, groupcols=NULL, leg=T, legpos=NULL,
-                         legsize=1, legtitle="", titlesize=2, invert=NULL,
+                         legsize=1, legtitle="", lty="dashed", titlesize=2, invert=NULL,
                          xlim=NULL, ylim=NULL, diffcol="#CCB03D", ...) {
   type <- match.arg(type, choices=c("est", "diff"))
   ndat <- length(x$estimates)
@@ -1344,7 +1346,7 @@ plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100,
 	if (!is.null(singletonest)) {
 	  #plt <- plt + ggplot2::geom_vline(xintercept=singletonest, linetype="dashed", color="black", linewidth=1
 	  plt <- plt + ggplot2::geom_vline(ggplot2::aes(xintercept=singletonest, color=singletongroup),
-	                                   linetype="dashed", linewidth=1) +
+	                                   linetype=lty, linewidth=1) +
 				   ggplot2::scale_color_manual(name="", values = "black")
 	}
 	# add title
