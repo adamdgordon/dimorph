@@ -107,3 +107,61 @@
 #' data(fauxil)
 #' fauxil
 "fauxil"
+
+#' @title Limb length and articular dimensions for six hominoid taxa
+#' @description Linear postcranial metric data from Gordon \emph{et al.} (2020) collected for 
+#'   Sumatran orangutans, Bornean orangutans, western lowland gorillas, modern humans, common chimpanzees, 
+#'   \emph{Australopithecus afarensis}, and \emph{A. africanus}.  Stratigraphic data and dates for 
+#'   \emph{A. afarensis} material from Campisano (2007).
+#' @format A data frame with 216 rows and 18 variables:
+#' \describe{
+#'   \item{\code{Taxon}}{\code{factor} Taxon name, with six possible levels : \code{"Pongo"},
+#'         \code{"Gorilla"}, \code{"Homo"}, \code{"Pan"}, \code{"A. afarensis"}, 
+#'         and \code{"A. africanus"})}
+#'   \item{\code{Species}}{\code{factor} Species name, with seven possible levels : \code{"Pongo abelii"},
+#'         \code{"Pongo pygmaeus"}, \code{"Gorilla gorilla"}, \code{"Homo sapiens"}, 
+#'         \code{"Pan troglodytes"}, \code{"A. afarensis"}, and \code{"A. africanus"})}
+#'   \item{\code{Sex}}{\code{factor} Specimen sex, with three possible levels: \code{"F"}, \code{"M"}, and \code{"U"}}
+#'   \item{\code{HUMHEAD}}{\code{numeric} Maximum anteroposterior (AP) diameter of the humeral head 
+#'         taken perpendicular to the shaft axis.}
+#'   \item{\code{ELBOW0.5}}{\code{numeric} Square root of the product of capitular height and articular width of the distal 
+#'         humerus. Capitular height was taken from the anteroproximal border of capitulum to the distoposterior 
+#'         border along the midline. Articular width was taken across the anterior aspect of the articular 
+#'         surface from the lateral border of the capitulum to the medial edge of the articular surface.}
+#'   \item{\code{RADTV}}{\code{numeric} Mediolateral (ML) diameter of the radial head.}
+#'   \item{\code{FEMHEAD}}{\code{numeric} Maximum superoinferior (SI) diameter of the femoral head.}
+#'   \item{\code{FEMSHAFT0.5}}{\code{numeric} Square root of the product of the AP and transverse diameters of the femoral shaft, 
+#'         taken just inferior to the lesser trochanter.}
+#'   \item{\code{DISTFEM0.5}}{\code{numeric} Square root of the product of the biepicondylar and shaft AP diameters of the distal femur.}
+#'   \item{\code{PROXTIB0.5}}{\code{numeric} Square root of the product of the AP and transverse diameters of the proximal tibia. 
+#'         The AP diameter was taken with one jaw of the calipers on the line connecting the posterior surfaces 
+#'         of the medial and lateral condyles and the other jaw on the most distant point on the medial condyle. 
+#'         Transverse diameter was the distance between the most lateral point on the lateral condyle to the most 
+#'         medial point on the medial condyle (perpendicular to the AP diameter).}
+#'   \item{\code{DISTTIB0.5}}{\code{numeric} Square root of the product of the AP and transverse diameters of the distal tibia. The 
+#'         AP diameter is the distance between the most anterior and posterior points of the talar facet in the 
+#'         AP plane. Transverse diameter is the distance between the midline of the medial malleolus and the 
+#'         midline of the most medial point of the talar facet before the fibular facet begins.}
+#'   \item{\code{Humerus.length}}{\code{integer} Humeral length measured to the nearest mm.}
+#'   \item{\code{Radius.length}}{\code{integer} Radial length measured to the nearest mm.}
+#'   \item{\code{Femur.length}}{\code{integer} Femoral length measured to the nearest mm.}
+#'   \item{\code{Tibia.length}}{\code{integer} Tibial length measured to the nearest mm.}
+#'   \item{\code{Stratum}}{\code{factor} Submember of the Hadar formation that is the most-likely source of the fossil according
+#'         to Campisano (2007).  Abbreviations: SH, Sidi Hakoma; DD, Denen Dora; KH, Hada Hadar.}
+#'   \item{\code{Age.old}}{\code{numeric} Age (in millions of years) of the lower bound of the submemeber.}
+#'   \item{\code{Age.young}}{\code{numeric} Age (in millions of years) of the upper bound of the submemeber.}
+#'}
+#' @references Campisano, CJ. (2007) Tephrostratigraphy and hominin paleoenvironments of the Hadar Formation, 
+#'   Afar Depression, Ethiopia (Ph.D.). Rutgers, The State University of New Jersey. 
+#'   \href{https://www.proquest.com/docview/304805803}{https://www.proquest.com/docview/304805803}
+#' @references Gordon AD, et al. (2020) Limb proportions and positional behavior: revisiting the theoretical 
+#'   and empirical underpinnings for locomotor reconstruction in \emph{Australopithecus africanus}. In Zipfel B, 
+#'   Richmond BG, and Ward CV, eds.: \emph{Hominid Postcranial Remains from Sterkfontein, South Africa, 1936-1995}. 
+#'   Advances in Human Evolution Series. Oxford University Press. pp. 321-334.
+#'   (\href{\doi.org/10.1093/oso/9780197507667.003.0017}{Book Chapter}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0003}{Appendix III}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0004}{Appendix IV})
+#' @examples
+#' data(Gordonetal2020)
+#' plot(log10(HUMHEAD) ~ log10(FEMHEAD), data=Gordonetal2020, 
+#'      pch=c(21:24,3,4)[Taxon], bg=c(NA, "#00000040", "black")[Sex])
+#' legend("bottomright", legend=levels(Gordonetal2020$Taxon), pch=c(21:24,3,4))
+"Gordonetal2020"

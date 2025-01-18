@@ -54,6 +54,7 @@ getstructure <- function(x, forcematrix=F) {
 	nspecpervar <- apply(struc, 2, function(x) sum(!is.na(x)))
 	goodvars <- nspecpervar > 1
 	struc <- struc[,goodvars, drop=F]
+	struc <- struc[apply(is.na(struc), 1, prod)==0,] # remove rows with no data
 	nspecpervar <- nspecpervar[goodvars]
 	# forcematrix prevents matrix structure from being converted to vector structure
 	if (!forcematrix) if (prod(nspecpervar==nspecpervar[1])==0) struc <- nspecpervar
@@ -805,7 +806,7 @@ resampleSSDuni <- function(x,
     tmp <- comparative[ads,]
     sex <- compsex
     if (!is.null(sex)) sex <- sex[ads] 
-    out <- dimorph::dimorph(tmp, method = mUni, methodMulti=NA, sex=sex,
+    out <- dimorph::dimorph(tmp, method = mUni, methodMulti=NULL, sex=sex,
 	                        #dfout=F,
 	                        dfout=T,
                             sex.female=sex.female, center=center,

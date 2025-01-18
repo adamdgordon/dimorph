@@ -1,7 +1,7 @@
 Package: dimorph
 Type: Package
 Title: Dimorphism Calculation and Estimation
-Version: 0.1.3
+Version: 0.1.4
 Authors@R: 
     person("Adam", "Gordon",
            email = "agordon@albany.edu",
@@ -20,7 +20,10 @@ Depends:
 Imports:
     mclust,
     ggplot2,
+    graphics,
     gridExtra,
     pals,
-    RcppAlgos
+    RcppAlgos,
+    stats,
+    utils
 License: GPL (>= 3)
