@@ -158,7 +158,7 @@
 #'   and empirical underpinnings for locomotor reconstruction in \emph{Australopithecus africanus}. In Zipfel B, 
 #'   Richmond BG, and Ward CV, eds.: \emph{Hominid Postcranial Remains from Sterkfontein, South Africa, 1936-1995}. 
 #'   Advances in Human Evolution Series. Oxford University Press. pp. 321-334.
-#'   (\href{\doi.org/10.1093/oso/9780197507667.003.0017}{Book Chapter}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0003}{Appendix III}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0004}{Appendix IV})
+#'   (\href{https://doi.org/10.1093/oso/9780197507667.003.0017}{Book Chapter}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0003}{Appendix III}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0004}{Appendix IV})
 #' @examples
 #' data(Gordonetal2020)
 #' plot(log10(HUMHEAD) ~ log10(FEMHEAD), data=Gordonetal2020, 
