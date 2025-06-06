@@ -1,7 +1,6 @@
 Package: dimorph
 Type: Package
 Title: Dimorphism Calculation and Estimation
-<<<<<<< HEAD
 Version: 0.1.5
 =======
 Version: 0.1.4
