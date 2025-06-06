@@ -17,7 +17,7 @@
 
 #' @title Long bone articular dimensions for four hominoid taxa
 #' @description Postcranial metric data collected for western lowland gorillas, modern humans, common chimpanzees, and lar 
-#'   gibbons.  Further details can be found in Gordon (2025).
+#'   gibbons from Gordon (2025).
 #' @format A data frame with 376 rows and 15 variables:
 #' \describe{
 #'   \item{\code{Species}}{\code{factor} Species name, with four possible levels (in decreasing order
@@ -109,7 +109,7 @@
 "fauxil"
 
 #' @title Limb length and articular dimensions for six hominoid taxa
-#' @description Linear postcranial metric data from Gordon (2025) collected for 
+#' @description Linear postcranial metric data from Gordon et al. (2020) collected for 
 #'   Sumatran orangutans, Bornean orangutans, western lowland gorillas, modern humans, common chimpanzees, 
 #'   \emph{Australopithecus afarensis}, and \emph{A. africanus}.
 #' @format A data frame with 216 rows and 15 variables:

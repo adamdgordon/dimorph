@@ -46,7 +46,7 @@ apelimbart
 }
 \description{
 Postcranial metric data collected for western lowland gorillas, modern humans, common chimpanzees, and lar 
-  gibbons.  Further details can be found in Gordon (2025).
+  gibbons from Gordon (2025).
 }
 \examples{
 data(apelimbart)

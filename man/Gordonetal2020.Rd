@@ -44,7 +44,7 @@ A data frame with 216 rows and 15 variables:
 Gordonetal2020
 }
 \description{
-Linear postcranial metric data from Gordon (2025) collected for 
+Linear postcranial metric data from Gordon et al. (2020) collected for 
   Sumatran orangutans, Bornean orangutans, western lowland gorillas, modern humans, common chimpanzees, 
   \emph{Australopithecus afarensis}, and \emph{A. africanus}.
 }
