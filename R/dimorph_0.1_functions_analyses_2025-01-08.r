@@ -54,7 +54,8 @@ getstructure <- function(x, forcematrix=F) {
 	nspecpervar <- apply(struc, 2, function(x) sum(!is.na(x)))
 	goodvars <- nspecpervar > 1
 	struc <- struc[,goodvars, drop=F]
-	struc <- struc[apply(is.na(struc), 1, prod)==0,] # remove rows with no data
+	#struc <- struc[apply(is.na(struc), 1, prod)==0,] # remove rows with no data
+	struc <- struc[apply(is.na(struc), 1, prod)==0, , drop=FALSE] # remove rows with no data
 	nspecpervar <- nspecpervar[goodvars]
 	# forcematrix prevents matrix structure from being converted to vector structure
 	if (!forcematrix) if (prod(nspecpervar==nspecpervar[1])==0) struc <- nspecpervar

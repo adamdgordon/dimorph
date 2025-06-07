@@ -681,7 +681,8 @@ SSDtest <- function(fossil=NULL,
     else if ("numeric" %in% class(fossil[[i]])| "integer" %in% class(fossil[[i]])) {
 	  uni <- T
 	  fossil[[i]] <- data.frame(fossil[[i]])
-	  colnames(fossil[[i]]) <- "VAR"
+	  vars <- "VAR"
+	  colnames(fossil[[i]]) <- vars
 	  methsMulti <- NULL
 	  templatevar <- NULL
     }
@@ -706,7 +707,8 @@ SSDtest <- function(fossil=NULL,
     else if ("numeric" %in% class(comp[[i]])| "integer" %in% class(comp[[i]])) {
 	  uni <- T
 	  comp[[i]] <- data.frame(comp[[i]])
-	  colnames(comp[[i]]) <- "VAR"
+	  vars <- "VAR"
+	  colnames(comp[[i]]) <- vars
 	  methsMulti <- NULL
 	  templatevar <- NULL
     }
