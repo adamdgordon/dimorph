@@ -65,7 +65,7 @@ Gordon AD. (2025b) Sexual size dimorphism in \emph{Australopithecus}:
   postcranial dimorphism differs significantly among \emph{Australopithecus afarensis}, 
   \emph{A. africanus}, and modern humans despite low-power resampling analyses. \emph{American 
   Journal of Biological Anthropology}. 187:e70093. 
-  \href{https://onlinelibrary.wiley.com/doi/10.1002/ajpa.70093}(https://onlinelibrary.wiley.com/doi/10.1002/ajpa.70093)
+  \href{https://onlinelibrary.wiley.com/doi/10.1002/ajpa.70093}{https://onlinelibrary.wiley.com/doi/10.1002/ajpa.70093}
 
 Gordon AD, et al. (2020) Limb proportions and positional behavior: revisiting the theoretical 
   and empirical underpinnings for locomotor reconstruction in \emph{Australopithecus africanus}. In Zipfel B, 
