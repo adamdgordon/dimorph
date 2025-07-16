@@ -204,7 +204,7 @@
 #'}
 #' @references Campisano CJ. (2007) Tephrostratigraphy and hominin paleoenvironments of the Hadar Formation, 
 #'   Afar Depression, Ethiopia (Ph.D.). Rutgers, The State University of New Jersey. 
-#'   \href{https://www.proquest.com/docview/304805803}{https://www.proquest.com/docview/304805803}
+#'   \href{https://www.proquest.com/pqdtglobal/docview/304805803/abstract/C144CD0BF5324CD0PQ}{https://www.proquest.com/pqdtglobal/docview/304805803/abstract/C144CD0BF5324CD0PQ}
 #' @references Gordon AD. (2025b) Sexual size dimorphism in \emph{Australopithecus}: 
 #'   postcranial dimorphism differs significantly among \emph{Australopithecus afarensis}, 
 #'   \emph{A. africanus}, and modern humans despite low-power resampling analyses. \emph{American 
