@@ -17,7 +17,7 @@
 
 #' @title Long bone articular dimensions for four hominoid taxa
 #' @description Postcranial metric data collected for western lowland gorillas, modern humans, common chimpanzees, and lar 
-#'   gibbons from Gordon (2025).
+#'   gibbons from Gordon (2025a).
 #' @format A data frame with 376 rows and 15 variables:
 #' \describe{
 #'   \item{\code{Species}}{\code{factor} Species name, with four possible levels (in decreasing order
@@ -53,7 +53,7 @@
 #'         articular surface of the radius when the medial point of this dimension is constrained to 
 #'         the midpoint of the curve of the articulation with the distal ulna.}
 #'}
-#' @references Gordon AD. (2025) Interpreting statistical significance in hominin dimorphism: Power and Type I error 
+#' @references Gordon AD. (2025a) Interpreting statistical significance in hominin dimorphism: Power and Type I error 
 #'   rates for resampling tests of univariate and missing-data multivariate size dimorphism estimation methods in the 
 #'   fossil record. \emph{Journal of Human Evolution}. 199:103630. 
 #'   (\href{https://doi.org/10.1016/j.jhevol.2024.103630}{https://doi.org/10.1016/j.jhevol.2024.103630})
@@ -71,7 +71,7 @@
 #' @description Postcranial metric data collected for two "fauxil" species. \emph{Fauxil} sp. 1 individuals
 #'   are extant gorillas from the \code{\link[dimorph]{apelimbart}} dataset with some data removed, and 
 #'   \emph{Fauxil} sp. 2 individuals are modern humans from the \code{\link[dimorph]{apelimbart}} dataset 
-#'   with some data removed.
+#'   with some data removed.  All data are from Gordon (2025a).
 #' @format A data frame with 35 rows and 13 variables:
 #' \describe{
 #'   \item{\code{Species}}{\code{factor} Species name, with two possible levels (in decreasing order
@@ -103,6 +103,10 @@
 #'         the midpoint of the curve of the articulation with the distal ulna.}
 #'}
 #' @seealso \code{\link[dimorph]{apelimbart}}
+#' @references Gordon AD. (2025a) Interpreting statistical significance in hominin dimorphism: Power and Type I error 
+#'   rates for resampling tests of univariate and missing-data multivariate size dimorphism estimation methods in the 
+#'   fossil record. \emph{Journal of Human Evolution}. 199:103630. 
+#'   (\href{https://doi.org/10.1016/j.jhevol.2024.103630}{https://doi.org/10.1016/j.jhevol.2024.103630})
 #' @examples
 #' data(fauxil)
 #' fauxil
@@ -159,7 +163,8 @@
 "Gordonetal2020"
 
 #' @title Articular dimensions for five hominoid taxa
-#' @description Linear postcranial metric data from Gordon (\emph{in review}) and Gordon \emph{et al.} (2020) collected for 
+#' @description Linear postcranial metric data from Gordon (2025b), some of which originally 
+#'   appeared in Gordon \emph{et al.} (2020), collected for 
 #'   western lowland gorillas (\emph{Gorilla gorilla gorilla}), modern humans, central chimpanzees 
 #'   (\emph{Pan troglodytes troglodytes}), \emph{Australopithecus afarensis}, and \emph{A. africanus}.  
 #'   Stratigraphic data and dates for \emph{A. afarensis} material from Campisano (2007).
@@ -197,13 +202,14 @@
 #'   \item{\code{Age.old}}{\code{numeric} Age (in millions of years) of the lower bound of the submemeber.}
 #'   \item{\code{Age.young}}{\code{numeric} Age (in millions of years) of the upper bound of the submemeber.}
 #'}
-#' @references Campisano, CJ. (2007) Tephrostratigraphy and hominin paleoenvironments of the Hadar Formation, 
+#' @references Campisano CJ. (2007) Tephrostratigraphy and hominin paleoenvironments of the Hadar Formation, 
 #'   Afar Depression, Ethiopia (Ph.D.). Rutgers, The State University of New Jersey. 
 #'   \href{https://www.proquest.com/docview/304805803}{https://www.proquest.com/docview/304805803}
-#' @references Gordon AD (\emph{in review}) Sexual size dimorphism in \emph{Australopithecus}: 
+#' @references Gordon AD. (2025b) Sexual size dimorphism in \emph{Australopithecus}: 
 #'   postcranial dimorphism differs significantly among \emph{Australopithecus afarensis}, 
 #'   \emph{A. africanus}, and modern humans despite low-power resampling analyses. \emph{American 
-#'   Journal of Biological Anthropology}.
+#'   Journal of Biological Anthropology}. 187:e70093. 
+#'   \href{https://onlinelibrary.wiley.com/doi/10.1002/ajpa.70093}(https://onlinelibrary.wiley.com/doi/10.1002/ajpa.70093)
 #' @references Gordon AD, et al. (2020) Limb proportions and positional behavior: revisiting the theoretical 
 #'   and empirical underpinnings for locomotor reconstruction in \emph{Australopithecus africanus}. In Zipfel B, 
 #'   Richmond BG, and Ward CV, eds.: \emph{Hominid Postcranial Remains from Sterkfontein, South Africa, 1936-1995}. 

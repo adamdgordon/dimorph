@@ -241,7 +241,7 @@
 #' @references Godfrey LR, Lyon SK, Sutherland MR. (1993) Sexual dimorphism in large-bodied 
 #'   primates: The case of the subfossil lemurs. \emph{American Journal of Physical 
 #'   Anthropology}. 90:315-334. (\href{https://doi.org/10.1002/ajpa.1330900306}{https://doi.org/10.1002/ajpa.1330900306})
-#' @references Gordon AD. (2025) Interpreting statistical significance in hominin dimorphism: Power and Type I error 
+#' @references Gordon AD. (2025a) Interpreting statistical significance in hominin dimorphism: Power and Type I error 
 #'   rates for resampling tests of univariate and missing-data multivariate size dimorphism estimation methods in the 
 #'   fossil record. \emph{Journal of Human Evolution}. 199:103630. 
 #'   (\href{https://doi.org/10.1016/j.jhevol.2024.103630}{https://doi.org/10.1016/j.jhevol.2024.103630})
