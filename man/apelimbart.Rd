@@ -56,7 +56,7 @@ ggplot2::ggplot(apelimbart, ggplot2::aes(x=log10(FHSI), y=log10(HHMaj),
   ggplot2::scale_shape_manual(values = c(19,3))
 ggplot2::ggplot(apelimbart, ggplot2::aes(x=log10(FHSI), y=log10(Mass.kg),
                                          color=Species, shape=Sex)) +
-  ggplot2::geom_point() +
+  ggplot2::geom_point(size=2) +
   ggplot2::scale_shape_manual(values = c(19,3))
 }
 \references{

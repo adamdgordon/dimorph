@@ -52,11 +52,11 @@ Linear postcranial metric data from Gordon et al. (2020) collected for
 data(Gordonetal2020)
 ggplot2::ggplot(Gordonetal2020, ggplot2::aes(x=log10(FEMHEAD), y=log10(HUMHEAD),
                                              color=Taxon, shape=Sex)) +
-  ggplot2::geom_point() +
+  ggplot2::geom_point(size=2) +
   ggplot2::scale_shape_manual(values = c(19,3, 17))
 ggplot2::ggplot(Gordonetal2020, ggplot2::aes(x=log10(FEMHEAD), y=log10(RADTV),
                                              color=Taxon, shape=Sex)) +
-  ggplot2::geom_point() +
+  ggplot2::geom_point(size=2) +
   ggplot2::scale_shape_manual(values = c(19,3, 17))
 }
 \references{
