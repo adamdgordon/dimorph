@@ -52,9 +52,9 @@ Linear postcranial metric data from Gordon (2025b), some of which originally
 }
 \examples{
 data(GordonAJBA)
-plot(log10(HUMHEAD) ~ log10(FEMHEAD), data=GordonAJBA, 
-     pch=c(21:24,3,4)[Taxon], bg=c(NA, "#00000040", "black")[Sex])
-legend("bottomright", legend=levels(GordonAJBA$Taxon), pch=c(21:24,3,4))
+plot(log10(RADTV) ~ log10(FEMHEAD), data=GordonAJBA, 
+     pch=c(21:23,3,4)[Taxon], bg=c(NA, "#00000040", "black")[Sex])
+legend("bottomright", legend=levels(GordonAJBA$Taxon), pch=c(21:23,3,4))
 }
 \references{
 Campisano CJ. (2007) Tephrostratigraphy and hominin paleoenvironments of the Hadar Formation, 
