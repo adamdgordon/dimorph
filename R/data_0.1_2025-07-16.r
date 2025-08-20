@@ -217,7 +217,7 @@
 #'   (\href{https://doi.org/10.1093/oso/9780197507667.003.0017}{Book Chapter}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0003}{Appendix III}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0004}{Appendix IV})
 #' @examples
 #' data(GordonAJBA)
-#' plot(log10(HUMHEAD) ~ log10(FEMHEAD), data=GordonAJBA, 
-#'      pch=c(21:24,3,4)[Taxon], bg=c(NA, "#00000040", "black")[Sex])
-#' legend("bottomright", legend=levels(GordonAJBA$Taxon), pch=c(21:24,3,4))
+#' plot(log10(RADTV) ~ log10(FEMHEAD), data=GordonAJBA, 
+#'      pch=c(21:23,3,4)[Taxon], bg=c(NA, "#00000040", "black")[Sex])
+#' legend("bottomright", legend=levels(GordonAJBA$Taxon), pch=c(21:23,3,4))
 "GordonAJBA"
