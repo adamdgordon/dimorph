@@ -59,12 +59,14 @@
 #'   (\href{https://doi.org/10.1016/j.jhevol.2024.103630}{https://doi.org/10.1016/j.jhevol.2024.103630})
 #' @examples
 #' data(apelimbart)
-#' plot(log10(HHMaj) ~ log10(FHSI), data=apelimbart, 
-#'      pch=(21:24)[Species], bg=c(NA, "#00000040")[Sex])
-#' legend("bottomright", legend=levels(apelimbart$Species), pch=21:24)
-#' plot(log10(FHSI) ~ log10(Mass.kg), data=apelimbart, 
-#'      pch=(21:24)[Species], bg=c(NA, "#00000040")[Sex])
-#' legend("bottomright", legend=levels(apelimbart$Species), pch=21:24)
+#' ggplot2::ggplot(apelimbart, ggplot2::aes(x=log10(FHSI), y=log10(HHMaj), 
+#'                                          color=Species, shape=Sex)) +
+#'   ggplot2::geom_point() +
+#'   ggplot2::scale_shape_manual(values = c(19,3))
+#' ggplot2::ggplot(apelimbart, ggplot2::aes(x=log10(Mass.kg), y=log10(FHSI),
+#'                                          color=Species, shape=Sex)) +
+#'   ggplot2::geom_point() +
+#'   ggplot2::scale_shape_manual(values = c(19,3))
 "apelimbart"
 
 #' @title Long bone articular dimensions for two simulated fossil hominoid samples with missing data
@@ -157,9 +159,14 @@
 #'   (\href{https://doi.org/10.1093/oso/9780197507667.003.0017}{Book Chapter}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0003}{Appendix III}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0004}{Appendix IV})
 #' @examples
 #' data(Gordonetal2020)
-#' plot(log10(HUMHEAD) ~ log10(FEMHEAD), data=Gordonetal2020, 
-#'      pch=c(21:24,3,4)[Taxon], bg=c(NA, "#00000040", "black")[Sex])
-#' legend("bottomright", legend=levels(Gordonetal2020$Taxon), pch=c(21:24,3,4))
+#' ggplot2::ggplot(Gordonetal2020, ggplot2::aes(x=log10(FEMHEAD), y=log10(HUMHEAD),
+#'                                              color=Taxon, shape=Sex)) +
+#'   ggplot2::geom_point() +
+#'   ggplot2::scale_shape_manual(values = c(19,3, 17))
+#' ggplot2::ggplot(Gordonetal2020, ggplot2::aes(x=log10(FEMHEAD), y=log10(RADTV),
+#'                                              color=Taxon, shape=Sex)) +
+#'   ggplot2::geom_point() +
+#'   ggplot2::scale_shape_manual(values = c(19,3, 17))
 "Gordonetal2020"
 
 #' @title Articular dimensions for five hominoid taxa
@@ -204,7 +211,7 @@
 #'}
 #' @references Campisano CJ. (2007) Tephrostratigraphy and hominin paleoenvironments of the Hadar Formation, 
 #'   Afar Depression, Ethiopia (Ph.D.). Rutgers, The State University of New Jersey. 
-#'   \href{https://www.proquest.com/pqdtglobal/docview/304805803/abstract/C144CD0BF5324CD0PQ}{https://www.proquest.com/pqdtglobal/docview/304805803/abstract/C144CD0BF5324CD0PQ}
+#'   \href{https://www.proquest.com/docview/304805803}{https://www.proquest.com/docview/304805803}
 #' @references Gordon AD. (2025b) Sexual size dimorphism in \emph{Australopithecus}: 
 #'   postcranial dimorphism differs significantly among \emph{Australopithecus afarensis}, 
 #'   \emph{A. africanus}, and modern humans despite low-power resampling analyses. \emph{American 
@@ -217,7 +224,12 @@
 #'   (\href{https://doi.org/10.1093/oso/9780197507667.003.0017}{Book Chapter}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0003}{Appendix III}) (\href{https://doi.org/10.1093/oso/9780197507667.005.0004}{Appendix IV})
 #' @examples
 #' data(GordonAJBA)
-#' plot(log10(RADTV) ~ log10(FEMHEAD), data=GordonAJBA, 
-#'      pch=c(21:23,3,4)[Taxon], bg=c(NA, "#00000040", "black")[Sex])
-#' legend("bottomright", legend=levels(GordonAJBA$Taxon), pch=c(21:23,3,4))
+#' ggplot2::ggplot(GordonAJBA, ggplot2::aes(x=log10(FEMHEAD), y=log10(HUMHEAD),
+#'                                          color=Taxon, shape=Sex)) +
+#'   ggplot2::geom_point() +
+#'   ggplot2::scale_shape_manual(values = c(19,3, 17))
+#' ggplot2::ggplot(GordonAJBA, ggplot2::aes(x=log10(FEMHEAD), y=log10(RADTV),
+#'                                          color=Taxon, shape=Sex)) +
+#'   ggplot2::geom_point() +
+#'   ggplot2::scale_shape_manual(values = c(19,3, 17))
 "GordonAJBA"
