@@ -261,6 +261,7 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
 	x$estimates <- x$estimates[!(x$estimates$methodUni %in% exclude),]
 	if (!is.null(x$CI)) x$CI <- x$CI[!(x$CI$methodUni %in% exclude),]
 	if (!is.null(x$CIbias)) x$CIbias <- x$CIbias[!(x$CIbias$methodUni %in% exclude),]
+    if (nrow(x$estimates)==0) stop("All methods have been excluded.")
   }
   type <- match.arg(type, choices=c("estimate", "bias"))
   if (type=="bias" & sum(is.na(x$estimates$bias))==length(x$estimates$bias)) stop("No bias data are present.")
@@ -472,8 +473,21 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
 }
 
 #' @export
-plot.dimorphResampledMulti <- function(x, type="estimate", ...) {
+plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, excludeMulti=NULL, ...) {
   CIheight <- 0.4
+  if (!is.null(exclude)) { # all entries must be in var names
+    if (!prod(exclude %in% as.character(unique(x$estimates$methodUni)))) stop("`exclude` must either be NULL or a vector containing\nunivariate methods in this object to exclude from plotting.")
+	x$estimates <- x$estimates[!(x$estimates$methodUni %in% exclude),]
+	if (!is.null(x$CI)) x$CI <- x$CI[!(x$CI$methodUni %in% exclude),]
+	if (!is.null(x$CIbias)) x$CIbias <- x$CIbias[!(x$CIbias$methodUni %in% exclude),]
+  }
+  if (!is.null(excludeMulti)) { # all entries must be in var names
+    if (!prod(excludeMulti %in% as.character(unique(x$estimates$methodMulti)))) stop("`exclude` must either be NULL or a vector containing\nmultivariate methods in this object to exclude from plotting.")
+	x$estimates <- x$estimates[!(x$estimates$methodMulti %in% excludeMulti),]
+	if (!is.null(x$CI)) x$CI <- x$CI[!(x$CI$methodMulti %in% excludeMulti),]
+	if (!is.null(x$CIbias)) x$CIbias <- x$CIbias[!(x$CIbias$methodMulti %in% excludeMulti),]
+  }
+  if ((!is.null(exclude) | !is.null(excludeMulti)) & nrow(x$estimates)==0) stop("All methods have been excluded.")
   type <- match.arg(type, choices=c("estimate", "bias"))
   if (type=="bias" & sum(is.na(x$estimates$bias))==length(x$estimates$bias)) stop("No bias data are present.")
   x$estimates$method <- droplevels(x$estimates$methodUni:x$estimates$methodMulti:x$estimates$center:x$estimates$datastructure)
