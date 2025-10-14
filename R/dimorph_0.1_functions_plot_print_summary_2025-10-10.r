@@ -254,8 +254,14 @@ summary.dimorphEstDF <- function(object, verbose=F, ...) {
 }
 
 #' @export
-plot.dimorphResampledUni <- function(x, type="estimate", ...) {
+plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
   CIheight <- 0.4
+  if (!is.null(exclude)) { # all entries must be in var names
+    if (!prod(exclude %in% as.character(unique(x$estimates$methodUni)))) stop("`exclude` must either be NULL or a vector containing\nunivariate methods in this object to exclude from plotting.")
+	x$estimates <- x$estimates[!(x$estimates$methodUni %in% exclude),]
+	if (!is.null(x$CI)) x$CI <- x$CI[!(x$CI$methodUni %in% exclude),]
+	if (!is.null(x$CIbias)) x$CIbias <- x$CIbias[!(x$CIbias$methodUni %in% exclude),]
+  }
   type <- match.arg(type, choices=c("estimate", "bias"))
   if (type=="bias" & sum(is.na(x$estimates$bias))==length(x$estimates$bias)) stop("No bias data are present.")
   x$estimates$method <- droplevels(x$estimates$methodUni:x$estimates$center)
