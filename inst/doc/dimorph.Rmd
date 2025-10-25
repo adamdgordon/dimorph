@@ -1,0 +1,942 @@
+---
+title: "Size dimorphism estimation, confidence intervals, and significance tests with `dimorph`"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Size dimorphism estimation, confidence intervals, and significance tests with `dimorph`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dimorph)
+```
+
+```{r echo=F}
+knitr::opts_knit$set(root.dir = "..")
+```
+
+# Overview
+
+The primary functions in the `dimorph` package are `dimorph()`, `bootdimorph()`, and `SSDtest()`. The function `dimorph()` allows users flexibility in calculating or estimating sexual size dimorphism in univariate or multivariate data sets, with or without missing data. The function `bootdimorph()` generates confidence intervals for those estimates, and the function `SSDtest()` performs resampling-based significance tests when comparing estimates for two or more samples. This vignette will walk through how to use these functions, although more specific detail on function arguments and further examples can be found in the help page for each function.  Also, the performance of each of these methods under various conditions is summarized and explored in detail in Gordon (2025a), with some further extensions developed in Gordon (2025b).
+
+# Data
+
+The dimorphism metrics in this package all require numerical data for one or more variables and for one or more groups of observations (typically species or populations) in which there are expected to be at most two size morphs.  Calculation of dimorphism itself requires specification of the size morph category (typically sex), although most of the dimorphism estimators included here do not require that information.  Observations of metric data may include `NA`s.
+
+There are several previously published data sets in the `dimorph` package which we can use to explore the functions in this package.  We'll focus on two: `apelimbart` and `GordonAJBA` (detailed information for each of these packages can be found using `help(apelimbart)`and `help(GordonAJBA)`).
+
+## `apelimbart`
+
+The `apelimbart` data set was pubished as supplemental material in Gordon (2025a).  It includes sex information and metric data for ten postcranial variables collected for western gorillas, modern humans, common chimpanzees, and lar gibbons.  Every specimen is complete for all variables.
+```{r}
+str(apelimbart)
+```
+
+We can visualize some of the data:
+
+```{r, fig.width=5, fig.height=4, echo=FALSE}
+ggplot2::ggplot(apelimbart, ggplot2::aes(x=log10(FHSI), y=log10(HHMaj),
+                                         color=Species, shape=Sex)) +
+  ggplot2::geom_point(size=2, alpha = 0.5) +
+  ggplot2::scale_shape_manual(values = c(19, 3, 17))
+```
+
+## `GordonAJBA`
+
+The `GordonAJBA` data set was pubished as supplemental material in Gordon (2025b).  It includes sex information and metric data for eight postcranial variables collected for western lowland gorillas, modern humans, central chimpanzees, and the fossil species *Australopithecus afarensis* and *A. africanus*.
+```{r}
+str(GordonAJBA)
+```
+
+Again, let's visualize some of the data:
+```{r, fig.width=5, fig.height=4, echo=FALSE}
+ggplot2::ggplot(GordonAJBA, ggplot2::aes(x=log10(FEMHEAD), y=log10(HUMHEAD),
+                                         color=Taxon, shape=Sex)) +
+  ggplot2::geom_point(size=2, alpha = 0.5) +
+  ggplot2::scale_shape_manual(values = c(19,3, 17))
+```
+
+Although the above plot only includes one fossil specimen, that's because this data set includes fossils with missing observations, and only one specimen includes both of the plotted variables (that warning message is reporting the number of specimens that don't record both measurements in the plot).  Here's a look at the first few fossil specimens in that data set:
+
+``` {r, echo=FALSE}
+displayvars <- c("Species", "Sex", "HUMHEAD", "ELBOW0.5", "RADTV", "FEMHEAD", 
+                 "FEMSHAFT0.5", "DISTFEM0.5", "PROXTIB0.5", "DISTTIB0.5")
+kableExtra::kable_styling(knitr::kable(
+  head(GordonAJBA[GordonAJBA$Species %in% c("A. afarensis"),
+             displayvars])),
+  bootstrap_options = "condensed", font_size=10)
+```
+
+The function `dimorph()` has two procedures for estimating dimorphism in multivariate data sets with missing data, although one of those procedures has been argued to be highly flawed (more on this below).
+
+# Estimating size dimorphism with `dimorph()`
+
+The function `dimorph()` allows users to calculate actual dimorphism (as a ratio of male size divided by female size) or any of several published estimators of dimorphism.  These can be calculated for univariate data sets, multivariate data sets with complete observations for all individuals and variables, or multivariate data sets with missing data.  Below we'll work through how to use `dimorph()` to generate these different values for different types of data.  In addition, the help page for `dimorph()` has more detail about all of the arguments that can be modified as well as more examples illustrating their effects.
+
+## Univariate estimates
+
+The argument `method` in `dimorph()` takes a character string specifying the univariate method used to calculate or estimate dimorphism for a vector of values `x`, which should not be log-transformed in advance.  The argument `center` specifies whether `dimorph()` should log-transform the data or not for certain procedures, but providing logged values to `dimorph()` will result in the calculation of ratios of logged data, which are mathematically nonsensical (although differences in logged data are equivalent to log-transformed ratios).  The methods available in `dimorph()` include the calculation for actual sexual size dimorphism, and also estimation techniques that fall into three general types of methods as distinguished by Gordon (2025a): grouping methods, finite mixture model methods, and variance-based methods. Options include:
+
+### Actual dimorphism
+- `"SSD"`: **Sexual Size Dimorphism.** Follows Smith (1999). Calculates actual sexual dimorphism in the sample as the ratio of mean male size to mean female size (often referred to in the paleoanthropological literature as the Index of Sexual Dimorphism, ISD). Sex-specific means are calculated as geometric means by default (the argument `center = "geomean"`) but they can be calculated as arithmetic means (`center = "mean"`). Requires the argument `sex` to be specified.  This is the default procedure for `dimorph()`.
+
+### Grouping methods
+These methods all use algorithms that separate a sample into two groups and produces a single ratio based on one or more ratios of larger measurements to smaller measurements.  None of these methods requires sex information.
+
+- `"MMR"`: **Mean Method Ratio.** Follows Godfrey et al. (1993). This procedure splits the sample at its mean, then calculates the ratio of the mean of measurements larger than the overall mean to the mean of measurements smaller than the overall mean. If any measurements are exactly equal to the overall mean, they contribute to both the larger and smaller group as half an individual in a weighted mean. Depending on `center`, the overall mean and subgroup means are calculated either as geometric means or arithmetic means. Ignores `sex`.
+
+- `"BDI"`: **Binomial Dimorphism Index.** Follows Reno et al. (2003). Given *n* measurements, this calculates all possible ratios of the mean of larger specimens to the mean of smaller specimens when the sample is split into the *k* largest specimens and *n*-*k* smallest specimens, where *k* ranges from 1 to *n*-1. A weighted mean is then calculated for all ratios, where the weights are equal to the probability of *k* successes in *n* trials in a binomial distribution where *p*=0.5. Depending on `center`, means are calculated either as geometric means or arithmetic means. Ignores `sex`.
+
+- `"ERM"`: **Exact Resampling Method.** Modification of Lee's (2001) Assigned Resampling Method (ARM) following Gordon (2025a). ARM is a resampling-based estimate of dimorphism that repeatedly samples two values with replacement from `x`, then calculates their ratio as long as both are neither more than 0.5 standard deviations above the mean or both 0.5 standard deviations below the mean (otherwise the pair is rejected). ARM typically oversamples the possible combination of two values sampled from a small sample (as originally described it samples 1,000 pairs, whereas a sample of 20 measurements only has 210 possible pairs) and sampling with replacement biases dimorphism estimates downwards by the incorporation of multiple ratios of 1 whenever the same value is sampled twice and is not rejected by retention criterion. `"ERM"` performs an exact resampling of all possible pairs of values without replacement, but otherwise follows Lee's algorithm. Depending on `center`, the procedure is applied in either logarithmic (`"geomean"`) or raw (`"mean"`) data space. Ignores `sex`.
+
+### Finite mixture model methods
+Instead of calculating ratios of some combinations of sample measurements, these methods make assumptions about the underlying distributions of female and male size that the sample is drawn from. The methods then estimate the difference in population means of those underlying distributions — not by assigning specimens to particular distributions and calculating sample means, but by using the specimens collectively to estimate population distribution parameters.  None of these methods requires sex information.
+
+- `"FMA"`: **Finite Mixture Analysis.** Follows Godfrey et al. (1993). Assumes that the sample is a mixture of two underlying normal or lognormal distributions, that the sample contains an equal proportion of females and males, and that those two subsamples have equal variance. It then estimates the maximum separation of the two means. Depending on `center`, the underlying distributions are treated as either normal (`"mean"`) or lognormal (`"geomean"`). Ignores `sex`.  Note that Godfrey et al. specifically stated that this application is for when the sample appears unimodal rather than bimodal (it was developed for evaluating dimorphism in subfossil lemurs, members of a clade with very low dimorphism).
+
+- `"MoM"`: **Method of Moments.** Follows Josephson et al. (1996). Assumes that the sample is a mixture of two underlying lognormal distributions, that the sample contains an equal proportion of females and males, and that those two subsamples have equal variance. It then uses three moments around the mean of the logged combined sex distribution to estimate the difference in means of the underlying lognormal distributions. This calculation is always performed on the log-transformed data regardless of the value of `center`. Ignores `sex`.
+
+- `"BFM"`: **Bayesian Finite Mixture.** Follows Gordon (2025). Assumes that the sample is a finite mixture of two underlying normal or lognormal distributions. Unlike `"FMA"` and `"MoM"`, it estimates the proportion of females and males assuming that they may not be equal, and uses a Bayesian Information Criterion (BIC) approach to select between a model that estimates a single variance for both sexes and a model that estimates variances separately for the two constituent distributions using `mclustBIC`. It then calculates the ratio of the two estimated means. Depending on center, the underlying distributions are treated as either normal (`"mean"`) or lognormal (`"geomean"`). Ignores `sex`. When performed on lognormal data, this method is similar to the pdPeak method of Sasaki et al. (2021), particularly when the BIC procedure selects an equal variance model (which it typically does).
+
+### Variance-based methods
+These methods avoid making any assumptions about sex identity or underlying distribution parameters, and instead simply calculate a measure of variability in proportional size for the whole sample.
+
+- `"CV"`: **Coefficient of Variation.** Calculates the coefficient of variation as the standard deviation of `x` divided by the mean of `x` then multiplied by 100. This calculation is always performed on the raw data regardless of the value of center (an analogous method using logarithmic data is `"sdlog"`). Ignores `sex`. Additionally, Sokal and Braumann's (1980) size correction factor can be applied by setting `ncorrection` to `TRUE`, although this is `FALSE` by default.
+
+- `"CVsex"`: **Modified Coefficient of Variation.** Calculates a modified version of the coefficient of variation: the standard deviation is replaced by the square root of the sum of squared differences of every value of `x` from the unweighted mean of the sex-specific means in `x` divided by the square root of *n*-1, and this is divided by the unweighted mean of the sex-specific means, then multiplied by 100. This calculation is always performed on the raw data regardless of the value of center (an analogous method using logarithmic data is `"sdlogsex"`). Requires `sex`. Additionally, Sokal and Braumann's (1980) size correction factor can be applied by setting `ncorrection` to `TRUE`, although this is `FALSE` by default.
+
+- `"sdlog"`: **Standard Deviation of Logged Data.** First, `x` is log-transformed using the natural logarithm, then the standard deviation is calculated. This is a measure of proportional variation of the values of `x` about their geometric mean; i.e., analagous to the coefficient of variation for a lognormal distribution. This calculation is always performed on the log-transformed data regardless of the value of center (an analogous method using raw data is `"CV"`). Ignores `sex`.
+
+- `"sdlogsex"`: **Modified Standard Deviation of Logged Data.** First, `x` is log-transformed using the natural logarithm. Then a modified version of standard deviation is calculated: the square root of the sum of squared differences of every logged value of `x` from the unweighted mean of the sex-specific means of log-transformed `x`, divided by the square root of *n*-1. This calculation is always performed on the log-transformed data regardless of the value of `center` (an analogous method using raw data is `"CVsex"`). Requires `sex`.
+
+### Applying the methods
+
+Let's explore the application of each of these methods.  First, let's pull out data for a single species, western gorillas, from the `apelimbart` data object.
+```{r}
+gorillas <- apelimbart[apelimbart$Species=="Gorilla gorilla",]
+```
+
+Now let's calculate actual dimorphism for a single variable in this sample, femoral head superoinferior diameter (FHSI).  `dimorph()` expects a vector of numeric values provided as the initial argument, `x`.  For some methods it also requires a vector specifying the sex of each specimen (supplied to the argument `sex`), otherwise an error will be generated. If the argument `sex` includes `NA`s, either those specimens will be dropped before calculating dimorphism or the function will return `NA`, depending on the value of argument `na.rm`.
+```{r}
+gorSSD  <- dimorph(x=gorillas$FHSI, method="SSD", sex=gorillas$Sex)
+gorSSD
+```
+Dimorphism is always returned as a ratio of values in the original (unlogged) units rather than the logarithm of that ratio, even when it is calculated using logged data (which is effectively what happens when using the geometric means of raw data, the default behavior of the function `dimorph()`).
+
+The function `summary()` provides more detailed information, including the number of variables (always 1 for univariate analyses), the number of specimens included in the analysis (this excludes specimens with missing data in univariate analyses), the proportion of females in the sample when sex information is included, the mean function (geometric or arithmetic) used on the data, and the estimated means for the numerator and denominator of the dimorphism ratio for every method that calculates them.  These are sex-specific male and female means in the case of actual dimorphism.  Also reported is information specific to multivariate analyses that will be addressed later.
+
+```{r}
+summary(gorSSD)
+```
+
+Now let's take a look at the various methods for estimating dimorphism, starting with the grouping methods.  These are all methods that estimate dimorphism in the absence of information about the sex of each specimen by splitting a sample into two sub-samples of larger and smaller specimens.  They also all return an estimate of dimorphism as a ratio of values.
+```{r}
+summary(dimorph(x=gorillas$FHSI, method="MMR"))
+summary(dimorph(x=gorillas$FHSI, method="BDI"))
+summary(dimorph(x=gorillas$FHSI, method="ERM"))
+```
+
+Notice that only `"MMR"` reports a numerator and denominator mean.  All three methods split the sample into larger and smaller measurements to calculate a ratio. But while `"MMR"` only does so once, `"BDI"` and `"ERM"` do so multiple times, and in those cases the full set of numerators and denominators are not stored in the resulting object (to save memory).
+
+Now for the finite mixture model methods.
+```{r}
+summary(dimorph(x=gorillas$FHSI, method="FMA"))
+summary(dimorph(x=gorillas$FHSI, method="MoM"))
+summary(dimorph(x=gorillas$FHSI, method="BFM"))
+```
+
+Unlike the grouping methods, these models do not assign individual specimens to groups, but rather use them collectively to estimate properties of the underlying distributions that they are sampled from.  `"MoM"` estimates the difference in the means of two lognormal distributions rather than the means themselves, so no numerator or denominator values are calculated. `"FMA"` and `"BFM"` do estimate the population means, so those estimates are provided, and `"BFM"` includes additional information about the finite mixture model.
+
+And finally, the variance-based methods.  Unlike all of the other methods, these do not provide direct estimates of dimorphism ratios.  Instead, they are estimates of proportional size variation in the sample.  Methods based on the coefficient of variation can opt to apply the sample size correction factor of Sokal and Braumann (1980) by specifying `ncorrection = TRUE`.
+```{r}
+summary(dimorph(x=gorillas$FHSI, method="CV"))
+summary(dimorph(x=gorillas$FHSI, method="CV", ncorrection=TRUE))
+```
+The values for `"CV"` estimates are unitless, expressing the standard deviation of the sample as a percentage of the arithmetic mean of the sample.  Note that the mean function for `"CV"` is always the arithmetic mean, regardless of the user-specified value of `center`.  An analogous method using the geometric mean is `"sdlog"`, discussed below.
+
+If sex designation data is available for all specimens, the method `"CVsex"` can be used.  Rather than using the mean of the entire data set in the calculation of standard deviation and CV, the mean of sex-specific means is used instead.  This counteracts bias introduced by uneven sex ratios and/or different variances for the sex-specific distributions.
+```{r}
+summary(dimorph(x=gorillas$FHSI, method="CVsex", sex=gorillas$Sex))
+summary(dimorph(x=gorillas$FHSI, method="CVsex", sex=gorillas$Sex, ncorrection=TRUE))
+```
+
+In addition to `"CV"`, an alternative (and arguably better - see Gordon, 2025a) method for measuring relative variability is to calculate the standard deviation of logged data (`"sdlog"`), which is also a measure of proportional dispersion in the sample.  Like `"CV"` and `"CVsex"`, there is also a version of this approach that uses the mean of sex-specific means rather than the overall mean when calculating standard deviation (`"sdlogsex"`).
+```{r}
+summary(dimorph(x=gorillas$FHSI, method="sdlog"))
+summary(dimorph(x=gorillas$FHSI, method="sdlogsex", sex=gorillas$Sex))
+```
+The values for these estimates are in the units of difference in the logged original data.  According to the log rules, $log(a)-log(b)=log(a/b)$, so these units are equivalent to units for the logarithm of ratios, which are unitless. The standard deviation of logged data is essentially an average of proportional deviation of observations around the geometric mean of a sample.  Note that the mean function for `"sdlog"` and `"sdlogsex"` is always the geometric mean, regardless of the user-specified value of `center`.
+
+An easier way to compare all of these different estimates is by using the argument `dfout`.  Setting it to `TRUE` makes `dimorph()` output information in a data frame format that can be combined across different estimates.
+```{r}
+allmethods <- rbind(dimorph(x=gorillas$FHSI, method="SSD", dfout=TRUE, sex=gorillas$Sex),
+                    dimorph(x=gorillas$FHSI, method="MMR", dfout=TRUE),
+                    dimorph(x=gorillas$FHSI, method="BDI", dfout=TRUE),
+                    dimorph(x=gorillas$FHSI, method="ERM", dfout=TRUE),
+                    dimorph(x=gorillas$FHSI, method="FMA", dfout=TRUE),
+                    dimorph(x=gorillas$FHSI, method="MoM", dfout=TRUE),
+                    dimorph(x=gorillas$FHSI, method="BFM", dfout=TRUE),
+                    dimorph(x=gorillas$FHSI, method="CV", dfout=TRUE),
+                    dimorph(x=gorillas$FHSI, method="CVsex", dfout=TRUE, sex=gorillas$Sex),
+                    dimorph(x=gorillas$FHSI, method="sdlog", dfout=TRUE),
+                    dimorph(x=gorillas$FHSI, method="sdlogsex", dfout=TRUE, sex=gorillas$Sex))
+```
+
+Let's take a look at what this generates.
+```{r, echo=F}
+kableExtra::kable_styling(knitr::kable(allmethods),
+  bootstrap_options = "condensed", font_size=10)
+```
+
+As mentioned above, several of these columns are only relevant for estimates of dimorphism based on multivariate data sets with missing data.  Let's take a look at how `dimorph()` handles multivariate data.
+
+## Multivariate estimates
+
+The argument `methodMulti` in `dimorph()` takes a character string specifying the multivariate method used to calculate or estimate dimorphism for a matrix or dataframe of metric values `x` (note that regardless of the value of this argument, multivariate estimation procedures will only be carried out if `x` is a multivariate data set).  As with the univariate methods, values in `x` should not be log-transformed. Options for `methodMulti` include:
+
+- "GMsize": If `x` is a dataframe or matrix, this method first calculates overall size as the geometric mean of measurements in all variables for those specimens that are complete for all variables in the data set. The selected univariate method is then applied to this measure of overall size.  If any specimens are missing data, those specimens will be dropped from the analysis if `na.rm=TRUE`, or the function will return `NA` if `na.rm=FALSE`.
+
+- "GMM": This method follows the Geometric Mean Method of Gordon et al. (2008). The selected univariate method is applied to all variables separately (where specimens missing data for a given variable are ignored).  Then the geometric mean is calculated of the dimorphism estimates for all variables, producing a single estimate of dimorphism for the whole data set. Note that this methodology is not appropriate for variance-based univariate methods; i.e., `"CV"`, `"CVsex"`, `"sdlog"`, and `"sdlogsex"` (see Gordon 2025a for a detailed explanation).  This method is the default for `methodMulti`.
+
+- "TM": This method follows the Template Method of Reno et al. (2003). A variable of interest is specified by the user with the argument `templatevar`. The algorithm identifies a template individual that can be used to estimate the largest number of values for the selected variable of interest.  It does so by calculating ratios between the value of the variable of interest and other variables in the template individual, which are then multiplied by the value of those other variables in individuals missing the target variable.  The template individual selected is the specimen that allows for the largest number of target variable estimates, maximizing the data set for that variable. A user-selected univariate method is then applied to the combined data set of actual and estimated values for the target variable.  Note that this method has been critiqued by several authors on multiple grounds (see Gordon 2025a for a summary of those critiques and references), and is only included here for the sake of completeness.
+
+### Equivalence of `"GMsize"` and `"GMM"` SSD values with complete data
+
+To begin with, let's calculate actual dimorphism for a sample with complete data using the `"GMsize"` multivariate method in conjunction with the `"SSD"` univariate method.  We'll do so using all ten linear variables for the gorilla sample in `apelimbart`.
+```{r}
+SSDvars_apelimbart <- c("FHSI", "TPML", "TPMAP", "TPLAP", "HHMaj",
+                        "HHMin", "RHMaj", "RHMin", "RDAP", "RDML")
+Gg_GMsize <- dimorph(x=gorillas[,SSDvars_apelimbart], method="SSD", methodMulti="GMsize",
+                     sex=gorillas$Sex, details=TRUE)
+summary(Gg_GMsize)
+```
+
+The summary of `Gg_GMsize` records the number of variables as `"1 (geometric mean of 10 variables)"`.  That's because overall size is calculated for each specimen (as the geometric mean for all ten measurements for that specimen), reducing the data set to a single variable of overall size, and then dimorphism is calculated for that one measure of size.  That also allows the ratio numerator and denominator to be reported.  That will be different when using `"GMM"`.
+
+```{r}
+Gg_GMM <- dimorph(x=gorillas[,SSDvars_apelimbart], method="SSD", methodMulti="GMM",
+                  sex=gorillas$Sex, details=TRUE)
+summary(Gg_GMM)
+```
+
+Here, dimorphism is calculated separately for each variable and then combined into a single value.  So the summary of `Gg_GMM` reports the number of variables simply as 10, and it doesn't report the ratio numerator and denominator because there are ten ratios that are combined to give the final dimorphism estimate.
+
+But notice that `"GMsize"` and `"GMM"` produce identical measures of SSD in this case, despite calculating it in two different ways: `"GMsize"` first calculates a geometric mean of all measurements for each specimen to get a measure of overall size, then calculates `"SSD"` for that measure of overall size; `"GMM"` first calculates `"SSD"` separately for all ten variables, then calculates the geometric mean of all ten measures of `"SSD"`.  Gordon et al. (2008) demonstrated that these are mathematically identical procedures when all specimens are complete for all measurements.  And it's not the case that this is dependent on complete separation in size between the sexes - we can see that the same property also holds for gibbons, which have virtually no dimorphism and a high degree of overlap between sex-specific distributions.
+
+```{r}
+gibbons <- apelimbart[apelimbart$Species=="Hylobates lar",]
+bothmethods <- rbind(dimorph(x=gibbons[,SSDvars_apelimbart], method="SSD", methodMulti="GMsize",
+                             sex=gibbons$Sex, dfout=TRUE),
+                     dimorph(x=gibbons[,SSDvars_apelimbart], method="SSD", methodMulti="GMM",
+                             sex=gibbons$Sex, dfout=TRUE))
+```
+
+Printing `bothmethods` produces the following, with identical values for dimorphism using either multivariate method:
+
+```{r, echo=F}
+kableExtra::kable_styling(knitr::kable(bothmethods),
+  bootstrap_options = "condensed", font_size=10)
+```
+
+Note that `"GMsize"` calculates a geometric mean of all included variables, so it cannot be used in cases where there is any missing data.  However, because `"GMM"` calculates dimorphism (or some estimate of dimorphism) separately for each variable, then combines them with a geometric mean, it can be used for any data set where each variable is represented by at least two specimens.
+
+Often data sets that are missing metric data are also missing sex identification for specimens (e.g. fossil data sets). The property of equality between `"GMsize"` and `"GMM"` with complete metric data applies to `"SSD"` alone, which requires sex information, although other ratio-based estimates that don't require sex information approach equality using the two multivariate methods.  By extension, using the `"GMM"` multivariate method in conjunction with any of the ratio-based univariate methods provides close estimates of `"GMsize"` values.  However, `"GMM"` cannot be used with any of the variance-based univariate methods (i.e., `"CV"`, `"CVsex"`, `"sdlog"`, `"sdlogsex"`).  This is because a geometric mean of variance-based estimates across multiple variables will only equal the value for the same variance-based estimator calculated for overall size if all of the variables are perfectly correlated with each other (Gordon, 2025a), which effectively never happens with morphological data.
+
+### Missing data applications: `"GMM"`
+
+So let's turn our attention to the two multivariate methods that do allow for missing data, `"GMM"` and `"TM"`.  We'll start with the geometric mean method (`"GMM"`), which was developed by Gordon et al. (2008) in response to concerns over the earlier template method (`"TM"`).  The `"GMM"` procedure is explained above, although more detail can be found in Gordon et al. (2008) and Gordon (2025a).
+
+For these examples, we'll turn to the `GordonAJBA` data set (published in Gordon, 2025b) to estimate dimorphism for a sample of eight postcranial linear measurements for the fossil hominin *Australopithecus afarensis*.
+```{r}
+SSDvars <- c("HUMHEAD", "ELBOW0.5", "RADTV", "FEMHEAD",    
+             "FEMSHAFT0.5", "DISTFEM0.5", "PROXTIB0.5", "DISTTIB0.5")
+Aafarensis <- GordonAJBA[GordonAJBA$Species=="A. afarensis", SSDvars]
+```
+
+Let's take a look at the data.
+
+```{r, echo=F}
+kableExtra::kable_styling(knitr::kable(Aafarensis),
+  bootstrap_options = "condensed", font_size=10)
+```
+
+As you can see, there's quite a bit of missing data across the sample, and no specimen is complete for all variables.  Now let's use the `"MMR"` univariate method in conjunction with the `"GMM"` multivariate method to estimate dimorphism in this sample. 
+
+When samples are missing data, some specimens and/or variables may not meet the criteria for inclusion in the analysis, in which case `dimorph()` generates a warning message and removes them before estimating dimorphism.  In the case of `"GMM"`, all variables must include at least two observations so that dimorphism can be estimated for each variable; any variables that don't are removed, and any specimens that no longer have observations are also removed.  Setting `details=TRUE` when running `dimorph()` records additional information about the specific set of variables and specimens that make it into the analysis.
+
+```{r}
+Aa_GMM <- dimorph(x=Aafarensis, method="MMR", methodMulti="GMM", details=TRUE)
+Aa_GMM
+```
+
+In this particular sample, all variables and specimens are usable with the `"GMM"` method.  We can take a detailed look at the results by using `summary()` with `verbose=TRUE`.
+
+```{r}
+summary(Aa_GMM, verbose=TRUE)
+```
+
+When `verbose=TRUE`, `summary()` provides a list of included variables and included specimens.  Regardless of the value of `verbose`, `summary()` provides some information that wasn't relevant for univariate analyses.  The output makes a distinction between "overall" and "realized" for number of variables, number of specimens, and proportion of females in the sample. "Overall" refers to the data set provided to `dimorph()`, while "realized" refers to the data set actually used to estimate dimorphism; i.e., the remaining sample after any ineligible variables and/or individuals have been removed.
+
+In addition, `summary()` also reports the proportion of missing data in both the provided sample and in the sample that remains after excluding ineligible variables and specimens.  This is simply the number of `NAs` in the data set divided by the total number of sells in the data matrix (in this case, 8 variables times 20 individuals = 160).  In this particular data set, about `r round(attr(Aa_GMM, "details")$proportion.missingdata.overall*100,1)`% of the data matrix contains `NA`s.
+
+### Missing data applications: `"TM"` (use with caution!)
+>
+>To estimate dimorphism using the template method, we not only have to set `methodMulti="TM"`, but we also have to specify which variable should be the template variable.  This is the variable that dimorphism will be estimated for; it is measured directly in specimens that preserve it, and it is estimated in specimens that don't have it.  That estimation occurs as follows.  A template specimen is identified by `dimorph()` that preserves the template variable and several other variables.  To estimate the value of the template variable in a specimen that doesn't preserve it, the value of a variable in that specimen that is also found in the template specimen is multiplied by the corresponding ratio in the template specimen. 
+>
+>**Important note: this procedure is equivalent to a regression procedure with zero degrees of freedom (and thus has infinitely large prediction intervals) that assumes an isometric relationship between all variables and zero variation around regression lines for all data points.**  These assumptions will always be violated, and previous research has shown that the template method produces a high degree of error in estimates of the template variable and resulting dimorphism estimates, which translates into low power for significance tests based on the template method (Gordon 2025a).
+>
+>That said, **and stressing that the template method should not be used**, let's see how to apply it in `dimorph()`.  We'll use the same *A. afarensis* data set and univariate method (`"MMR"`) that we used for the `"GMM"` method.  
+>```{r}
+>Aa_TM  <- dimorph(x=Aafarensis, method="MMR", methodMulti="TM", 
+>                  templatevar="FEMHEAD", details=TRUE)
+>Aa_TM
+>```
+>
+>In the case of `"TM"`, any variables that aren't present in the template specimen are removed, and any specimens that don't preserve either the template variable or a variable in the template specimen are removed.  The warnings in the output above note those removals for this particular data set.  We can get a bit more information from `summary()`.
+>
+>```{r}
+>summary(Aa_TM, verbose=TRUE)
+>```
+>
+>Because some variables and specimens were removed by `dimorph()`, there is a difference in the reported "overall" and "realized" values.  The number of variables dropped from `r attr(Aa_TM, "details")$n.vars.overall` overall to `r attr(Aa_TM, "details")$n.vars.realized` realized, the number of specimens dropped from `r attr(Aa_TM, "details")$n.specimens.overall` overall to `r attr(Aa_TM, "details")$n.specimens.realized` realized, and the proportion of missing data dropped from `r attr(Aa_TM, "details")$proportion.missingdata.overall` overall to `r attr(Aa_TM, "details")$proportion.missingdata.realized` realized.
+>
+>Note that the proportion of missing data has decreased - there is proportionally more data - because it is measured as a proportion of the newly reduced data set, not as a proportion of the original data set.  Also, for the `"TM"` multivariate method, `summary()` reports the proportion of the template variable values that are estimated.  In this case, `r round(attr(Aa_TM, "details")$proportion.templated*100,2)`% of FEMHEAD values were estimated using the template method, corrresponding to `r round(attr(Aa_TM, "details")$proportion.templated*attr(Aa_TM, "details")$n.specimens.realized,0)` of `r attr(Aa_TM, "details")$n.specimens.realized` values - only `r attr(Aa_TM, "details")$n.specimens.realized - round(attr(Aa_TM, "details")$proportion.templated*attr(Aa_TM, "details")$n.specimens.realized,0)` FEMHEAD values were actually measured directly.
+
+### Missing data applications: full set of allowable `methodMulti` and `method` combinations
+
+Below is the full set of combinations of unviariate and multivariate methods that can be applied to multivariate data sets with missing data (even including methods that shouldn't be used!).  We can use the function `suppressWarnings()` to prevent warnings about the removal of variables and specimens from popping up for all of the `"TM"` estimates.
+```{r}
+Aa_various <- rbind(dimorph(x=Aafarensis, method="MMR", methodMulti="GMM", dfout=TRUE),
+                    suppressWarnings(dimorph(x=Aafarensis, method="MMR", methodMulti="TM",
+                            dfout=TRUE, templatevar="FEMHEAD")),
+                    dimorph(x=Aafarensis, method="BDI", methodMulti="GMM", dfout=TRUE),
+                    suppressWarnings(dimorph(x=Aafarensis, method="BDI", methodMulti="TM",
+                            dfout=TRUE, templatevar="FEMHEAD")),
+                    dimorph(x=Aafarensis, method="ERM", methodMulti="GMM", dfout=TRUE),
+                    suppressWarnings(dimorph(x=Aafarensis, method="ERM", methodMulti="TM",
+                            dfout=TRUE, templatevar="FEMHEAD")),
+                    dimorph(x=Aafarensis, method="FMA", methodMulti="GMM", dfout=TRUE),
+                    suppressWarnings(dimorph(x=Aafarensis, method="FMA", methodMulti="TM",
+                            dfout=TRUE, templatevar="FEMHEAD")),
+                    dimorph(x=Aafarensis, method="MoM", methodMulti="GMM", dfout=TRUE),
+                    suppressWarnings(dimorph(x=Aafarensis, method="MoM", methodMulti="TM",
+                            dfout=TRUE, templatevar="FEMHEAD")),
+                    dimorph(x=Aafarensis, method="BFM", methodMulti="GMM", dfout=TRUE),
+                    suppressWarnings(dimorph(x=Aafarensis, method="BFM", methodMulti="TM",
+                            dfout=TRUE, templatevar="FEMHEAD")),
+                    suppressWarnings(dimorph(x=Aafarensis, method="CV", methodMulti="TM",
+                            dfout=TRUE, templatevar="FEMHEAD")),
+                    suppressWarnings(dimorph(x=Aafarensis, method="sdlog", methodMulti="TM",
+                            dfout=TRUE, templatevar="FEMHEAD")))
+```
+
+Notice that there is still a set of warnings that pop up - these relate to the `"BFM"` and `"GMM"` method combination because `"BFM"` requires more observations than other methods, and some of these variables have sample sizes that are too small to use it.  When variables are dropped, as in that case, estimates are no longer comparable with other estimation techniques unless those other estimates are also recalculated using the same set of variables and specimens.  The default behavior of `dimorph()` is to still report the dimorphism estimate when based on fewer than the full set of variables (argument `completevars=FALSE`).  However, users can set `completevars=TRUE` which requires `"GMM"` to only report estimates when all variables are involved in their calculation, otherwise an NA is returned (*N.B.*: all resampling methods automatically set `completevars=TRUE`).
+
+Also, `"TM"` estimates are not directly comparable to `"GMM"` (or `"GMsize"`) estimates because the former are estimates of dimorphism in the template variable, while the latter are estimates of dimorphism in the geometric mean of all included variables (i.e., a measure of overall size).
+
+In addition, the set of methods above does not include any of the methods that require sex information (i.e., `"SSD"`, `"CVsex"`, and `"sdlogsex"`).  We could add in those methods in the rare cases where you have missing metric data but sex information for each specimen, but this will rarely (if ever!) apply to fossil samples.  Also, the combinations above do not include `"CV"` or `"sdlog"` for the `"GMM"` multivariate method for the reasons explained above (trying to use any of those combinations will produce an error), although those methods can be used by the `"TM"` multivariate method.   Let's take a look at `Aa_various`.
+
+```{r, echo=F}
+kableExtra::kable_styling(knitr::kable(Aa_various),
+  bootstrap_options = "condensed", font_size=10)
+```
+
+There's a wide range of values produced by these different estimation techniques, so they're not terribly informative on their own and without quantification of uncertainty in those estimates.  Let's add some context.
+
+# Calculating confidence intervals with `bootdimorph()`
+
+The two primary functions that provide that context are `bootdimorph()` and `SSDtest()`, which both rely on the function `resampleSSD()`. `resampleSSD()` will not be covered here, but it provides great flexibility in setting up resampling procedures for any of the dimorphism estimation methods outlined above.  See the help page for `resampleSSD()` for various examples.
+
+We'll begin by considering `bootdimorph()`.  This is the function used to generate confidence intervals around dimorphism estimates.  It uses a bootstrapping procedure, and it can be applied to univariate data sets or complete multivariate data sets, but not multivariate data sets with missing data (we'll address those kinds of data sets later).
+
+## Confidence intervals for univariate data sets
+
+First, let's separate the `apelimbart` data set into four objects each containing the data for one species.
+```{r}
+gor <- apelimbart[apelimbart$Species=="Gorilla gorilla",]
+hom <- apelimbart[apelimbart$Species=="Homo sapiens",]
+pan <- apelimbart[apelimbart$Species=="Pan troglodytes",]
+hyl <- apelimbart[apelimbart$Species=="Hylobates lar",]
+```
+
+Now we'll specify the number of resampling iterations we'll use for all of the iterative procedures in the rest of this vignette. In `bootdimorph()` this is specified by the argument `nResamp`, which defaults to 1,000.  For this vignette we'll bump it up to 5,000; in order to only have to specify this value once, we'll set the value of an object `nResample` to 5,000 and we'll pass `nResample` to `nResamp` in all later code.  If you're cutting and pasting code to run these examples on your own just to make sure they work, reducing the value of `nResample` to a small number (like 10 or 100) will let these functions run much faster on your computer.
+
+```{r}
+nResample <- 5000
+```
+
+`bootdimorph()` can generate confidence intervals for multiple estimation methods at the same time, so we'll create a vector `meths` that we'll pass to the argument `methsUni` in `bootdimorph()`.  Let's just do all of the univariate methods.
+```{r}
+meths <- c("SSD", "MMR", "BDI", "ERM", "FMA", "MoM", "BFM", "CV", "CVsex", "sdlog", "sdlogsex")
+```
+
+### Applying `bootdimoph()` to univariate samples
+
+Now we can run `bootdimorph()` on our four species.  Let's use the variable FHSI again.  Note that we can pass that variable to `bootdimorph()` (and `dimorph()`) in various ways.  All of the following will work (as will pulling a single vector from a matrix instead of a data frame, or just giving the function any numeric vector):
+```{r eval=FALSE}
+# these lines of code are not actually being evaluated
+bootdimorph(gor$FHSI)
+bootdimorph(gor[,"FHSI"])
+bootdimorph(gor[,"FHSI", drop=FALSE])
+```
+
+But because of how R extracts single variables from data frames, only the last line of code above will pass the name of the variable to `bootdimorph()`.  Whether or not that name is included has no impact on the values generated by the function, only on whether or not the name of the variable is preserved in the object produced by `bootdimorph()`.  We'll use that last version in the applications of `bootdimorph()` below to preserve the name of the variable.
+
+Now let's generate confidence intervals for all four species samples.
+
+>*Technical note:* As with all functions in R that rely on random number generators, we can create reproducible examples by using `set.seed()` to set the initial state of the random number generator.  This step is not necessary, but it does allow for completely reproducible results.  `set.seed()` sets the initial condition for the whole session, but in the following example we could repeat it before each run of `bootdimorph()`.  Because the sample sizes are the same across all four species, this will produce identical bootstrap samples across all four taxa in the sense that, if the hundredth bootstrap sample for gorillas samples the fourth specimen 3 times and the fifth specimen not at all, that will also be true for the hundredth human bootstrap sample, the hundredth chimpanzee bootstrap sample, and the hundredth gibbon bootstrap sample.  However, that only holds true because the samples are identically sized. 
+
+```{r}
+set.seed(5782) # not necessary, but generates reproducible example - see technical note above
+bootsUgor <- bootdimorph(gor[,"FHSI", drop=FALSE], sex=gor$Sex, methsUni=meths, nResamp=nResample)
+set.seed(5782) # not necessary, but generates reproducible example - see technical note above
+bootsUhom <- bootdimorph(hom[,"FHSI", drop=FALSE], sex=hom$Sex, methsUni=meths, nResamp=nResample)
+set.seed(5782) # not necessary, but generates reproducible example - see technical note above
+bootsUpan <- bootdimorph(pan[,"FHSI", drop=FALSE], sex=pan$Sex, methsUni=meths, nResamp=nResample)
+set.seed(5782) # not necessary, but generates reproducible example - see technical note above
+bootsUhyl <- bootdimorph(hyl[,"FHSI", drop=FALSE], sex=hyl$Sex, methsUni=meths, nResamp=nResample)
+```
+
+None of these data sets are missing data, but if they were then either specimens with missing data would be dropped (if `na.rm=TRUE`, the default) or an error would be generated (if `na.rm=FALSE`).
+
+### Viewing the resulting object
+
+Let's take a look at one of the resulting objects.
+
+```{r}
+bootsUgor
+```
+
+There's a lot of information in there.  First, information about the data set is provided: the number of specimens, broken down by sex if that information is provided, and the number and name of included variables.  Next is information about the univariate methods, centering, algorithms, and number of unique combinations of the two.
+
+It also provides information about the resampling data structure. `bootdimorph()` has the arguments `exact` and `limit` that are passed to `resampleSSD()` and determine whether Monte Carlo or exact resampling is used.  If `exact=TRUE` the function will calculate how many unique resampled datasets exist, and if that number is less than or equal to `limit`, exact resampling is used where every possible unique combination of *n* values sampled with replacement from *n* values is generated.  If the number of unique combinations exceeds `limit` then Monte Carlo resampling is used instead.  `limit` defaults to 50,000 but can be changed by the user.
+
+For `bootdimorph()`, the number of individuals in each resampled data set will equal the number of specimens in the sample and the resampling procedure will always be "bootstrap" in which subsamples are sampled with replacement.  The reported confidence level and sidedness information depends on the arguments `conf.level` (which defaults to `0.95`) and `alternative` (which defaults to `"two.sided"`).  Any other resampling information is also provided.  Notice that confidence intervals for ratio-based methods are reported as logged ratios by default; this is due to ratios typically being lognormally distributed (see Smith, 1999, and Gordon, 2025a for further discussion of this point).
+
+Finally, the confidence limits themselves are reported for each applied method.  Notice that in this case there are also confidence intervals "for bias of estimates from sample SSD, CVsex, or sdlogsex".  Whenever any of these three methods that require sex information are included in the set of methods `bootdimorph()` uses, then the bias of estimators that don't use sex information is also calculated.  For ratio based estimators, this is the bias of sample estimates from sample `"SSD"` for each bootstrapped subsample; for `"CV"` it is the bias of sample `"CV"` from sample `"Cvsex"` for each subsample, and for `"sdlog"` it is the bias of sample `"sdlog"` from sample `"sdlogsex"` for each subsample.
+
+### Structure of the object
+
+We can also extract quite a bit of information from this object. Objects produced by `bootdimorph()` for univariate data sets are of class `dimorphResampledUni`, which are lists of up to four components: `estimates`, `sampleADS`, `CI`, and `CIbias`.  In practice you won't have to dig into these objects to get the information you want, but you may want to.  Let's take a look at the structure of `bootsUgor`.
+
+```{r}
+str(bootsUgor)
+```
+
+As you can see, `estimates` is a data frame.  It holds all of the bootstrapped estimates for each iteration of each method, as well as the bias from the corresponding sample value using `"SSD"`, `"CVsex"`, or `"sdlogsex"`.  There will be a number of rows equal to the number of methods times the number of iterations in the bootstrapping prodecure (`nResamp`).
+
+`CI`, and `CIbias` when present, are also data frames.  These are the tables providing the upper and lower confidence intervals that are reported when the object is viewed.  They are calculated using a percentile bootstrap procedure applied to the values in `estimates` using the user specified `conf.level` and `alternative`.  We can pull these data frames using `confint()` and the argument `type`, which defaults to `"estimate"` but can also be set to `"bias"`.
+
+```{r}
+confint(bootsUgor)
+```
+
+```{r}
+confint(bootsUgor, type="bias")
+```
+
+The remaining list element, `sampleADS`, is itself a list.  It preserves the resampling information, in particular the set of specimens sampled for each iteration of the bootstrap (`sampleADS$addresses`), as well as the original data set (`sampleADS$comparative`).  An important point to note here is that all methods draw on the same set of resampled values, which is what allows bias from sample `"SSD"`, `"CVsex"`, and/or `"sdlogsex"` to be calculated.
+
+### Plotting
+
+Because the object also records all of the `nResamp` bootstrapped values for every method, we can visualize the distribution of these values and the confidence intervals.  This can be done using `plot()`.
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsUgor)
+```
+
+A violin plot is generated for the bootstrapped values associated with each combination of univariate method and centering algorithm.  These are separated into panels by the units in which estimates are measured: ratios (which are plotted as logged ratios), percentages (for CV methods), and sdlog units.  Vertical lines are drawn at the upper and lower limits of the confidence intervals for each parameter estimate.  The confidence level can be adjusted in `bootdimorph()` using the argument `conf.level`.
+
+In each panel the vertical extent of the violin plots are scaled to the same relative frequency across all method combinations. For this particular example, the violin plots for all of the ratio methods except `"FMA"` are highly compressed vertically because of the very narrow range of estimates generated by `"FMA"`.  If we want to get a better sense of the shape of the other bootstrapped distributions, we can exclude one or more univariate methods from the plot by passing the names of those methods in a vector to the argument `exclude`.
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsUgor, exclude="FMA")
+```
+
+We can now take a look at the bootstrapped confidence intervals for the other three species samples.  Here are humans:
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsUhom)
+```
+
+Now chimpanzees:
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsUpan)
+```
+
+And finally, gibbons:
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsUhyl)
+```
+
+These plots illustrate some of the issues to be aware of when using these methods; e.g., patterns of over- or under-estimation of SSD under certain conditions and the unusual distributions of finite mixture model methods (`FMA"`, `"MoM"`, `"BFM"`) under many conditions.  These issues are all discussed in detail in Gordon (2025a).
+
+Additionally, in cases where bias has been calculated from sample estimates of SSD or the other methods that include sex, the argument `type` can be set to `"bias"` to plot bootstrapped distributions and confidence intervals for bias.  These plots are useful in illustrating the degree of systematic bias for various methods depending on the actual degree of dimorphism.  We'll just take a look at the two samples with the most and least dimorphism, gorillas and gibbons.
+```{r, fig.width=7, fig.height=7}
+plot(bootsUgor, type="bias")
+```
+
+For ratio-based estimates, most estimators do a pretty good job of matching actual sample sexual dimorphism in gorillas (confidence intervals include zero), although `"FMA"` and `"ERM"` underestimate it by quite a bit.  However, all ratio-based estimators overestimate dimorphism in gibbons:
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsUhyl, type="bias")
+```
+
+We can also take this opportunity to see how uneven sex ratios can impact dimorphism estimates.  Let's recalculate a set of confidence intervals for gorillas. But this time, instead of using the full data set which has an equal number of females and males, let's run it for a subset that includes all 47 females but only 10 males, then look at bias from sample `"SSD"`.
+
+```{r, echo=FALSE}
+set.seed(472)
+```
+```{r, fig.width=7, fig.height=7}
+bootsUgorUnbalanced <- bootdimorph(gor[c(1:47, 71:80), "FHSI", drop=FALSE],
+                                   sex=gor$Sex[c(1:47, 71:80)], methsUni=meths, nResamp=nResample)
+plot(bootsUgorUnbalanced, type="bias")
+```
+
+Looking back at the confidence intervals based on the full, balanced gorilla sample, we can see that those 95% confidence intervals included zero bias for all methods except for `"ERM"` and `"FMA"`.  But in this unbalanced sex sample (about 82% females), all of the 95% confidence intervals exclude zero bias except for `"BFM"`, and even in that case the confidence interval is very large, with the lower confidence interval extending beyond the lower interval for `"MMR"`, `"BDI"`, and `"FMA"` (*N.B.*: `"BFM"` does well at estimating dimorphism in unbalanced samples at large sample sizes because it explicitly estimates the proportion of each sex present, but it is a data-hungry model and performs poorly at the smaller sample sizes typical of most fossil samples).  See Gordon (2025a) for a thorough discussion about the benefits and limitations of these various estimation techniques.
+
+## Confidence intervals for multivariate data sets
+
+We can also bootstrap multivariate estimates of dimorphism.  Let's do it.
+
+### Applying `bootdimoph()` to multivariate samples
+
+Using `bootdimorph()` with multivariate samples requires complete sets of observations for every specimen.  If `na.rm=TRUE` (the default), any specimen that is missing data will be removed from the analysis.  An error is returned if there are missing data and `na.rm=FALSE`. Let's bootstrap confidence intervals for the gorilla sample using all ten variables in the `apelimbart` data set, all univariate methods, and both the `"GMsize"` and `"GMM"` multivariate methods (*N.B.*: not only is the use of `"TM"` discouraged, it also simply reverts to a univariate estimate of dimorphism in the template variable when all specimens have data for the template variable because no estimation for that variable is necessary).
+
+```{r}
+bootsMgor <- bootdimorph(gor[,SSDvars_apelimbart], sex=gor$Sex, methsUni=meths,
+                         methsMulti=c("GMM", "GMsize"), nResamp=nResample)
+```
+
+### Viewing the resulting object
+
+Now let's take a look at the resulting object.  It has many similarities with the univariate examples, but also some additional information.
+
+```{r}
+bootsMgor
+```
+
+Just as we saw above, it reports the number of specimens, the number of variables and their names, and the univariate methods and centering algorithms.  It also reports the multivariate methods used and notes whether multivariate sampling used complete or missing data.  This will always be "complete" for `bootdimorph()`, but as we'll see later, `SSDtest()` can be based on complete or missing data patterns.  In addition, the number of unique combinations of univariate methods, multivariate methods, centering algorithms, and complete or missing data structures is reported.  A new piece of information is also reported for the resampling data structure: the proportion of missing data in that structure.  This will always be zero for `bootdimorph()`, but not necessarily for `SSDtest()`.
+
+The tables giving the confidence limits are much the same as those for univariate estimates, although they now include the additional information about multivariate method, data structure, and proportion of missing data.  Just like in the univariate case, we can use `confint()` to pull out those data frames.
+
+### Structure of the object
+
+In the multivariate case, `bootdimorph()` produces an object of class `dimorphResampledMulti`.  The object structure is essentially the same as in the univariate case, extended slightly to capture information about the multivariate methods and record the original multivariate data set.
+
+### Plotting
+
+Just as we saw with univariate bootstrapped confidence intervals, visualizing the bootstrapped distributions is straightforward using `plot()`.
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsMgor)
+```
+
+And just like in the univariate examples, we can also exclude specified univariate methods using `exclude`.
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsMgor, exclude="FMA")
+```
+
+We can also exclude multivariate methods from the plot using `excludeMulti`.
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsMgor, exclude="FMA", excludeMulti="GMsize")
+```
+
+And we can also plot bias from sex-based sample values, just like in the univariate example.
+
+```{r, fig.width=7, fig.height=7}
+plot(bootsMgor, type="bias")
+```
+
+## Confidence intervals for data sets with missing data?
+
+Nope.
+
+The function `bootdimorph()` won't allow users to generate bootstrapped confidence intervals for estimates based on missing data.  That said, `resampleSSD()`, the resampling function that `bootdimorph()` and `SSDtest()` both rely on, has great flexibility in how resampling procedures proceed.  It is possible to use that function to set up a bootstrap based on missing data, but interpreting those confidence intervals would be quite tricky.  When there is missing data, any estimates (and confidence intervals around them) are only meaningful in comparison to estimates from other samples in which the data set has that same particular pattern of missingness.
+
+So with samples that have missing data, it's most appropriate to run a significance test for pairs of taxa where all taxon data sets are resampled to the same sample size and missing data pattern.  `SSDtest()` does exactly that.
+
+# Running signficance tests with `SSDtest()`
+
+The function `SSDtest()` allows users to run a variety of resampling-based significance tests as commonly used in the paleoanthropological literature.  In particular, it allows for resampling tests based on exact or Monte Carlo resampling techniques, sampling with or without replacement, and using either univariate or multivariate samples which may or may not have missing data.
+
+## Univariate estimates
+
+Significance tests comparing dimorphism for a single variable in a fossil sample to dimorphism in extant comparative taxa typically resample the extant samples down to the sample size of the fossil sample (either with or without replacement), then compare the point estimate calculated for the fossil sample to resampled distributions for the comparative samples to generate one- or two-sided p-values (see studies cited in Gordon 2025a for examples).  Those procedures (and more) are implemented in `SSDtest()`.
+
+### Using `SSDtest()` with one fossil sample (univariate)
+
+To run the procedures described above, `SSDtest()` requires the data sets as two separate arguments: `fossil`, which is a list where each element is a data set for a single fossil taxon (this will only have one element in this case), and `comp`, a list where each element is a data set for a single comparative taxon.  Names for each list element are not required, but providing them will make interpreting the results easier (those names will be passed to the resulting object and will show up in summaries and plots).  Similarly, sex information is provided as separate lists for the arguments `fossilsex` (which will typically be `NULL`) and `compsex`.
+
+Note that the following univariate example resamples from comparative samples **without** replacement, which is the default behavior of `SSDtest()`.  However, if users prefer to sample **with** replacement they can simply set the argument `replace` equal to `TRUE`.  Any fossil specimen without data for the variable is removed from the sample (this happens regardless of the value of `na.rm`).
+
+```{r, echo=F}
+set.seed(32)
+```
+```{r, fig.width=7, fig.height=7}
+test_fossil_uni <- SSDtest(
+     fossil=list("A. afarensis"=GordonAJBA[GordonAJBA$Species=="A. afarensis", "FEMHEAD", drop=FALSE]),
+     comp=list("G. gorilla"=GordonAJBA[GordonAJBA$Species=="Gorilla gorilla", "FEMHEAD", drop=FALSE],
+               "H. sapiens"=GordonAJBA[GordonAJBA$Species=="Homo sapiens", "FEMHEAD", drop=FALSE],
+               "P. troglodytes"=GordonAJBA[GordonAJBA$Species=="Pan troglodytes", "FEMHEAD", drop=FALSE]),
+     fossilsex=NULL,
+     compsex=list("G. gorilla"=GordonAJBA[GordonAJBA$Species=="Gorilla gorilla", "Sex"],
+                  "H. sapiens"=GordonAJBA[GordonAJBA$Species=="Homo sapiens", "Sex"],
+                  "P. troglodytes"=GordonAJBA[GordonAJBA$Species=="Pan troglodytes", "Sex"]),
+     methsUni=c("SSD", "MMR", "BDI"),
+     nResamp=nResample)
+```
+
+By default, `SSDtest()` will attempt to perform exact resampling for all of the comparative samples (argument `exactcomp = TRUE`).  If the number of unique combinations of resampled data sets for a comparative taxon exceeds `limit` (which defaults to 50,000), then Monte Carlo resampling will be used instead with a number of iterations equal to `nResamp` (users can also specify Monte Carlo sampling by setting `exactcomp = FALSE`).  The first set of warnings reported above tell the user that sampling was switched to Monte Carlo for all three comparative samples.
+
+Also, because the fossil sample size is so small, sometimes when a comparative sample is downsampled to the fossil sample size there is only one sex present.  In those cases `"SSD"`, `"CVsex"`, and `"sdlogsex"` can't be calculated those methods require both sexes to be present in a sample in order to be calculated.  In any scenario where NAs are produced in at least one iteration for a particular method in a particular sample, a warning is generated to let the user know that p-values involving those sample/method combinations drop the NA estimates before calculating p-values.  Users may or may not find those p-values acceptable.  In any event, tests using methods that require sex information for all specimens typically won't be usable for fossil samples since those samples almost always lack sex information.
+
+### Viewing the resulting object
+
+Now let's take a look at the output.
+
+```{r, fig.width=7, fig.height=7}
+test_fossil_uni
+```
+
+To begin with, we've got information about the data set.  First, the sample size broken out by sex for each sample, then the number of variables and the names of those variables are provided (if those names were in the data set given to `SSDtest()`).  There's also information about the estimation method(s) used and the centering algorithm(s) used, along with number of unique combinations of methods and centering algorithms.
+
+Next there's information about the resampling data structure, with the number of resampled datasets given for each sample and the type of sampling used.  Because this procedure downsamples all samples to the size of the fossil sample without replacement, there is only one resampled fossil data set (which is the original fossil data set).  Even when `replace=TRUE`, only the comparative data sets are sampled with replacement, not the fossil sample (refer to the help page for `SSDtest()` for information about resampling both the comparative and fossil samples).  Also reported is the number of individuals in each resampled data set, as well as any other information about the resampling procedure.
+
+The next section of printed information provides the median resampled value for each sample and each method.  Alternatively, the mean resampled value can be reported by using `print(test_fossil_uni, central="mean")`.
+
+The remainder of the reported information relates to calculated p-values for all pairwise comparisons of two samples.  First one-sided p-values are reported for both directions, then two-sided p-values (see Gordon 2025a for details of their calculation).  If any p-values are based on sets of estimates that include NAs, a warning is given that identifies the p-values for which that is the case.
+
+### Structure of the object
+
+`SSDtest()` produces an object of class `SSDtest`. This is a more complex object than the `dimorphResampledUni` object produced by `bootdimorph()` applied to univariate data.  In fact, the `SSDtest` object contains multiple `dimorphResampledUni` objects, one for each taxon sample, as well as other information.  Let's take a look.
+
+```{r}
+names(test_fossil_uni)
+```
+
+The `SSDtest` object is a list containing three components: `estimates`,  `methcombos`, and `pvalues`. `methcombos` is a data frame containing means and medians for each taxon sample for each combination of methods, and `pvalues` is a list containing two matrices of one-sided and two-sided p-values.
+
+We can use a couple of functions to extract data frames from the `methcombos` and `pvalues` elements of a `SSDtest` object: `centers()` and `pvals()`.  `centers()` provides a data frame with mean and median resampled values for every sample for each method combination.
+
+```{r}
+centers(test_fossil_uni)
+```
+
+`pvals()` pulls out one of the p-value data frames, and the argument `alternative` has two options: `"two.sided"` (the default) and `"one.sided"`.
+
+```{r}
+pvals(test_fossil_uni)
+```
+
+`pvals()` returns the data frame, but it also generates the same warning we saw earlier.  We can suppress that warning if we want to.
+
+```{r}
+suppressWarnings(pvals(test_fossil_uni, alternative="one.sided"))
+```
+
+The remaining element of a `SSDtest` object, `estimates`, is a list containing elements corresponding to each taxon sample:
+
+```{r}
+names(test_fossil_uni$estimates)
+```
+
+These list components are all objects of class `dimorphResampledUni`, which is the same class produced by `bootdimorph()` applied to univariate datasets (both `bootdimorph()` and `SSDtest()` call on `resampleSSD()`, which generates these objects).  Just like the objects produced by `bootdimorph()`, these objects contain all of the resampled estimates; a summary of the information contained in them can be generated by typing their names.  Here's that information for the fossil sample:
+
+```{r}
+test_fossil_uni$estimates[["A. afarensis"]]
+```
+
+And here's the information for one of the comparative samples:
+
+```{r}
+test_fossil_uni$estimates[["G. gorilla"]]
+```
+
+Because these parts of the `SSDtest` object are `dimorphResampledUni` objects just like the output of `bootdimorph()`, we can plot them if we want to:
+
+```{r, fig.width=7, fig.height=4}
+plot(test_fossil_uni$estimates[["G. gorilla"]])
+```
+
+Notice that no confidence intervals are drawn - that's because this object doesn't have any.  Now let's look into plotting the whole `SSDtest` object.
+
+### Plotting
+
+There are a number of different ways the information in a `SSDtest` object can be visualized (type `help(plot.SSDtest)` for detailed information).  Simply using `plot()` with no other arguments will plot histograms of the resampled distributions for all taxon samples for the first combination of univariate and multivariate methods.
+
+```{r, fig.width=7, fig.height=4}
+plot(test_fossil_uni)
+```
+
+Note that the fossil sample is not included here.  That's because the first method combination is plotted by default; in this case, that's `"SSD"` using the `"geomean"` centering algorithm, and that can't be calculated for samples without sex information.
+
+We can change what's plotted by using the argument `est` to denote the estimate method combination we want.  If we refer back to the printed output of `test_fossil_uni` above, we see that the second method combination generates resampled values of `"MMR"` using the `"geomean"` centering algorithm, and it includes the observed value for the fossil sample.  Let's plot that.
+
+```{r, fig.width=7, fig.height=4}
+plot(test_fossil_uni, est=2) # plots second method (MMR)
+```
+
+The fossil sample is included as a vertical line because it's a single point estimate and is not resampled.
+
+We also might want to adjust the colors for each resampled distribution.  We can do that by using the argument `groupcols`, specifying a vector of colors with names for each element corresponding to the taxon sample names.
+
+```{r, fig.width=7, fig.height=4}
+speciescolors <- c("A. afarensis"="#352A87", "A. africanus"="#F9FB0E", "G. gorilla"="#EABA4B",
+                   "H. sapiens"="#09A9C0", "P. troglodytes"="#78BE7C")
+plot(test_fossil_uni, est=2, groupcols=speciescolors) # change the colors
+```
+
+We might further want to visualize the resampled difference in estimates for any given pair of samples.  We can do this by setting the argument `type` to `"diff"` (the default is `"est"`).  By default, this will produce histograms for all pairwise combinations of samples, which are generated by calculating the difference between all possible pairs of one value from each of the two resampled distributions.  That calculation is performed at the time of plotting so these plots may take a long time to generate if a large number of iterations was used by `SSDtest()`.
+
+By default, these histograms are plotted in a single grid of plots.  However, we'll plot them individually here to keep them legible using the arguments `gridplot` and `useradvance`.
+
+```{r, fig.width=7, fig.height=3}
+plot(test_fossil_uni, est=2, type="diff", # plots differences for all pairs of samples
+     gridplot=FALSE, useradvance=FALSE) # prints each plot separately without waiting for user input
+```
+
+Alternatively, we might want to plot the difference for a single pair of samples.  In that case, a vector of two integers specifying the samples to include is passed to the argument `diffs`. These integers are the order in which the samples were given to `SSDtest()`, and are the order that the samples appear in when the `SSDtest` object is printed.
+
+```{r, fig.width=7, fig.height=3}
+plot(test_fossil_uni, type="diff", est=2, diffs=c(1,2)) # plots diffs between first pair of samples
+```
+
+### Using `SSDtest()` with multiple fossil samples (univariate)
+
+We can also include more than one fossil sample in univariate tests, in which case any fossil samples larger than the smallest fossil sample will also be resampled down to the sample size of the smallest fossil sample.  Because we know that the number of unique combinations of resampled data sets for our comparative samples far exceeds `limit`, we can specify that we want to use Monte Carlo resampling for them by setting `exactcomp=FALSE`.  By default, `SSDtest()` will also attempt to perform exact resampling for all of the fossil samples (argument `exactfossil = TRUE`), switching to Monte Carlo resampling if the number of unique combinations of resampled data sets for a fossil taxon exceeds `limit`.
+
+```{r, echo=FALSE}
+set.seed(8915)
+```
+```{r}
+test_2fossil_uni <- SSDtest(
+     fossil=list("A. afarensis"=GordonAJBA[GordonAJBA$Species=="A. afarensis", "FEMHEAD"],
+	               "A. africanus"=GordonAJBA[GordonAJBA$Species=="A. africanus", "FEMHEAD"]),
+     comp=list("G. gorilla"=GordonAJBA[GordonAJBA$Species=="Gorilla gorilla", "FEMHEAD"],
+               "H. sapiens"=GordonAJBA[GordonAJBA$Species=="Homo sapiens", "FEMHEAD"],
+               "P. troglodytes"=GordonAJBA[GordonAJBA$Species=="Pan troglodytes", "FEMHEAD"]),
+     fossilsex=NULL,
+     compsex=list("G. gorilla"=GordonAJBA[GordonAJBA$Species=="Gorilla gorilla", "Sex"],
+                  "H. sapiens"=GordonAJBA[GordonAJBA$Species=="Homo sapiens", "Sex"],
+                  "P. troglodytes"=GordonAJBA[GordonAJBA$Species=="Pan troglodytes", "Sex"]),
+     methsUni=c("MMR", "BDI"),
+     exactcomp=FALSE,
+     nResamp=nResample)
+```
+
+As with the one fossil sample case we can print the output.
+
+```{r, fig.width=7, fig.height=7}
+test_2fossil_uni
+```
+
+We can also plot the output in the same way as we did earlier.
+
+```{r, fig.width=7, fig.height=4}
+plot(test_2fossil_uni, est=1, groupcols=speciescolors)
+```
+
+In this case we have a resampled distribution for one of the fossil samples in addition to all of the comparative samples.  If we want to better distinguish overlapping distributions, we can give a vector of one or more integer values to the argument `invert`.  This will flip the histograms of the corresponding sample(s) in the plot (and move those sample names to the bottom of the legend).
+
+```{r, fig.width=7, fig.height=6}
+plot(test_2fossil_uni, invert=2, est=1, groupcols=speciescolors)
+```
+
+And just as we did earlier, we can plot histograms for the difference in estimates for pairs of samples.
+
+```{r, fig.width=7, fig.height=4}
+plot(test_2fossil_uni, type="diff", est=2, diffs=c(2,3))
+```
+
+## Multivariate estimates
+
+Finally, we can test for difference in multivariate dimorphism between one or more fossil samples with missing data and one or more complete comparative data sets.  The procedures described below follow those outlined in Gordon et al. (2008), Gordon (2025a), and Gordon (2025b).  Please refer to those articles for more specific details.
+
+To begin with, let's specify a vector containing the names of all of the variables we'll include in our data sets.
+
+```{r, fig.width=7, fig.height=7}
+SSDvars <- c("HUMHEAD", "ELBOW0.5", "RADTV", "FEMHEAD",    
+             "FEMSHAFT0.5", "DISTFEM0.5", "PROXTIB0.5", "DISTTIB0.5")
+```
+
+Now let's run some tests.
+
+### Using `SSDtest()` with missing data in one fossil sample (multivariate)
+
+First, we'll run `SSDtest()` for the situation where we have a single fossil sample with missing data that we'd like to compare to one or more comparative samples with no missing data.  As in the univariate case, `SSDtest()` attempts to perform exact resampling for all of the comparative samples by default (argument `exactcomp = TRUE`) but shifts to Monte Carlo resampling if the number of unique resampled data sets exceeds `limit`. We'll set `exactcomp = FALSE` here to just use Monte Carlo sampling from the outset.
+
+The only multivariate method we'll run here is `"GMM"`.  Remember, the `"GMM"` approach (and `"GMsize"`, which can't be used with incomplete data) generates estimates of dimorphism for an overall size variable that is the geometric mean of all of the included variables.  These variables should all be of the same dimensionality (linear, area, volume) and measured in the same units.  If we wanted to, we could also use the `"TM"` approach.  Remember that `"TM"` estimates dimorphism for a single variable (the template variable) rather than an overall measure of size.  Also, remember that it's highly flawed - *don't use it!* (But if you really, really want to, the function will allow you to do it.  Just remember that `"GMM"` and `"TM"` are estimating dimorphism for different size variables.)
+
+```{r, echo=FALSE}
+set.seed(5240)
+```
+```{r}
+test_fossil_multi <- SSDtest(
+     fossil=list("A. afarensis"=GordonAJBA[GordonAJBA$Species=="A. afarensis", SSDvars]),
+     comp=list("G. gorilla"=GordonAJBA[GordonAJBA$Species=="Gorilla gorilla", SSDvars],
+               "H. sapiens"=GordonAJBA[GordonAJBA$Species=="Homo sapiens", SSDvars],
+               "P. troglodytes"=GordonAJBA[GordonAJBA$Species=="Pan troglodytes", SSDvars]),
+     fossilsex=NULL,
+     compsex=list("G. gorilla"=GordonAJBA[GordonAJBA$Species=="Gorilla gorilla", "Sex"],
+                  "H. sapiens"=GordonAJBA[GordonAJBA$Species=="Homo sapiens", "Sex"],
+                  "P. troglodytes"=GordonAJBA[GordonAJBA$Species=="Pan troglodytes", "Sex"]),
+     methsUni=c("MMR", "BDI"),
+     methsMulti=c("GMM"),
+     exactcomp = FALSE,
+     datastruc="both",
+     nResamp=nResample)
+```
+
+Above we've specified that we'd like to estimate dimorphism using the `"GMM"` multivariate method in conjunction with both the `"MMR"` and `"BDI"` univariate methods.  In addition, the argument `datastruc` is set to `"both"`.  The other options are `"complete"` and `"missing"`.  When set to `"complete"`, `SSDtest()` downsamples the comparative samples to the size of the fossil sample in every iteration of the resampling procedure, then estimates dimorphism in the comparative samples using all of the resampled data (i.e., not mimicking the missing data structure of the fossil sample).  Dimorphism is not estimated for the fossil sample when `datastruc="complete"`.  When it is `"missing"`, the pattern of missing data in the fossil sample is imposed on the resampled comparative datasets in each iteration (see Gordon et al., 2008 and Gordon, 2025a for more detail).  Dimorphism is also estimated for the fossil sample as a single point estimate.  When `datastruc="both"`, `SSDtest()` generates both sets of estimates (and analyzes them separately).
+
+### Viewing the resulting object
+
+Now let's take a look at the resulting object.  It will look very similar to the object produced in the univariate case with a few additional pieces of information.
+
+```{r}
+test_fossil_multi
+```
+
+There is some notable additional information beyond what we saw with a univariate `SSDtest` object, especially in relation to the resampling data structure.  In that section, the missing data resampling structure is reported.  Here it says, "sampling individuals, then imposing missing data pattern," the process described above.  In addition, the proportion of missing data in the fossil sample - and thus in the resampling structure - is also reported.  However, a different missing data resampling structure will be used when multiple fossil samples with missing data are included (more on that below).  
+
+### Structure of the object
+
+The structure of a `SSDtest` object produced by multivariate data is essentially the same as that produced by univariate data.  The one difference is that it contains multiple `dimorphResampledMulti` objects rather than `dimorphResampledUni` objects.  As before, we can plot those objects if we want to.
+
+```{r, fig.width=7, fig.height=4}
+plot(test_fossil_multi$estimates[["G. gorilla"]])
+```
+
+In the above plot we can see the effect on the distributions of resampled estimates of imposing the missing data structure onto the comparative sample.  Now let's plot the whole `SSDtest` object.
+
+### Plotting
+
+Plotting is exactly the same for multivariate significance tests as it is for the univariate case.  Using `plot()` generates histograms for the resampled values using the first methods combination in the `SSDtest` object.
+
+```{r, fig.width=7, fig.height=4}
+plot(test_fossil_multi)
+```
+
+Note that the x-axis label reports the univariate method, the multivariate method as a subscript, and whether or not the missing data structure was imposed in parentheses.  This first method combination uses complete data and does not impose the missing data pattern, so dimorphism isn't estimated for the fossil sample in this case.  We can take a look at the resampled distributions using the missing data structure by changing the estimate that's plotted (argument `est`).
+
+```{r, fig.width=7, fig.height=4}
+plot(test_fossil_multi, est=2, # plot the 2nd method combination: MMR, GMM, "missing" datastructure
+     groupcols=speciescolors) # use our previously specified color vector
+```
+
+As in the univariate case, the distributions of differences in resampled values can also be plotted.
+
+```{r, fig.width=7, fig.height=3}
+plot(test_fossil_multi, est=2, type="diff",
+     gridplot=FALSE, useradvance=FALSE)
+```
+
+### Using `SSDtest()` with missing data in multiple fossil samples (multivariate)
+
+Finally, we may want to include two or more fossil samples in the same set of significance tests.  In order to allow for direct comparison of estimates across all fossil samples, the same missing data structure must be imposed on all samples, fossil and comparative alike.  This follows the procedure developed in Gordon (2025b), which downsamples within each variable to the sample size for that variable in the fossil sample with the smallest sample for that particular variable.  See Gordon (2025b) for a more detailed explanation of this procedure.
+
+```{r, echo=FALSE}
+set.seed(249)
+```
+```{r}
+test_2fossil_multi <- SSDtest(
+     fossil=list("A. afarensis"=GordonAJBA[GordonAJBA$Species=="A. afarensis", SSDvars],
+	             "A. africanus"=GordonAJBA[GordonAJBA$Species=="A. africanus", SSDvars]),
+     comp=list("G. gorilla"=GordonAJBA[GordonAJBA$Species=="Gorilla gorilla", SSDvars],
+               "H. sapiens"=GordonAJBA[GordonAJBA$Species=="Homo sapiens", SSDvars],
+               "P. troglodytes"=GordonAJBA[GordonAJBA$Species=="Pan troglodytes", SSDvars]),
+     fossilsex=NULL,
+     compsex=list("G. gorilla"=GordonAJBA[GordonAJBA$Species=="Gorilla gorilla", "Sex"],
+                  "H. sapiens"=GordonAJBA[GordonAJBA$Species=="Homo sapiens", "Sex"],
+                  "P. troglodytes"=GordonAJBA[GordonAJBA$Species=="Pan troglodytes", "Sex"]),
+     methsUni=c("MMR", "BDI"),
+     methsMulti=c("GMM"),
+     exactcomp = FALSE,
+     exactfossil = TRUE,
+     datastruc="both",
+     nResamp=nResample)
+```
+
+Let's take a look at `test_2fossil_multi`.
+
+```{r}
+test_2fossil_multi
+```
+
+Here we can see that we have different numbers of resampled data sets for our two fossil samples because exact resampling was used for them, sampling each unique resampled data set exactly once.  All comparative taxa share the same number of Monte Carlo resampled data sets as specified by the argument `nResamp`.  Also, notice that the missing data resampling structure is quite different from the single fossil sample case: now it is "sampling variable-specific number of individuals for each variable," and below that is reported the sample size used for each variable in each iteration of the resampling procedure.
+
+Aside from those differences, the type of information reported is the same as in the single fossil sample example, and the structure of the object is the same.  We can also plot it in the same way:
+
+```{r, fig.width=7, fig.height=4}
+plot(test_2fossil_multi, groupcols=speciescolors)
+```
+
+However, because both fossil samples are resampled, we now have distributions for both of them when we plot estimates based on missing data.
+
+```{r, fig.width=7, fig.height=6}
+plot(test_2fossil_multi, est=2,
+     groupcols=speciescolors, invert=c(1,2)) # invert first and second sample distributions
+```
+
+And finally, we can again plot differences in resampled estimates.
+
+```{r, fig.width=7, fig.height=3}
+plot(test_2fossil_multi, est=2, type="diff",
+     gridplot=FALSE, useradvance=FALSE)
+```
+
+# Useful? Please cite it!
+
+Further information about all of these functions can be found in their help pages.  To get the full index of help pages for this package, use `help(package="dimorph")`.
+
+Also, if you use this package in your work, please use the following citations:
+
+```{r}
+citation(package="dimorph")
+```
+
+And if you use any of the data sets in this package, please refer to the help page for that data set for the proper citations.
+
+# References
+
+Campisano CJ. (2007) _Tephrostratigraphy and hominin paleoenvironments of the Hadar Formation, Afar Depression, Ethiopia_. Ph.D. thesis. Rutgers, The State University of New Jersey. [https://www.proquest.com/docview/304805803](https://www.proquest.com/docview/304805803)
+
+Godfrey LR, Lyon SK, Sutherland MR. (1993) Sexual dimorphism in large-bodied primates: The case of the subfossil lemurs. _American Journal of Physical Anthropology_. 90:315-334. [https://doi.org/10.1002/ajpa.1330900306](https://doi.org/10.1002/ajpa.1330900306)
+
+Gordon AD. (2025a) Interpreting statistical significance in hominin dimorphism: Power and Type I error rates for resampling tests of univariate and missing-data multivariate size dimorphism estimation methods in the fossil record. _Journal of Human Evolution_. 199:103630. [https://doi.org/10.1016/j.jhevol.2024.103630](https://doi.org/10.1016/j.jhevol.2024.103630)
+
+Gordon AD. (2025b) Sexual size dimorphism in _Australopithecus_: postcranial dimorphism differs significantly among _Australopithecus afarensis_, _A. africanus_, and modern humans despite low-power resampling analyses. _American Journal of Biological Anthropology_. 187:e70093. [https://onlinelibrary.wiley.com/doi/10.1002/ajpa.70093](https://onlinelibrary.wiley.com/doi/10.1002/ajpa.70093)
+
+Gordon AD, Green DJ, Richmond BG. (2008) Strong postcranial size dimorphism in _Australopithecus afarensis_: Results from two new resampling methods for multivariate data sets with missing data. _American Journal of Physical Anthropology_. 135:311-328. [https://doi.org/10.1002/ajpa.20745](https://doi.org/10.1002/ajpa.20745)
+
+Gordon AD, Green DJ, Jungers WL, Richmond BG. (2020) Limb proportions and positional behavior: revisiting the theoretical and empirical underpinnings for locomotor reconstruction in _Australopithecus africanus_. In Zipfel B, Richmond BG, and Ward CV, eds.: _Hominid Postcranial Remains from Sterkfontein, South Africa, 1936-1995_. Advances in Human Evolution Series. Oxford University Press. pp. 321-334. [Book Chapter](https://doi.org/10.1093/oso/9780197507667.003.0017) | [Appendix III](https://doi.org/10.1093/oso/9780197507667.005.0003) | [Appendix IV](https://doi.org/10.1093/oso/9780197507667.005.0004)
+
+Josephson SC, Juell KE, Rogers AR. (1996) Estimating sexual dimorphism by method-of-moments. _American Journal of Physical Anthropology_. 100:191-206. [https://doi.org/10.1002/(SICI)1096-8644(199606)100:2<191::AID-AJPA3>3.0.CO;2-0](https://doi.org/10.1002/(SICI)1096-8644(199606)100:2<191::AID-AJPA3>3.0.CO;2-0)
+
+Lee S-H. (2001) Assigned Resampling Method: A new method to estimate size sexual dimorphism in samples of unknown sex. _Anthropological Review_. 64:21–39. [https://doi.org/10.18778/1898-6773.64.02](https://doi.org/10.18778/1898-6773.64.02)
+
+Reno PL, Meindl RS, McCollum MA, Lovejoy CO. (2003) Sexual dimorphism in _Australopithecus afarensis_ was similar to that of modern humans. _Proceedings of the National Academy of Sciences_. 100:9404-9409. [https://doi.org/10.1073/pnas.1133180100](https://doi.org/10.1073/pnas.1133180100)
+
+Sasaki T, Semaw S, Rogers MJ, Simpson SW, Beyene Y, Asfaw B, White TD, Suwa G. (2021) Estimating sexual size dimorphism in fossil species from posterior probability densities. _Proceedings of the National Academy of Sciences_. 118:e2113943118. [https://doi.org/10.1073/pnas.2113943118](https://doi.org/10.1073/pnas.2113943118)
+
+Sokal RR, Braumann CA (1980) Significance tests for coefficients of variation and variability profiles. _Systematic Zoology_. 29:50–66. [https://doi.org/10.2307/2412626](https://doi.org/10.2307/2412626)
+
+Smith RJ. (1999) Statistics of sexual size dimorphism. _Journal of Human Evolution_. 36:423-458. [https://doi.org/10.1006/jhev.1998.0281](https://doi.org/10.1006/jhev.1998.0281)
+
