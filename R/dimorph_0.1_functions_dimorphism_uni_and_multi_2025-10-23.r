@@ -114,7 +114,7 @@
 #'      The template individual selected is the specimen that allows for the largest number of 
 #'     target variable estimates, maximizing the data set for that variable. A user-selected 
 #'     univariate method is then applied to the combined data set of actual and estimated values 
-#'     for the target variable.  Note that this method has been critiqued by multiple authors on 
+#'     for the target variable.  Note that this method has been critiqued by several authors on 
 #'     multiple grounds (see Gordon 2025a for a summary of those critiques and references), and is 
 #'     only included here for the sake of completeness.
 #' } Defaults to \code{"GMM"}.
@@ -141,6 +141,13 @@
 #' @param templatevar A character object or integer value specifying the name or column number 
 #'   of the variable in \code{x} to be estimated using the template method.  Ignored if template method 
 #'   is not used.  Defaults to \code{NULL}.
+#' @param completevars A logical scalar indicating whether geometric mean method multivariate estimates 
+#'   should require all variables to contain enough observations to calculate the selected univariate 
+#'   estimator.  If some variables need to be dropped, NA will be returned if \code{completevars} is
+#'   \code{TRUE}, while the geometric mean of the dimorphism estimate for the remaining variables will be 
+#'   returned if \code{completevars} is \code{FALSE}.  Defaults to \code{FALSE} (although this is always 
+#'   \code{TRUE} when \code{dimorph} is called by \code{\link[dimorph]{bootdimorph}}, 
+#'   \code{\link[dimorph]{SSDtest}}, or \code{\link[dimorph]{resampleSSD}}).
 #' @param na.rm A logical scalar indicating whether NA values should be stripped before
 #'   the computation proceeds.  Defaults to \code{TRUE}.
 #' @param ncorrection A logical scalar indicating whether to apply Sokal and Braumann's (1980) 
@@ -155,7 +162,7 @@
 #'   preserved as attributes.  \code{dimorphEstDF} objects are single-row data frames that contain the dimorphism 
 #'   estimate for \code{x} along with other associated information.  Applying \code{summary} to either of these 
 #'   objects provides information about the dataset and method used to generate it.
-#' @seealso \code{\link[mclust]{mclustBIC}},  \code{\link[dimorph]{SSDtest}}
+#' @seealso \code{\link[mclust]{mclustBIC}}, \code{\link[dimorph]{bootdimorph}}, \code{\link[dimorph]{SSDtest}}, \code{\link[dimorph]{resampleSSD}}
 #' @examples
 #' ## Univariate estimates:
 #' data(apelimbart)
@@ -276,7 +283,9 @@
 #'   Human Evolution}. 36:423-458. (\href{https://doi.org/10.1006/jhev.1998.0281}{https://doi.org/10.1006/jhev.1998.0281})
 #' @export
 dimorph <- function(x, method="SSD", methodMulti="GMM", sex=NULL, sex.female=1,
-                    center="geomean", ads=NULL, templatevar=NULL, na.rm=T, ncorrection=F,
+                    center="geomean", ads=NULL, templatevar=NULL,
+					completevars=F,
+					na.rm=T, ncorrection=F,
                     details=F, dfout=F) {
   uni <- NA
   {if (class(x)[1]=="data.frame" | class(x)[1]=="matrix") {
@@ -287,7 +296,7 @@ dimorph <- function(x, method="SSD", methodMulti="GMM", sex=NULL, sex.female=1,
   else if (class(x)[1]=="list") uni <- F}
   if (is.na(uni)) stop("'x' must be a numeric vector, matrix, dataframe, or list.")
   {if (uni) return(dimorph:::dimorphUni(x=x, method=method, sex=sex, sex.female=sex.female, center=center, ads=ads, na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout))
-  else if (!uni) return(dimorph:::dimorphMulti(x=x, methodUni=method, methodMulti=methodMulti, sex=sex, sex.female=sex.female, center=center, ads=ads, templatevar=templatevar, na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout))}
+  else if (!uni) return(dimorph:::dimorphMulti(x=x, methodUni=method, methodMulti=methodMulti, sex=sex, sex.female=sex.female, center=center, ads=ads, templatevar=templatevar, completevars=completevars, na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout))}
   return(NA)
 }
 
@@ -315,8 +324,9 @@ dimorphUni <- function(x, method="SSD", sex=NULL, sex.female=1, center="geomean"
 	attr(out$estimate, "details") <- list(ratio.means=NA,
 	                                      vars.used=NA,
 	                                      specimens.used=NA,
-										  model.parameters=NA,
-										  estvalues="raw")
+	                                      model.parameters=NA,
+                                        template.specimen=NA,
+                                        estvalues="raw")
     class(out) <- c("dimorphEstDF", "data.frame")
   }
   else {
@@ -334,6 +344,7 @@ dimorphUni <- function(x, method="SSD", sex=NULL, sex.female=1, center="geomean"
 								 proportion.missingdata.overall=NA,
 								 proportion.missingdata.realized=NA,
 								 proportion.templated=NA,
+                 template.specimen=NA,
 								 ratio.means=NA,
 								 vars.used=NA,
 								 specimens.used=NA,
@@ -652,7 +663,9 @@ dimorphUni <- function(x, method="SSD", sex=NULL, sex.female=1, center="geomean"
 #' @noRd
 dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL, 
                          sex.female=1, center="geomean", ads=NULL,
-                         templatevar=NULL, na.rm=T, ncorrection=F, details=F, dfout=F) {
+                         templatevar=NULL,
+						 completevars=F,
+						 na.rm=T, ncorrection=F, details=F, dfout=F) {
   methodMulti <- match.arg(methodMulti, choices=c("GMM", "GMsize", "TM"))
   methodUni <- match.arg(methodUni, choices=c("SSD", "MMR", "BDI", "MoM", "FMA", "BFM",
                                               "ERM", "CV", "CVsex", "sdlog", "sdlogsex"))
@@ -715,6 +728,7 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
 	    attr(out, "details")$proportion.missingdata.overall <- propmissoverall
 	    attr(out, "details")$proportion.missingdata.realized <- 0
 	    attr(out, "details")$proportion.templated <- NA
+        attr(out, "details")$template.specimen <- NA
 	    attr(out, "details")$methodMulti <- methodMulti
         if (details) {
           if(!is.null(colnames(x))) attr(out, "details")$vars.used <- colnames(x)
@@ -730,6 +744,7 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
 		out$proportion.missingdata.overall <- propmissoverall
 		out$proportion.missingdata.realized <- 0
 		out$proportion.templated <- NA
+        attributes(out[[1]])$details$template.specimen <- NA
         if (details) {
           if(!is.null(colnames(x))) attributes(out[[1]])$details$vars.used <- colnames(x)
         } 
@@ -737,7 +752,6 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
       return(out)
     } # end methodMulti "GMsize"
     else if(methodMulti=="GMM") { # start methodMulti "GMM"
-      #if (methodUni %in% c("CV", "CVsex", "sdlog", "sdlogsex")) warning("The 'GMM' multivariate method should NOT be used with the univariate methods 'CV', 'CVsex', 'sdlog', or 'sdlogsex'.")
       if (methodUni %in% c("CV", "CVsex", "sdlog", "sdlogsex")) stop("The 'GMM' multivariate method can NOT be used with the univariate methods 'CV', 'CVsex', 'sdlog', or 'sdlogsex'.")
       if (class(x)[1]=="matrix") x <- data.frame(x)
       #atleasttwo <- lapply(lapply(x, dimorph::not.is.na), sum) > 1
@@ -756,7 +770,6 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
           x <- x[atleast3]
         }
 	  }
-	  #
 	  # Drop specimens that no longer have any measurements
 	  if (!"list" %in% class(x)) {
 	    keep <- !(apply(is.na(x), prod, MARGIN=1))
@@ -772,7 +785,28 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
       ssd <- lapply(x, FUN=dimorph:::dimorphUni, method=methodUni, sex=sex,
                     sex.female=sex.female, center=center,
                     na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=F)
+      if(sum(is.na(ssd)) > 0) { # pull out NA variable and again remove specimens now without data
+        warning(paste0("The following variable(s) were removed because they generated\nNA estimates:\n",
+                       paste(names(ssd)[is.na(ssd)], collapse=", ")))
+		x <- x[names(ssd)[!is.na(ssd)]]
+		# remove any specimens with no data
+		if (!"list" %in% class(x)) {
+		  keep <- !(apply(is.na(x), prod, MARGIN=1))
+		  if (sum(!keep) > 0) {
+			x <- x[keep, ,drop=F]
+			if(!is.null(sex)) sex <- sex[keep]
+			propF.realized <- sum(sex==levels(sex)[sex.female]) / length(sex)
+				warning(paste0("The following specimen(s) were removed because they did not include\nat least one measurement after variables were removed:\n", paste(names(keep)[!keep], collapse=", ")))
+		  }
+		}
+		if(!is.null(sex)) propF.realized <- sum(sex==levels(sex)[sex.female]) / length(sex)
+		# recalculate ssd
+		ssd <- lapply(x, FUN=dimorph:::dimorphUni, method=methodUni, sex=sex,
+					  sex.female=sex.female, center=center,
+					  na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=F)
+      }
       out <- dimorph::geomean(unlist(ssd), na.rm=F) # if some variables have NAs for estimates, no overall estimate should be returned
+	  if (completevars & (length(x) < nvarsoverall)) out <- NA # if not all variables were used and completevars = TRUE
 	  {if (!dfout) {
         attributes(out) <- attributes(ssd[[1]])
 	    names(out) <- paste0(methodMulti, ".", methodUni)
@@ -801,11 +835,13 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
 		}}
 	    attr(out, "details")$proportion.missingdata.overall <- propmissoverall
 	    attr(out, "details")$proportion.templated <- NA
+        attr(out, "details")$template.specimen <- NA
 	    attr(out, "details")$proportion.female.overall <- propF.overall
 	    attr(out, "details")$proportion.female.realized <- propF.realized
 	    attr(out, "details")$ratio.means <- NA
 	    attr(out, "details")$methodMulti <- methodMulti
 	    attr(out, "details")$model.parameters <- NA
+	    attr(out, "details")$only.use.complete.vars <- completevars
 		class(out) <- c("dimorphEst", "numeric")
       }	  
       else {
@@ -844,6 +880,8 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
 		             vars.used=NA,
 					 specimens.used=NA,
 					 model.parameters=NA,
+					 only.use.complete.vars=completevars,
+                     template.specimen=NA,
 					 estvalues="raw")	
 		if (details) {
           if ("list" %in% class(x)) {
@@ -860,17 +898,21 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
       }}
       return(out)
     } # end methodMulti "GMM"
-	else if(methodMulti=="TM") { # start methodMulti "TM"
+	  else if(methodMulti=="TM") { # start methodMulti "TM"
       if (class(x)[1]=="list") stop("'x' must be formatted as a matrix or data frame to use method 'TM'.")
       if (class(x)[1]=="matrix") x <- data.frame(x)
-	  tmpEst <- dimorph:::TM(x, templatevar=templatevar)
+	    tmpEst <- dimorph:::TM(x, templatevar=templatevar)
       varsmissing <- colnames(tmpEst$template)[is.na(tmpEst$template)]
       {if(length(varsmissing)==ncol(tmpEst$templat)) {
-	    warning("No specimen could act as template.")
-	  }
-      else if(length(varsmissing) > 0) {
+	      warning("No specimen could act as template.")
+        tmpltspec <- NA
+	    }
+      else {
+        tmpltspec <- rownames(tmpEst$template)
+        if(length(varsmissing) > 0) {
         warning(paste0("The following variable(s) were removed because they\nwere not included in the template specimen:\n",
                        paste(varsmissing, collapse="\n")))
+        }
       }}
       specmissing <- names(tmpEst$TM)[is.na(tmpEst$TM)]
       if(length(specmissing) > 0) {
@@ -880,36 +922,38 @@ dimorphMulti <- function(x, methodMulti="GMM", methodUni="SSD", sex=NULL,
       out <- dimorph:::dimorphUni(tmpEst$TM, method=methodUni, sex=sex,
                     sex.female=sex.female, center=center, ads=ads,
                     na.rm=na.rm, ncorrection=ncorrection, details=details, dfout=dfout)
-	  x <- x[!is.na(tmpEst$template), !is.na(tmpEst$template)]
-	  {if (!dfout) {
-	    names(out) <- paste0(methodMulti, ".", methodUni)
+	    x <- x[!is.na(tmpEst$template), !is.na(tmpEst$template)]
+	    {if (!dfout) {
+	      names(out) <- paste0(methodMulti, ".", methodUni)
         attr(out, "details")$n.vars.overall <- nvarsoverall
         attr(out, "details")$n.specimens.overall <- nspecoverall
-		attr(out, "details")$proportion.female.overall <- propF.overall
+		    attr(out, "details")$proportion.female.overall <- propF.overall
         attr(out, "details")$n.vars.realized <- sum(!is.na(tmpEst$template))
-	    attr(out, "details")$proportion.missingdata.overall <- propmissoverall
-	    attr(out, "details")$proportion.missingdata.realized <- sum(is.na(x)) / (nrow(x)*ncol(x))
-	    attr(out, "details")$proportion.templated <- tmpEst$prop.templated
-	    attr(out, "details")$methodMulti <- methodMulti
-	    attr(out, "details")$vars.used <- NA
-	    attr(out, "details")$specimens.used <- NA
+	      attr(out, "details")$proportion.missingdata.overall <- propmissoverall
+	      attr(out, "details")$proportion.missingdata.realized <- sum(is.na(x)) / (nrow(x)*ncol(x))
+	      attr(out, "details")$proportion.templated <- tmpEst$prop.templated
+	      attr(out, "details")$methodMulti <- methodMulti
+        attr(out, "details")$template.specimen <- tmpltspec
+	      attr(out, "details")$vars.used <- NA
+	      attr(out, "details")$specimens.used <- NA
         if (details) {
           if(!is.null(colnames(x))) attr(out, "details")$vars.used <- colnames(x)
-	      if(!is.null(rownames(x))) attr(out, "details")$specimens.used <- rownames(x)
+	        if(!is.null(rownames(x))) attr(out, "details")$specimens.used <- rownames(x)
         }
       }	  
       else {
-	    rownames(out) <- paste0(methodMulti, ".", methodUni)
-		out$methodMulti <- methodMulti
+	      rownames(out) <- paste0(methodMulti, ".", methodUni)
+		    out$methodMulti <- methodMulti
         out$n.vars.overall <- nvarsoverall
         out$n.specimens.overall <- nspecoverall
-		out$proportion.female.overall <- propF.overall
+		    out$proportion.female.overall <- propF.overall
         out$n.vars.realized <- sum(!is.na(tmpEst$template))
-		out$proportion.missingdata.overall <- propmissoverall
-		out$proportion.missingdata.realized <- sum(is.na(x)) / (nrow(x)*ncol(x))
-		out$proportion.templated <- tmpEst$prop.templated
-		attributes(out[[1]])$details$vars.used <- NA
-		attributes(out[[1]])$details$specimens.used <- NA
+        out$proportion.missingdata.overall <- propmissoverall
+        out$proportion.missingdata.realized <- sum(is.na(x)) / (nrow(x)*ncol(x))
+        out$proportion.templated <- tmpEst$prop.templated
+        attributes(out[[1]])$details$template.specimen <- tmpltspec
+        attributes(out[[1]])$details$vars.used <- NA
+        attributes(out[[1]])$details$specimens.used <- NA
         if (details) {
           if(!is.null(colnames(x))) attributes(out[[1]])$details$vars.used <- colnames(x)
           if(!is.null(rownames(x))) attributes(out[[1]])$details$specimens.used <- rownames(x)

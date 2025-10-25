@@ -1,7 +1,7 @@
 Package: dimorph
 Type: Package
 Title: Dimorphism Calculation and Estimation
-Version: 0.1.7
+Version: 0.1.11
 Authors@R: 
     person("Adam", "Gordon",
            email = "agordon@albany.edu",
@@ -27,3 +27,7 @@ Imports:
     stats,
     utils
 License: GPL (>= 3)
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

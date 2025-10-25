@@ -107,6 +107,19 @@ bootdimorph <- function(x,
 	    if (is.null(colnames(x))) colnames(x) <- "VAR"
 	    x <- data.frame(x)
 	  }
+	  # check for missing data, proceed according to na.rm, generate warning or error
+	  if (sum(is.na(x)) > 0 | sum(is.na(sex)) > 0) {
+	    if (!na.rm) stop("There are missing data and 'na.rm' is FALSE.")
+	    else {
+	      rmads <- unique(c(which(is.na(x[,1])), which(is.na(sex))))
+		  x <- x[-rmads, , drop=FALSE]
+		  if (!is.null(sex)) {
+		    sex <- sex[-rmads]
+		    sex <- droplevels(factor(sex))
+		  }
+		  warning(paste0(length(rmads), " observations have been removed due to missing data."))
+	    }
+	  }
 	  #xnames <- rownames(x)
 	  #x <- unlist(x)
 	  #names(x) <- xnames
@@ -117,6 +130,19 @@ bootdimorph <- function(x,
   else if (class(x)[1]=="numeric" | class(x)[1]=="integer") {
     x <- data.frame(VAR=x)
     uni <- T
+	# check for missing data, proceed according to na.rm, generate warning or error
+	if (sum(is.na(x)) > 0 | sum(is.na(sex)) > 0) {
+	  if (!na.rm) stop("There are missing data and 'na.rm' is FALSE.")
+	  else {
+	    rmads <- unique(c(which(is.na(x[,1])), which(is.na(sex))))
+		x <- x[-rmads, , drop=FALSE]
+		if (!is.null(sex)) {
+		  sex <- sex[-rmads]
+		  sex <- droplevels(factor(sex))
+		}
+		warning(paste0(length(rmads), " observations have been removed due to missing data."))
+	  }
+	}
   }
   else if (class(x)[1]=="list") uni <- F}
   if (is.na(uni)) stop("'x' must be a numeric vector, matrix, dataframe, or list.")
@@ -645,7 +671,9 @@ SSDtest <- function(fossil=NULL,
   methsMulti <- match.arg(methsMulti, choices=c("GMM", "GMsize", "TM"), several.ok=T)
   center <- match.arg(center, choices=c("geomean", "mean"), several.ok=T)
   datastruc <- match.arg(datastruc, choices=c("missing", "complete", "both"))
+  fossilNull <- TRUE # Flag for running standard randomization test
   if (!is.null(fossil)) {
+    fossilNull <- FALSE
     if (!inherits(fossil, c("list", "data.frame", "matrix"))) stop("'fossil' must be a data frame or matrix holding metric data for a sample, or a list of such objects.")
     #if (!class(fossil) %in% c("list", "data.frame", "matrix")) stop("'fossil' must be a data frame or matrix holding metric data for a sample, or a list of such objects.")
     if (!inherits(fossil, "list")) fossil <- list(fossil)
@@ -743,7 +771,31 @@ SSDtest <- function(fossil=NULL,
 	  if (!is.null(compsex[[i]])) if(nrow(comp[[i]])!=length(compsex[[i]])) stop("When sex information is provided, the number of individuals in the sex\nvector in 'compsex' must match the number of individuals in the corresponding\ndata set in 'comp'.")
 	}
   }
-
+  #################################
+  # STANDARD RANDOMIZATION IF NO FOSSIL SAMPLE
+  #################################
+  if (fossilNull) { # run standard randomization and return object
+    out <- NULL
+    # add warning that a standard randomization will be performed and some arguments may be ignored
+    # add option to constrain sampling to same sex? i.e., randomize within males and randomize within females.
+    # 'estimates' will be a list where each element is not a sample, but rather a pairwise comparison 
+    #    between samples
+    # for each pair, calculate number of exact combinations if exact is selected and compare to 'limit',
+    #    running Monte Carlo if necessary
+    # for each pair, record the smaller sample name (and choose the lower factor number if they are tied
+    #    for sample size) and then record the adresses chosen for the smaller sample from a combined vector
+    #    of both samples for each iteration, where the first iteration is the actual sample.  This will 
+    #    necessitate recording different sampling addresses for every pair.
+    # 'estimate' data frame for each pair will contain an estimate of the difference for that pair rather than 
+    #    an estimate of the value for a sample.  A column should be added to denot which set of addresses was used
+    #    for a particular difference, with the first set of addresses always being the actual difference.
+  
+  
+    return(out)
+  }
+  #################################
+  # END OF STANDARD RANDOMIZATION IF NO FOSSIL SAMPLE
+  #################################
   # get structure, but do differently if all data are complete and
   #  it's just a test using full sample sizes for all samples,
   #  in which case I should be using bootdimorph to get the
@@ -1157,12 +1209,23 @@ SSDtest <- function(fossil=NULL,
   colnames(p.twosided) <- names(xDiffs)
   p.twosided <- p.twosided[1:(nrow(p.twosided)/2),] # same values for A-B and B-A
   p <- list(p.onesided=p.onesided, p.twosided=p.twosided)
+  wrntxt <- NULL
+  for (i in 1:length(xDiffs)) {
+    for (j in 1:length(xDiffs[[i]])) {
+      if (sum(is.na(xDiffs[[i]][[j]])) > 0) wrntxt <- paste0(wrntxt, "  ", names(xDiffs)[i], ": ",  names(xDiffs[[i]])[j], "\n")
+	}
+  }
+  if (!is.null(wrntxt)) {
+    wrntxt <- paste0("The following comparisons contain NAs that were\ndropped in the calculation of p-values:\n", wrntxt)
+	warning(wrntxt)
+  }
   out <- list(estimates=xSSDres,
 			  #differences=xDiffs, # do I really need to save these? These can be recaluclated when needed.
 			  methcombos=methcombos,
 			  #H0=H0,
 			  pvalues=p)
   class(out) <- "SSDtest"
+  attr(out, "warntext") <- wrntxt
   return(out)
 }
 

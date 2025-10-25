@@ -489,7 +489,7 @@ getsampleaddresses <- function(comparative,
 #' Resample Univariate or Multivariate Dimorphism
 #' 
 #' Function to generate a set of resampled dimorphism estimates for a univariate or multivariate sample.
-#'   Called by \code{\link{SSDtest}}.
+#'   Called by \code{\link{SSDtest}} and \code{\link{bootdimorph}}.
 #' @param x A matrix or data frame of measurements from a comparative sample, with rows
 #'   corresponding to individual specimens and columns corresponding to size variables.  Sex data
 #'   should not be included.  Should not include \code{NA}s; resampling addresses will not be
@@ -591,7 +591,7 @@ getsampleaddresses <- function(comparative,
 #'                             struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars],
 #'                             compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
 #'                             nResamp=100,
-#'                             datastruc="both",
+#'                             datastruc="complete",
 #'                             methsMulti = c("GMM"),
 #'                             methsUni = c("SSD", "MMR", "BDI"),
 #'                             matchvars=TRUE,
@@ -606,11 +606,24 @@ getsampleaddresses <- function(comparative,
 #'                compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
 #'                nResamp=100, matchvars=TRUE, replace=FALSE)
 #' gorSSDmulti2 <- resampleSSD(x=addresses,
-#'                             datastruc="both",
+#'                             datastruc="complete",
 #'                             methsMulti = c("GMM"),
 #'                             methsUni = c("SSD", "MMR", "BDI"))
 #' gorSSDmulti2
 #' plot(gorSSDmulti2)
+#'
+#' # or run with missing data (exclude 'SSD' because some variables won't have both sexes)
+#' addresses <- getsampleaddresses(comparative=
+#'                apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
+#'                struc=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars],
+#'                compsex=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+#'                nResamp=100, matchvars=TRUE, replace=FALSE)
+#' gorSSDmulti3 <- resampleSSD(x=addresses,
+#'                             datastruc="both",
+#'                             methsMulti = c("GMM"),
+#'                             methsUni = c("MMR", "BDI"))
+#' gorSSDmulti3
+#' plot(gorSSDmulti3)
 #' @export
 resampleSSD <- function(x,
                         struc=NULL,
@@ -757,6 +770,19 @@ resampleSSDuni <- function(x,
     if (inherits(x, "numeric") | inherits(x, "integer")) x <- data.frame(VAR=x)
     # if (class(x)=="numeric" | class(x)=="integer") x <- data.frame(VAR=x)
     if (ncol(x) > 1) stop("This function cannot be used for multivariate datasets.")
+	# check for missing data, proceed according to na.rm, generate warning or error
+	if (sum(is.na(x)) > 0 | sum(is.na(compsex)) > 0) {
+	  if (!na.rm) stop("There are missing data and 'na.rm' is FALSE.")
+	  else {
+	    rmads <- unique(c(which(is.na(x[,1])), which(is.na(compsex))))
+		x <- x[-rmads, , drop=FALSE]
+		if (!is.null(compsex)) {
+		  compsex <- compsex[-rmads]
+		  compsex <- droplevels(factor(compsex))
+		}
+		warning(paste0(length(rmads), " observations have been removed due to missing data."))
+	  }
+	}
     n <- nrow(x)
     comparative <- x
 	rm(x)
@@ -986,6 +1012,7 @@ resampleSSDmulti <- function(x,
                             sex.female=sex.female,
 							center=center,
 							templatevar=templatevar,
+							completevars=TRUE,
 							na.rm=na.rm,
 							ncorrection=ncorrection,
 							details=F)
@@ -1009,6 +1036,7 @@ resampleSSDmulti <- function(x,
                               sex.female=sex.female,
 							  center=center,
 							  templatevar=templatevar,
+							  completevars=TRUE,
                               na.rm=na.rm,
 							  ncorrection=ncorrection,
 							  details=F)
@@ -1026,6 +1054,7 @@ resampleSSDmulti <- function(x,
 							  sex.female=sex.female,
 							  center=center,
 							  templatevar=templatevar,
+							  completevars=TRUE,
 							  na.rm=na.rm,
 							  ncorrection=ncorrection,
 							  details = T)

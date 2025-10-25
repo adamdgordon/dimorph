@@ -155,6 +155,8 @@ summary.dimorphEst <- function(object, verbose=F, ...) {
     txt <- paste0(txt, "proportion of missing data (realized): ", round(attr(object,"details")$proportion.missingdata.realized,5),"\n")
   if(!is.na(attr(object,"details")$proportion.templated))
     txt <- paste0(txt, "proportion of template variable data estimated: ", round(attr(object,"details")$proportion.templated,5),"\n")
+  if(!is.null(attr(object,"details")$template.specimen)) if(!is.na(attr(object,"details")$template.specimen))
+    txt <- paste0(txt, "template specimen: ", attr(object,"details")$template.specimen,"\n")    
   centertxt <- attr(object,"details")$center
   if (!is.na(centertxt)) {
     if(centertxt=="geomean") centertxt <- "geometric mean"
@@ -218,6 +220,8 @@ summary.dimorphEstDF <- function(object, verbose=F, ...) {
     txt <- paste0(txt, "proportion of missing data (realized): ", round(object$proportion.missingdata.realized,5),"\n")
   if(!is.na(object$proportion.templated))
     txt <- paste0(txt, "proportion of template variable data estimated: ", round(object$proportion.templated,5),"\n")
+  if(!is.null(attr(object[[1]],"details")$template.specimen)) if(!is.na(attr(object[[1]],"details")$template.specimen))
+    txt <- paste0(txt, "template specimen: ", attr(object[[1]],"details")$template.specimen,"\n")    
   centertxt <- object$center
   if (!is.na(centertxt)) {
     if(centertxt=="geomean") centertxt <- "geometric mean"
@@ -256,6 +260,10 @@ summary.dimorphEstDF <- function(object, verbose=F, ...) {
 #' @export
 plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
   CIheight <- 0.4
+  # reverse methodUni level orders for plotting
+  x$estimates$methodUni <- factor(as.character(x$estimates$methodUni), levels=rev(levels(x$estimates$methodUni)))
+  if (!is.null(x$CI)) x$CI$methodUni <- factor(as.character(x$CI$methodUni), levels=rev(levels(x$CI$methodUni)))
+  if (!is.null(x$CIbias)) x$CIbias$methodUni <- factor(as.character(x$CIbias$methodUni), levels=rev(levels(x$CIbias$methodUni)))
   if (!is.null(exclude)) { # all entries must be in var names
     if (!prod(exclude %in% as.character(unique(x$estimates$methodUni)))) stop("`exclude` must either be NULL or a vector containing\nunivariate methods in this object to exclude from plotting.")
 	x$estimates <- x$estimates[!(x$estimates$methodUni %in% exclude),]
@@ -288,26 +296,26 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
   if (nSSDv > 0 & sum(is.na(x$estimates[x$estimates$methodUni %in% SSDvars,type])) < length(x$estimates[x$estimates$methodUni %in% SSDvars,type])) {
     {if (type=="estimate") {
 	  pltSSD <- ggplot2::ggplot()
-	  {if (attr(x$estimates, "estvalues")=="raw") pltSSD <- pltSSD + ggplot2::scale_x_log10() + ggplot2::geom_vline(xintercept=1) + ggplot2::xlab("estimate (axis scale is log10 transformed)")
-	  else pltSSD <- pltSSD + ggplot2::geom_vline(xintercept=0)}
+	  {if (attr(x$estimates, "estvalues")=="raw") pltSSD <- pltSSD + ggplot2::scale_x_log10() + ggplot2::geom_vline(xintercept=1, linetype=1, na.rm=T) + ggplot2::xlab("estimate (axis scale is log10 transformed)")
+	  else pltSSD <- pltSSD + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) + ggplot2::xlab("ln(estimate)")}
 	  pltSSD <- pltSSD + ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% SSDvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% SSDvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none")
     }
-	else if (type=="bias") pltSSD <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+	else if (type=="bias") pltSSD <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% SSDvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% SSDvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none") +
 			ggplot2::xlab("bias from sample SSD")}
     CIdat <- NULL
     if (type=="estimate" & !is.null(x$CI)) CIdat <- x$CI		  
     else if (type=="bias" & !is.null(x$CIbias)) CIdat <- x$CIbias			  
     if (!is.null(CIdat)) {		  
-      # only do one or the other if upper or lower bound
+	  # only do one or the other if upper or lower bound
 	  segdatSSDlow <- NULL
 	  segdatSSDhigh <- NULL
 	  if (attr(x, "alternative")=="two.sided" | attr(x, "alternative")=="greater") {
@@ -315,6 +323,9 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
                                  y=CIheight,
 								 xend=CIdat$lower_lim[CIdat$methodUni %in% SSDvars],
 								 yend=-CIheight)
+		segdatSSDlow$method <- CIdat$method[CIdat$methodUni %in% SSDvars]
+		segdatSSDlow <- segdatSSDlow[order(segdatSSDlow$method),]
+		rownames(segdatSSDlow) <- 1:nrow(segdatSSDlow)
         segdatSSDlow$y <- segdatSSDlow$y + as.integer(rownames(segdatSSDlow))
         segdatSSDlow$yend <- segdatSSDlow$yend + as.integer(rownames(segdatSSDlow))
 	  }
@@ -323,6 +334,9 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
                                  y=CIheight,
 								 xend=CIdat$upper_lim[CIdat$methodUni %in% SSDvars],
 								 yend=-CIheight)
+		segdatSSDhigh$method <- CIdat$method[CIdat$methodUni %in% SSDvars]
+		segdatSSDhigh <- segdatSSDhigh[order(segdatSSDhigh$method),]
+		rownames(segdatSSDhigh) <- 1:nrow(segdatSSDhigh)
         segdatSSDhigh$y <- segdatSSDhigh$y + as.integer(rownames(segdatSSDhigh))
         segdatSSDhigh$yend <- segdatSSDhigh$yend + as.integer(rownames(segdatSSDhigh))
 	  }
@@ -330,22 +344,22 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
       pltSSD <- pltSSD + ggplot2::geom_segment(data=segdatSSD, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
                                        color="black")
       pltSSD <- pltSSD + ggplot2::geom_segment(data=segdatSSD, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
-                                       color="red", linetype=3)
+                                       color="red", linetype=2)
     }
   } # end pltSSD
   # generate pltCV
   if (nCVv > 0 & sum(is.na(x$estimates[x$estimates$methodUni %in% CVvars,type])) < length(x$estimates[x$estimates$methodUni %in% CVvars,type])) {
-    {if (type=="estimate") pltCV <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+    {if (type=="estimate") pltCV <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% CVvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% CVvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none")
-	else if (type=="bias") pltCV <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+	else if (type=="bias") pltCV <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% CVvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% CVvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none") +
 			ggplot2::xlab("bias from sample CVsex")}
     CIdat <- NULL
@@ -360,6 +374,9 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
                                  y=CIheight,
 								 xend=CIdat$lower_lim[CIdat$methodUni %in% CVvars],
 								 yend=-CIheight)
+		segdatCVlow$method <- CIdat$method[CIdat$methodUni %in% CVvars]
+		segdatCVlow <- segdatCVlow[order(segdatCVlow$method),]
+		rownames(segdatCVlow) <- 1:nrow(segdatCVlow)
         segdatCVlow$y <- segdatCVlow$y + as.integer(rownames(segdatCVlow))
         segdatCVlow$yend <- segdatCVlow$yend + as.integer(rownames(segdatCVlow))
 	  }
@@ -368,6 +385,9 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
                                  y=CIheight,
 								 xend=CIdat$upper_lim[CIdat$methodUni %in% CVvars],
 								 yend=-CIheight)
+		segdatCVhigh$method <- CIdat$method[CIdat$methodUni %in% CVvars]
+		segdatCVhigh <- segdatCVhigh[order(segdatCVhigh$method),]
+		rownames(segdatCVhigh) <- 1:nrow(segdatCVhigh)
         segdatCVhigh$y <- segdatCVhigh$y + as.integer(rownames(segdatCVhigh))
         segdatCVhigh$yend <- segdatCVhigh$yend + as.integer(rownames(segdatCVhigh))
 	  }
@@ -375,22 +395,22 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
       pltCV <- pltCV + ggplot2::geom_segment(data=segdatCV, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
                                        color="black")
       pltCV <- pltCV + ggplot2::geom_segment(data=segdatCV, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
-                                       color="red", linetype=3)
+                                       color="red", linetype=2)
     }
   } # end pltCV
   # generate pltsdlog
   if (nsdlogv > 0 & sum(is.na(x$estimates[x$estimates$methodUni %in% sdlogvars,type])) < length(x$estimates[x$estimates$methodUni %in% sdlogvars,type])) {
-    {if (type=="estimate") pltsdlog <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+    {if (type=="estimate") pltsdlog <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% sdlogvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% sdlogvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none")
-    else if (type=="bias") pltsdlog <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+    else if (type=="bias") pltsdlog <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% sdlogvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% sdlogvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none") +
 			ggplot2::xlab("bias from sample sdlogsex")}
     CIdat <- NULL
@@ -405,6 +425,9 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
                                  y=CIheight,
 								 xend=CIdat$lower_lim[CIdat$methodUni %in% sdlogvars],
 								 yend=-CIheight)
+		segdatsdloglow$method <- CIdat$method[CIdat$methodUni %in% sdlogvars]
+		segdatsdloglow <- segdatsdloglow[order(segdatsdloglow$method),]
+		rownames(segdatsdloglow) <- 1:nrow(segdatsdloglow)
         segdatsdloglow$y <- segdatsdloglow$y + as.integer(rownames(segdatsdloglow))
         segdatsdloglow$yend <- segdatsdloglow$yend + as.integer(rownames(segdatsdloglow))
 	  }
@@ -413,6 +436,9 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
                                  y=CIheight,
 								 xend=CIdat$upper_lim[CIdat$methodUni %in% sdlogvars],
 								 yend=-CIheight)
+		segdatsdloghigh$method <- CIdat$method[CIdat$methodUni %in% sdlogvars]
+		segdatsdloghigh <- segdatsdloghigh[order(segdatsdloghigh$method),]
+		rownames(segdatsdloghigh) <- 1:nrow(segdatsdloghigh)
         segdatsdloghigh$y <- segdatsdloghigh$y + as.integer(rownames(segdatsdloghigh))
         segdatsdloghigh$yend <- segdatsdloghigh$yend + as.integer(rownames(segdatsdloghigh))
 	  }
@@ -420,7 +446,7 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
       pltsdlog <- pltsdlog + ggplot2::geom_segment(data=segdatsdlog, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
                                        color="black")
       pltsdlog <- pltsdlog + ggplot2::geom_segment(data=segdatsdlog, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
-                                       color="red", linetype=3)
+                                       color="red", linetype=2)
     }
   } # end pltsdlog
   # build plotting text
@@ -475,6 +501,17 @@ plot.dimorphResampledUni <- function(x, type="estimate", exclude=NULL, ...) {
 #' @export
 plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, excludeMulti=NULL, ...) {
   CIheight <- 0.4
+  # reverse methodUni and methodMulti level orders for plotting
+  x$estimates$methodUni <- factor(as.character(x$estimates$methodUni), levels=rev(levels(x$estimates$methodUni)))
+  x$estimates$methodMulti <- factor(as.character(x$estimates$methodMulti), levels=rev(levels(x$estimates$methodMulti)))
+  if (!is.null(x$CI)) {
+    x$CI$methodUni <- factor(as.character(x$CI$methodUni), levels=rev(levels(x$CI$methodUni)))
+    x$CI$methodMulti <- factor(as.character(x$CI$methodMulti), levels=rev(levels(x$CI$methodMulti)))
+  }
+  if (!is.null(x$CIbias)) {
+    x$CIbias$methodUni <- factor(as.character(x$CIbias$methodUni), levels=rev(levels(x$CIbias$methodUni)))
+    x$CIbias$methodMulti <- factor(as.character(x$CIbias$methodMulti), levels=rev(levels(x$CIbias$methodMulti)))
+  }
   if (!is.null(exclude)) { # all entries must be in var names
     if (!prod(exclude %in% as.character(unique(x$estimates$methodUni)))) stop("`exclude` must either be NULL or a vector containing\nunivariate methods in this object to exclude from plotting.")
 	x$estimates <- x$estimates[!(x$estimates$methodUni %in% exclude),]
@@ -518,19 +555,19 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
   if (nSSDv > 0 & sum(is.na(x$estimates[x$estimates$methodUni %in% SSDvars,type])) < length(x$estimates[x$estimates$methodUni %in% SSDvars,type])) {
     {if (type=="estimate") {
 	  pltSSD <- ggplot2::ggplot()
-	  {if (attr(x$estimates, "estvalues")=="raw") pltSSD <- pltSSD + ggplot2::scale_x_log10() + ggplot2::geom_vline(xintercept=1) + ggplot2::xlab("estimate (axis scale is log10 transformed)")
-	  else pltSSD <- pltSSD + ggplot2::geom_vline(xintercept=0)}
+	  {if (attr(x$estimates, "estvalues")=="raw") pltSSD <- pltSSD + ggplot2::scale_x_log10() + ggplot2::geom_vline(xintercept=1, linetype=1, na.rm=T) + ggplot2::xlab("estimate (axis scale is log10 transformed)")
+	  else pltSSD <- pltSSD + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) + ggplot2::xlab("ln(estimate)")}
 	  pltSSD <- pltSSD + ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% SSDvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% SSDvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none", axis.text.y=ggplot2::element_text(size=fntsize))
     }
-	else if (type=="bias") pltSSD <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+	else if (type=="bias") pltSSD <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% SSDvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% SSDvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none", axis.text.y=ggplot2::element_text(size=fntsize)) +
 			ggplot2::xlab("bias from sample SSD")}
 
@@ -546,6 +583,9 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
                                  y=CIheight,
 								 xend=CIdat$lower_lim[CIdat$methodUni %in% SSDvars],
 								 yend=-CIheight)
+		segdatSSDlow$method <- CIdat$method[CIdat$methodUni %in% SSDvars]
+		segdatSSDlow <- segdatSSDlow[order(segdatSSDlow$method),]
+		rownames(segdatSSDlow) <- 1:nrow(segdatSSDlow)
         segdatSSDlow$y <- segdatSSDlow$y + as.integer(rownames(segdatSSDlow))
         segdatSSDlow$yend <- segdatSSDlow$yend + as.integer(rownames(segdatSSDlow))
 	  }
@@ -554,6 +594,9 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
                                  y=CIheight,
 								 xend=CIdat$upper_lim[CIdat$methodUni %in% SSDvars],
 								 yend=-CIheight)
+		segdatSSDhigh$method <- CIdat$method[CIdat$methodUni %in% SSDvars]
+		segdatSSDhigh <- segdatSSDhigh[order(segdatSSDhigh$method),]
+		rownames(segdatSSDhigh) <- 1:nrow(segdatSSDhigh)
         segdatSSDhigh$y <- segdatSSDhigh$y + as.integer(rownames(segdatSSDhigh))
         segdatSSDhigh$yend <- segdatSSDhigh$yend + as.integer(rownames(segdatSSDhigh))
 	  }
@@ -561,22 +604,22 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
       pltSSD <- pltSSD + ggplot2::geom_segment(data=segdatSSD, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
                                        color="black")
       pltSSD <- pltSSD + ggplot2::geom_segment(data=segdatSSD, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
-                                       color="red", linetype=3)
+                                       color="red", linetype=2)
     }
   } # end pltSSD
   # generate pltCV
   if (nCVv > 0 & sum(is.na(x$estimates[x$estimates$methodUni %in% CVvars,type])) < length(x$estimates[x$estimates$methodUni %in% CVvars,type])) {
-    {if (type=="estimate") pltCV <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+    {if (type=="estimate") pltCV <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% CVvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% CVvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none", axis.text.y=ggplot2::element_text(size=fntsize))
-    else if (type=="bias") pltCV <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+    else if (type=="bias") pltCV <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% CVvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% CVvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none", axis.text.y=ggplot2::element_text(size=fntsize)) +
 			ggplot2::xlab("bias from sample CV")}
     CIdat <- NULL
@@ -591,6 +634,9 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
                                  y=CIheight,
 								 xend=CIdat$lower_lim[CIdat$methodUni %in% CVvars],
 								 yend=-CIheight)
+		segdatCVlow$method <- CIdat$method[CIdat$methodUni %in% CVvars]
+		segdatCVlow <- segdatCVlow[order(segdatCVlow$method),]
+		rownames(segdatCVlow) <- 1:nrow(segdatCVlow)
         segdatCVlow$y <- segdatCVlow$y + as.integer(rownames(segdatCVlow))
         segdatCVlow$yend <- segdatCVlow$yend + as.integer(rownames(segdatCVlow))
 	  }
@@ -599,6 +645,9 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
                                  y=CIheight,
 								 xend=CIdat$upper_lim[CIdat$methodUni %in% CVvars],
 								 yend=-CIheight)
+		segdatCVhigh$method <- CIdat$method[CIdat$methodUni %in% CVvars]
+		segdatCVhigh <- segdatCVhigh[order(segdatCVhigh$method),]
+		rownames(segdatCVhigh) <- 1:nrow(segdatCVhigh)
         segdatCVhigh$y <- segdatCVhigh$y + as.integer(rownames(segdatCVhigh))
         segdatCVhigh$yend <- segdatCVhigh$yend + as.integer(rownames(segdatCVhigh))
 	  }
@@ -606,22 +655,22 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
       pltCV <- pltCV + ggplot2::geom_segment(data=segdatCV, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
                                        color="black")
       pltCV <- pltCV + ggplot2::geom_segment(data=segdatCV, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
-                                       color="red", linetype=3)
+                                       color="red", linetype=2)
     }
   } # end pltCV
   # generate pltsdlog
   if (nsdlogv > 0 & sum(is.na(x$estimates[x$estimates$methodUni %in% sdlogvars,type])) < length(x$estimates[x$estimates$methodUni %in% sdlogvars,type])) {
-    {if (type=="estimate") pltsdlog <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+    {if (type=="estimate") pltsdlog <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% sdlogvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% sdlogvars,],
-                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=estimate, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none", axis.text.y=ggplot2::element_text(size=fntsize))
-    else if (type=="bias") pltsdlog <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0) +
+    else if (type=="bias") pltsdlog <- ggplot2::ggplot() + ggplot2::geom_vline(xintercept=0, linetype=1, na.rm=T) +
             ggplot2::geom_violin(data=x$estimates[x$estimates$methodUni %in% sdlogvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni)) +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni), na.rm=T) +
             ggplot2::stat_summary(data=x$estimates[x$estimates$methodUni %in% sdlogvars,],
-                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black") +
+                          ggplot2::aes(y=method, x=bias, fill=methodUni),fun=median, geom="point", size=2, color="black", na.rm=T) +
             ggplot2::theme(legend.position = "none", axis.text.y=ggplot2::element_text(size=fntsize)) +
 			ggplot2::xlab("bias from sample sdlog")}
     CIdat <- NULL
@@ -636,6 +685,9 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
                                  y=CIheight,
 								 xend=CIdat$lower_lim[CIdat$methodUni %in% sdlogvars],
 								 yend=-CIheight)
+		segdatsdloglow$method <- CIdat$method[CIdat$methodUni %in% sdlogvars]
+		segdatsdloglow <- segdatsdloglow[order(segdatsdloglow$method),]
+		rownames(segdatsdloglow) <- 1:nrow(segdatsdloglow)
         segdatsdloglow$y <- segdatsdloglow$y + as.integer(rownames(segdatsdloglow))
         segdatsdloglow$yend <- segdatsdloglow$yend + as.integer(rownames(segdatsdloglow))
 	  }
@@ -644,6 +696,9 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
                                  y=CIheight,
 								 xend=CIdat$upper_lim[CIdat$methodUni %in% sdlogvars],
 								 yend=-CIheight)
+		segdatsdloghigh$method <- CIdat$method[CIdat$methodUni %in% sdlogvars]
+		segdatsdloghigh <- segdatsdloghigh[order(segdatsdloghigh$method),]
+		rownames(segdatsdloghigh) <- 1:nrow(segdatsdloghigh)
         segdatsdloghigh$y <- segdatsdloghigh$y + as.integer(rownames(segdatsdloghigh))
         segdatsdloghigh$yend <- segdatsdloghigh$yend + as.integer(rownames(segdatsdloghigh))
 	  }
@@ -651,7 +706,7 @@ plot.dimorphResampledMulti <- function(x, type="estimate", exclude=NULL, exclude
       pltsdlog <- pltsdlog + ggplot2::geom_segment(data=segdatsdlog, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
                                        color="black")
       pltsdlog <- pltsdlog + ggplot2::geom_segment(data=segdatsdlog, ggplot2::aes(x=x, y=y, xend=xend, yend=yend),
-                                       color="red", linetype=3)
+                                       color="red", linetype=2)
     }
   } # end pltsdlog
   # build plotting text
@@ -753,7 +808,7 @@ print.dimorphResampledMulti <- function(x, verbose=F, ...) {
   txt <- paste0(txt, "Multivariate sampling with complete or missing data:\n  ", paste0(datastrucs, collapse=" and "), "\n")
   txt <- paste0(txt, "Number of unique combinations of univariate method, multivariate method,\n    centering algorithm, and complete or missing data structure: ", nmethtotal, "\n")
   if (verbose) txt <- paste0(txt, "Unique combinations:\n  ", paste0(methcombos, collapse="\n  "),"\n")
-  txt <- paste0(txt, "Resampling data structure:\n")
+  txt <- paste0(txt, "\nResampling data structure:\n")
   if (!is.null(x$sampleADS$exact)) {
     {if (x$sampleADS$exact) txt <- paste0(txt, "  type of resampling: exact")
     else if (!x$sampleADS$exact) txt <- paste0(txt, "  type of resampling: Monte Carlo")}
@@ -863,7 +918,7 @@ print.dimorphResampledUni <- function(x, verbose=F, ...) {
   txt <- paste0(txt, "Centering algorithms:\n  ", paste0(centers, collapse=", "), "\n")
   txt <- paste0(txt, "Number of unique combinations of univariate method and centering algorithm: ", nmethtotal, "\n")
   if (verbose) txt <- paste0(txt, "Unique combinations:\n  ", paste0(methcombos, collapse="\n  "),"\n")
-  txt <- paste0(txt, "Resampling data structure:\n")
+  txt <- paste0(txt, "\nResampling data structure:\n")
   if (!is.null(x$sampleADS$exact)) {
     {if (x$sampleADS$exact) txt <- paste0(txt, "  type of resampling: exact")
     else if (!x$sampleADS$exact) txt <- paste0(txt, "  type of resampling: Monte Carlo")}
@@ -1066,7 +1121,7 @@ print.SSDtest <- function(x, verbose=F, central="median", ...) {
   else {
     txt <- paste0(txt, "Number of unique combinations of univariate method and centering algorithm: ", nmethtotal, "\n")
   }}
-  txt <- paste0(txt, "Resampling data structure:\n")
+  txt <- paste0(txt, "\nResampling data structure:\n")
   #if (!is.null(x$estimates[[1]]$sampleADS$exact)) {
   #  {if (x$estimates[[1]]$sampleADS$exact) txt <- paste0(txt, "  type of resampling: exact")
   #  else if (!x$estimates[[1]]$sampleADS$exact) txt <- paste0(txt, "  type of resampling: Monte Carlo")}
@@ -1166,6 +1221,7 @@ print.SSDtest <- function(x, verbose=F, central="median", ...) {
   cat("\np-values (two-sided):\n")
   ptwo <- round(x$pvalues$p.twosided,4)
   print(ptwo)
+  if (!is.null(attr(x, "warntext"))) cat(paste0("\nWarning: ", attr(x, "warntext")))
 }
 
 #' Plot \code{SSDtest} Object
@@ -1225,6 +1281,12 @@ print.SSDtest <- function(x, verbose=F, central="median", ...) {
 #'   \code{ylim} is \code{NULL}, default values generated by \code{\link[ggplot2]{ggplot}} are used.
 #' @param diffcol A color used to fill in histogram bars for differences in parameter values between two samples. 
 #'   defaults to \code{"#CCB03D"}.
+#' @param gridplot A logical scalar indicating whether the multiple plots generated by \code{type="diff"} should 
+#'   be plotted as a single grid of plots or not.  If \code{FALSE} then individual plots are printed sequentially. 
+#'   Defaults to \code{TRUE}. 
+#' @param useradvance A logical scalar indicating whether to prompt the user between plots when multiple plots 
+#'   are generated by \code{type="diff"} and \code{gridplot} is \code{FALSE}. If \code{FALSE} then the function 
+#'   waits two seconds between plots. Defaults to \code{TRUE}. 
 #' @param ... Arguments to be passed to other functions.  Not currently used.
 #' @examples
 #' SSDvars <- c("FHSI", "TPML", "TPMAP", "TPLAP", "HHMaj", "HHMin", "RHMaj", "RHMin", "RDAP", "RDML")
@@ -1263,7 +1325,7 @@ print.SSDtest <- function(x, verbose=F, central="median", ...) {
 plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100, 
                          plottitle=NULL, groupcols=NULL, leg=T, legpos=NULL,
                          legsize=1, legtitle="", lty="dashed", titlesize=2, invert=NULL,
-                         xlim=NULL, ylim=NULL, diffcol="#CCB03D", ...) {
+                         xlim=NULL, ylim=NULL, diffcol="#CCB03D", gridplot=TRUE, useradvance=TRUE, ...) {
   type <- match.arg(type, choices=c("est", "diff"))
   ndat <- length(x$estimates)
   groups <- names(x$estimates)
@@ -1351,21 +1413,21 @@ plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100,
 	plt <- plt + ggplot2::geom_hline(yintercept=0, col="black")
 	{if (is.null(invert)) {
 	  plt <- plt +
-			 ggplot2::geom_histogram(ggplot2::aes(y=ggplot2::after_stat(density)), binwidth=bw, alpha=1, position="identity") +
-			 ggplot2::geom_histogram(ggplot2::aes(y=ggplot2::after_stat(density)), binwidth=bw, alpha=.4, position="identity")
+			 ggplot2::geom_histogram(ggplot2::aes(y=ggplot2::after_stat(density)), binwidth=bw, alpha=1, position="identity", na.rm=TRUE) +
+			 ggplot2::geom_histogram(ggplot2::aes(y=ggplot2::after_stat(density)), binwidth=bw, alpha=.4, position="identity", na.rm=TRUE)
 	}
 	else {
 	  datdown <- plotdat[plotdat$group %in% groups[invert],]
 	  datup <- plotdat[plotdat$group %in% groups[-invert],]
 	  plt <- plt +
-			 ggplot2::geom_histogram(data=datup, ggplot2::aes(y=ggplot2::after_stat(density)), binwidth=bw, alpha=1, position="identity") +
-			 ggplot2::geom_histogram(data=datup, ggplot2::aes(y=ggplot2::after_stat(density)), binwidth=bw, alpha=.4, position="identity") +
-			 ggplot2::geom_histogram(data=datdown, ggplot2::aes(y=ggplot2::after_stat(density)*-1), binwidth=bw, alpha=1, position="identity") +
-			 ggplot2::geom_histogram(data=datdown, ggplot2::aes(y=ggplot2::after_stat(density)*-1), binwidth=bw, alpha=.4, position="identity")
+			 ggplot2::geom_histogram(data=datup, ggplot2::aes(y=ggplot2::after_stat(density)), binwidth=bw, alpha=1, position="identity", na.rm=TRUE) +
+			 ggplot2::geom_histogram(data=datup, ggplot2::aes(y=ggplot2::after_stat(density)), binwidth=bw, alpha=.4, position="identity", na.rm=TRUE) +
+			 ggplot2::geom_histogram(data=datdown, ggplot2::aes(y=ggplot2::after_stat(density)*-1), binwidth=bw, alpha=1, position="identity", na.rm=TRUE) +
+			 ggplot2::geom_histogram(data=datdown, ggplot2::aes(y=ggplot2::after_stat(density)*-1), binwidth=bw, alpha=.4, position="identity", na.rm=TRUE)
 	}}
 	if (!is.null(singletonest)) {
 	  #plt <- plt + ggplot2::geom_vline(xintercept=singletonest, linetype="dashed", color="black", linewidth=1
-	  plt <- plt + ggplot2::geom_vline(ggplot2::aes(xintercept=singletonest, color=singletongroup),
+	  plt <- plt + ggplot2::geom_vline(ggplot2::aes(xintercept=singletonest, color=singletongroup), na.rm=TRUE,
 	                                   linetype=lty, linewidth=1) +
 				   ggplot2::scale_color_manual(name="", values = "black")
 	}
@@ -1470,7 +1532,7 @@ plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100,
 	  pltlist[[i]] <- ggplot2::ggplot(data.frame(difference=dat[[i]]), ggplot2::aes(x=difference)) + 
 						#ggplot2::xlim(datrange) +
 						#ggplot2::xlim(xlim) +
-						ggplot2::geom_histogram(ggplot2::aes(y=ggplot2::after_stat(density)),
+						ggplot2::geom_histogram(ggplot2::aes(y=ggplot2::after_stat(density)), na.rm=TRUE,
 						                        binwidth=bw, alpha=1, position="identity", fill=diffcol)
       {if (is.null(plottitle)) pltlist[[i]] <- pltlist[[i]] + ggplot2::ggtitle(names(dat)[i],
 						                 subtitle=bquote("one-sided" ~ italic(p)~.(pvalone)~"|"~"two-sided" ~ italic(p)~.(pvaltwo)))
@@ -1493,7 +1555,7 @@ plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100,
 	    else
 	      pltlist[[i]] <- pltlist[[i]] + ggplot2::labs(x=bquote(Delta ~ .(methcombos$methodUni[est])))
 	  }}
-      pltlist[[i]] <- pltlist[[i]] + ggplot2::geom_vline(xintercept=0, linetype="solid", color="black", linewidth=1)
+      pltlist[[i]] <- pltlist[[i]] + ggplot2::geom_vline(xintercept=0, linetype="solid", color="black", linewidth=1, na.rm=TRUE)
 	  # remove y-axis ticks and labels
 	  #pltlist[[i]] <- pltlist[[i]] + ggplot2::theme(axis.text.y=ggplot2::element_blank(), axis.ticks.y=ggplot2::element_blank())   
 	} # end for loop 'ncomparisons'
@@ -1501,14 +1563,32 @@ plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100,
 	{if (ncomparisons==1) {
 	  plt <- pltlist[[1]]
 	  rm(pltlist)
+	  return(plt)
 	}
 	else {
-	  ngridcol <- ceiling(sqrt(length(dat)))
-	  ngridrow <- ceiling(length(dat)/ngridcol)
-	  plt <- gridExtra::marrangeGrob(grobs=pltlist, nrow=ngridrow, ncol=ngridcol,
-	           top="")
+	  if (gridplot) {
+	    ngridcol <- ceiling(sqrt(length(dat)))
+	    ngridrow <- ceiling(length(dat)/ngridcol)
+	    plt <- gridExtra::marrangeGrob(grobs=pltlist, nrow=ngridrow, ncol=ngridcol, top="")
+		return(plt)
+	  }
+	  else {
+		for (i in 1:length(pltlist)) {
+		  print(pltlist[[i]])
+		  # Pause
+		  {if (useradvance) {
+		    if (i < length(pltlist)) {
+			  readline(prompt = "Press [Enter] to see the next plot...")
+		    }
+		  }
+		  else {
+		    Sys.sleep(2)
+		  }}
+		}
+	  }
 	}}
   } # end 'diff'
   } # end if else
-  return(plt)
 }
+
+
