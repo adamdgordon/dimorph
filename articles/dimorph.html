@@ -4141,12 +4141,12 @@ and <code>pvalues</code> is a list containing two matrices of one-sided
 and two-sided p-values.</p>
 <p>We can use a couple of functions to extract data frames from the
 <code>methcombos</code> and <code>pvalues</code> elements of a
-<code>SSDtest</code> object: <code>centers()</code> and
-<code>pvals()</code>. <code>centers()</code> provides a data frame with
+<code>SSDtest</code> object: <code><a href="../reference/centers.html">centers()</a></code> and
+<code><a href="../reference/pvals.html">pvals()</a></code>. <code><a href="../reference/centers.html">centers()</a></code> provides a data frame with
 mean and median resampled values for every sample for each method
 combination.</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">centers</span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/centers.html">centers</a></span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   methodUni  center median.A. afarensis mean.A. afarensis median.G. gorilla</span></span>
 <span><span class="co">#&gt; 1       SSD geomean                  NA                NA         0.2152390</span></span>
 <span><span class="co">#&gt; 2       MMR geomean           0.2392566         0.2392566         0.1996344</span></span>
@@ -4159,11 +4159,11 @@ combination.</p>
 <span><span class="co">#&gt; 1          0.04945883</span></span>
 <span><span class="co">#&gt; 2          0.09534067</span></span>
 <span><span class="co">#&gt; 3          0.08465606</span></span></code></pre></div>
-<p><code>pvals()</code> pulls out one of the p-value data frames, and
+<p><code><a href="../reference/pvals.html">pvals()</a></code> pulls out one of the p-value data frames, and
 the argument <code>alternative</code> has two options:
 <code>"two.sided"</code> (the default) and <code>"one.sided"</code>.</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">pvals</span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pvals.html">pvals</a></span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in pvals(test_fossil_uni): The following comparisons contain NAs that were</span></span>
 <span><span class="co">#&gt; dropped in the calculation of p-values:</span></span>
 <span><span class="co">#&gt;   SSD:geomean: G. gorilla - H. sapiens</span></span>
@@ -4179,11 +4179,11 @@ the argument <code>alternative</code> has two options:
 <span><span class="co">#&gt; H0: G. gorilla = H. sapiens        0.27872074    0.465417    0.472602</span></span>
 <span><span class="co">#&gt; H0: G. gorilla = P. troglodytes    0.05470744    0.232732    0.219298</span></span>
 <span><span class="co">#&gt; H0: H. sapiens = P. troglodytes    0.34277140    0.570753    0.567096</span></span></code></pre></div>
-<p><code>pvals()</code> returns the data frame, but it also generates
+<p><code><a href="../reference/pvals.html">pvals()</a></code> returns the data frame, but it also generates
 the same warning we saw earlier. We can suppress that warning if we want
 to.</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">pvals</span><span class="op">(</span><span class="va">test_fossil_uni</span>, alternative<span class="op">=</span><span class="st">"one.sided"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="../reference/pvals.html">pvals</a></span><span class="op">(</span><span class="va">test_fossil_uni</span>, alternative<span class="op">=</span><span class="st">"one.sided"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                    SSD:geomean MMR:geomean BDI:geomean</span></span>
 <span><span class="co">#&gt; H0: A. afarensis &lt;= G. gorilla              NA    0.281000    0.111000</span></span>
 <span><span class="co">#&gt; H0: A. afarensis &lt;= H. sapiens              NA    0.033000    0.008000</span></span>
