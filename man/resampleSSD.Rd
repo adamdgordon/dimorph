@@ -185,5 +185,6 @@ gorSSDmulti3
 plot(gorSSDmulti3)
 }
 \seealso{
-\code{\link{bootdimorph}}, \code{\link{dimorph}}, \code{\link{getsampleaddresses}}
+\code{\link{bootdimorph}}, \code{\link{SSDtest}}, \code{\link{dimorph}}, 
+  \code{\link{getsampleaddresses}}
 }

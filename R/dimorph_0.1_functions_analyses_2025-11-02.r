@@ -555,7 +555,8 @@ getsampleaddresses <- function(comparative,
 #'   with resampled dimorphism estimates and a \code{dimorphAds} object containg resampled addresses produced
 #'   by \code{\link{getsampleaddresses}}.  Plotting this object produces violin plots for
 #'   all resampled distributions.
-#' @seealso \code{\link{bootdimorph}}, \code{\link{dimorph}}, \code{\link{getsampleaddresses}}
+#' @seealso \code{\link{bootdimorph}}, \code{\link{SSDtest}}, \code{\link{dimorph}}, 
+#'   \code{\link{getsampleaddresses}}
 #' @examples
 #' ## Univariate
 #' data(apelimbart)

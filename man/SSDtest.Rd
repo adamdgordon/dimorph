@@ -152,21 +152,21 @@ fauxil
 
 # Standard significance test with one fossil sample, sampling without replacement
 test_faux_uni <- SSDtest(
-     fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI"]),
-     comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI"],
-               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI"],
-               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "FHSI"],
-               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI"]),
-     fossilsex=NULL,
-     compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-                  "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
-                  "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
-                  "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("SSD", "MMR", "BDI"),
-     limit=1000,
-     nResamp=100)
+  fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI"]),
+  comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI"],
+            "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI"],
+            "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "FHSI"],
+            "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI"]),
+  fossilsex=NULL,
+  compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+  methsUni=c("SSD", "MMR", "BDI"),
+  limit=1000,
+  nResamp=100)
 test_faux_uni
-plot(test_faux_uni) # plots first method by default (SSD) - warning due to known ggplot issue
+plot(test_faux_uni) # plots first method by default (SSD)
 plot(test_faux_uni, est=2) # plots second method (MMR)
 speciescolors <- c("Fauxil sp. 1"="#352A87", "Fauxil sp. 2"="#F9FB0E", "G. gorilla"="#EABA4B",
                    "H. sapiens"="#09A9C0", "P. troglodytes"="#78BE7C", "H. lar"="#0D77DA")
@@ -176,38 +176,38 @@ plot(test_faux_uni, type="diff", est=2, diffs=c(1,2)) # plots diffs between firs
 
 # Same as above, but variable name information is preserved
 test_faux_uni2 <- SSDtest(
-     fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI", drop=FALSE]),
-     comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI", drop=FALSE],
-               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI", drop=FALSE],
-               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes","FHSI",drop=FALSE],
-               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI", drop=FALSE]),
-     fossilsex=NULL,
-     compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-                  "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
-                  "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
-                  "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("SSD", "MMR", "BDI"),
-     limit=1000,
-     nResamp=100)
+  fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI", drop=FALSE]),
+  comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI", drop=FALSE],
+            "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI", drop=FALSE],
+            "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes","FHSI",drop=FALSE],
+            "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI", drop=FALSE]),
+  fossilsex=NULL,
+  compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+  methsUni=c("SSD", "MMR", "BDI"),
+  limit=1000,
+  nResamp=100)
 test_faux_uni2
 plot(test_faux_uni2, est=2, groupcols=speciescolors)
 
 # Same as above except that null distributions are generated WITH replacement rather than WITHOUT
 test_faux_uni3 <- SSDtest(
-     fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI", drop=FALSE]),
-     comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI", drop=FALSE],
-               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI", drop=FALSE],
-               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes","FHSI",drop=FALSE],
-               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI", drop=FALSE]),
-     fossilsex=NULL,
-     compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-                  "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
-                  "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
-                  "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("SSD", "MMR", "BDI"),
-     limit=1000,
-     nResamp=100,
-     replace=TRUE)
+  fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI", drop=FALSE]),
+  comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI", drop=FALSE],
+            "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI", drop=FALSE],
+            "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes","FHSI",drop=FALSE],
+            "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI", drop=FALSE]),
+  fossilsex=NULL,
+  compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+  methsUni=c("SSD", "MMR", "BDI"),
+  limit=1000,
+  nResamp=100,
+  replace=TRUE)
 test_faux_uni3
 plot(test_faux_uni3, est=2, groupcols=speciescolors)
 
@@ -217,20 +217,20 @@ plot(test_faux_uni3, est=2, groupcols=speciescolors)
 #   but note that comparative samples are resampled to their full sample size, not 
 #   downsampled to the fossil sample size.
 test_faux_uni4 <- SSDtest(
-     fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI", drop=FALSE]),
-     comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI", drop=FALSE],
-               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI", drop=FALSE],
-               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes","FHSI",drop=FALSE],
-               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI", drop=FALSE]),
-     fossilsex=NULL,
-     compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-                  "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
-                  "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
-                  "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("SSD", "MMR", "BDI"),
-     limit=1000,
-     nResamp=100,
-     fullsamplesboot=TRUE)
+  fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI", drop=FALSE]),
+  comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI", drop=FALSE],
+            "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI", drop=FALSE],
+            "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes","FHSI",drop=FALSE],
+            "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI", drop=FALSE]),
+  fossilsex=NULL,
+  compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+  methsUni=c("SSD", "MMR", "BDI"),
+  limit=1000,
+  nResamp=100,
+  fullsamplesboot=TRUE)
 test_faux_uni4
 plot(test_faux_uni4, est=2, # plots the second estimation method (MMR)
      invert=1, # inverts the histogram for the first group in 'test_afar_uni4'
@@ -243,21 +243,20 @@ plot(test_faux_uni4, est=2, # plots the second estimation method (MMR)
 SSDvars <- c("FHSI", "TPML", "TPMAP", "TPLAP", "HHMaj",
              "HHMin", "RHMaj", "RHMin", "RDAP", "RDML")
 test_faux_multi1 <- SSDtest(
-     fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars]),
-     comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
-               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", SSDvars],
-               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", SSDvars],
-               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", SSDvars]),
-     fossilsex=NULL,
-     compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-                  "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
-                  "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
-                  "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("MMR", "BDI"),
-     methsMulti=c("GMM"),
-     datastruc="both",
-     nResamp=100,
-     templatevar="FHSI")
+  fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", SSDvars]),
+  comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
+            "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", SSDvars],
+            "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", SSDvars],
+            "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", SSDvars]),
+  fossilsex=NULL,
+  compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+  methsUni=c("MMR", "BDI"),
+  methsMulti=c("GMM"),
+  datastruc="both",
+  nResamp=100)
 test_faux_multi1
 plot(test_faux_multi1, groupcols=speciescolors)
 plot(test_faux_multi1, est=2, # plot the 2nd method combination: MMR, GMM, missing datastructure
@@ -267,21 +266,20 @@ plot(test_faux_multi1, est=2,
 
 # As above but with a different fossil sample.
 test_faux_multi2 <- SSDtest(
-     fossil=list("Fauxil sp. 2"=fauxil[fauxil$Species=="Fauxil sp. 2", SSDvars]),
-     comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
-               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", SSDvars],
-               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", SSDvars],
-               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", SSDvars]),
-     fossilsex=NULL,
-     compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-                  "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
-                  "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
-                  "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("MMR", "BDI"),
-     methsMulti=c("GMM"),
-     datastruc="both",
-     nResamp=100,
-     templatevar="FHSI")
+  fossil=list("Fauxil sp. 2"=fauxil[fauxil$Species=="Fauxil sp. 2", SSDvars]),
+  comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
+            "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", SSDvars],
+            "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", SSDvars],
+            "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", SSDvars]),
+  fossilsex=NULL,
+  compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+  methsUni=c("MMR", "BDI"),
+  methsMulti=c("GMM"),
+  datastruc="both",
+  nResamp=100)
 test_faux_multi2
 plot(test_faux_multi2, groupcols=speciescolors)
 plot(test_faux_multi2, est=2, groupcols=speciescolors)
@@ -289,22 +287,21 @@ plot(test_faux_multi2, est=2, type="diff")
 
 # Now the same data using a much more conservative approach by setting 'rebootstrap' to TRUE.
 test_faux_multi3 <- SSDtest(
-     fossil=list("Fauxil sp. 2"=fauxil[fauxil$Species=="Fauxil sp. 2", SSDvars]),
-     comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
-               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", SSDvars],
-               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", SSDvars],
-               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", SSDvars]),
-     fossilsex=NULL,
-     compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
-                  "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
-                  "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
-                  "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("MMR", "BDI"),
-     methsMulti=c("GMM"),
-     datastruc="both",
-     nResamp=100,
-     rebootstrap=TRUE,
-     templatevar="FHSI")
+  fossil=list("Fauxil sp. 2"=fauxil[fauxil$Species=="Fauxil sp. 2", SSDvars]),
+  comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", SSDvars],
+            "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", SSDvars],
+            "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", SSDvars],
+            "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", SSDvars]),
+  fossilsex=NULL,
+  compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+               "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+               "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+               "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+  methsUni=c("MMR", "BDI"),
+  methsMulti=c("GMM"),
+  datastruc="both",
+  nResamp=100,
+  rebootstrap=TRUE)
 test_faux_multi3
 plot(test_faux_multi3, est=2, invert=1, groupcols=speciescolors)
 }
@@ -315,5 +312,5 @@ Gordon AD, Green DJ, Richmond BG. (2008) Strong postcranial size dimorphism in
   (\href{https://doi.org/10.1002/ajpa.20745}{https://doi.org/10.1002/ajpa.20745})
 }
 \seealso{
-\code{\link[dimorph]{plot.SSDtest}}
+\code{\link{pvals}}, \code{\link[dimorph]{plot.SSDtest}}
 }

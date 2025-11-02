@@ -1116,12 +1116,7 @@ print.SSDtest <- function(x, verbose=F, central="median", ...) {
 
 #' Plot \code{SSDtest} Object
 #' 
-#' Plot the object output by \code{\link[dimorph]{SSDtest}}.  \strong{N.B.:} warning messages stating 
-#'   "\code{Removed} \emph{n} \code{rows containing  missing values (`geom_bar()`).}" are generated 
-#'   for any histogram that contains bars of height zero, which will be true for most histograms.  This is 
-#'   due to a known issue with how \code{\link[ggplot2]{ggplot}} handles histograms (see 
-#'   \href{https://github.com/tidyverse/ggplot2/issues/3265}{https://github.com/tidyverse/ggplot2/issues/3265}), 
-#'   and these warning messages can safely be ignored.  
+#' Plot the object output by \code{\link[dimorph]{SSDtest}}.
 #' @param x An \code{SSDtest} object.
 #' @param est An integer specifiying the specific combination of methods (e.g., univariate 
 #'   method, centering algorithm) for the resampled estimates to be plotted.  This integer corresponds to 
@@ -1191,7 +1186,7 @@ print.SSDtest <- function(x, verbose=F, central="median", ...) {
 #'                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
 #'                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
 #'                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-#'      methsUni=c("SSD", "MMR", "BDI"),
+#'      methsUni=c("MMR", "BDI"),
 #'      methsMulti=c("GMM"),
 #'      datastruc="both",
 #'      nResamp=100,
@@ -1203,14 +1198,14 @@ print.SSDtest <- function(x, verbose=F, central="median", ...) {
 #'                    "H. lar"="#0D77DA")
 #' # change colors of sample distributions                   
 #' plot(test_faux_multi1, groupcols=speciescolors)
-#' # plot estimates for the fourth methcombo (GMM and MMR)
-#' plot(test_faux_multi1, est=4, groupcols=speciescolors)
+#' # plot estimates for the second methcombo (GMM and MMR)
+#' plot(test_faux_multi1, est=2, groupcols=speciescolors)
 #' # invert second and fourth sample distributions
-#' plot(test_faux_multi1, est=4, groupcols=speciescolors, invert=c(2,4))
-#' # plot distributions of differences among sample estimates for method combination 4
-#' plot(test_faux_multi1, est=4, type="diff")
+#' plot(test_faux_multi1, est=2, groupcols=speciescolors, invert=c(2,4))
+#' # plot distributions of differences among sample estimates for method combination 2
+#' plot(test_faux_multi1, est=2, type="diff")
 #' # plot differences between second and third samples
-#' plot(test_faux_multi1, est=4, type="diff", diffs=c(2,3)) 
+#' plot(test_faux_multi1, est=2, type="diff", diffs=c(2,3)) 
 #' @export
 plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100, 
                          plottitle=NULL, groupcols=NULL, leg=T, legpos=NULL,

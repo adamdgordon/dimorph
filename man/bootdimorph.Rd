@@ -112,6 +112,7 @@ outcomeUgor
 confint(outcomeUgor)
 confint(outcomeUgor, conf.level=0.8, alternative="greater")
 plot(outcomeUgor)
+plot(bootsUgor, exclude="FMA") # exclude one or more methods from plot
 outcomeUhom
 plot(outcomeUhom)
 outcomeUpan
@@ -125,5 +126,6 @@ plot(outcomeUpan, type="bias")
 plot(outcomeUhyl, type="bias")
 }
 \seealso{
-\code{\link{resampleSSD}}, \code{\link{dimorph}}, \code{\link{getsampleaddresses}}
+\code{\link{centers}}, \code{\link{confint}}, \code{\link{resampleSSD}}, 
+  \code{\link{dimorph}}, \code{\link{getsampleaddresses}}
 }
