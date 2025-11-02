@@ -6,16 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Size dimorphism estimation, confidence intervals, and significance tests with `dimorph` • dimorph</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Size dimorphism estimation, confidence intervals, and significance tests with `dimorph`">
 </head>
 <body>
@@ -26,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dimorph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +55,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Size dimorphism estimation, confidence intervals, and significance tests with `dimorph`</h1>
             
-            <h4 data-toc-skip class="date">2025-10-26</h4>
+            <h4 data-toc-skip class="date">2025-11-02</h4>
       
 
       <div class="d-none name"><code>dimorph.Rmd</code></div>
@@ -168,7 +167,7 @@ only one specimen includes both of the plotted variables (that warning
 message is reporting the number of specimens that don’t record both
 measurements in the plot). Here’s a look at the first few fossil
 specimens in that data set:</p>
-<table class="table table table-condensed" style="font-size: 10px; margin-left: auto; margin-right: auto;">
+<table class="table table table-condensed" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
 </th>
@@ -3326,15 +3325,15 @@ objects each containing the data for one species.</p>
 all of the iterative procedures in the rest of this vignette. In
 <code><a href="../reference/bootdimorph.html">bootdimorph()</a></code> this is specified by the argument
 <code>nResamp</code>, which defaults to 1,000. For this vignette we’ll
-bump it up to 5,000; in order to only have to specify this value once,
-we’ll set the value of an object <code>nResample</code> to 5,000 and
+keep it at 1,000; in order to only have to specify this value once,
+we’ll set the value of an object <code>nResample</code> to 1,000 and
 we’ll pass <code>nResample</code> to <code>nResamp</code> in all later
 code. If you’re cutting and pasting code to run these examples on your
 own just to make sure they work, reducing the value of
 <code>nResample</code> to a small number (like 10 or 100) will let these
 functions run much faster on your computer.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nResample</span> <span class="op">&lt;-</span> <span class="fl">5000</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">nResample</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span></code></pre></div>
 <p><code><a href="../reference/bootdimorph.html">bootdimorph()</a></code> can generate confidence intervals for
 multiple estimation methods at the same time, so we’ll create a vector
 <code>meths</code> that we’ll pass to the argument <code>methsUni</code>
@@ -3343,7 +3342,7 @@ methods.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SSD"</span>, <span class="st">"MMR"</span>, <span class="st">"BDI"</span>, <span class="st">"ERM"</span>, <span class="st">"FMA"</span>, <span class="st">"MoM"</span>, <span class="st">"BFM"</span>, <span class="st">"CV"</span>, <span class="st">"CVsex"</span>, <span class="st">"sdlog"</span>, <span class="st">"sdlogsex"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
-<h4 id="applying-bootdimoph-to-univariate-samples">Applying <code>bootdimoph()</code> to univariate samples<a class="anchor" aria-label="anchor" href="#applying-bootdimoph-to-univariate-samples"></a>
+<h4 id="applying-bootdimorph-to-univariate-samples">Applying <code>bootdimorph()</code> to univariate samples<a class="anchor" aria-label="anchor" href="#applying-bootdimorph-to-univariate-samples"></a>
 </h4>
 <p>Now we can run <code><a href="../reference/bootdimorph.html">bootdimorph()</a></code> on our four species. Let’s
 use the variable FHSI again. Note that we can pass that variable to
@@ -3416,7 +3415,7 @@ either specimens with missing data would be dropped (if
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Resampling data structure:</span></span>
 <span><span class="co">#&gt;   type of resampling: Monte Carlo</span></span>
-<span><span class="co">#&gt;   number of resampled data sets: 5000</span></span>
+<span><span class="co">#&gt;   number of resampled data sets: 1000</span></span>
 <span><span class="co">#&gt;   number of individuals in each resampled data set: 94</span></span>
 <span><span class="co">#&gt;   resampling procedure: bootstrap</span></span>
 <span><span class="co">#&gt;   subsamples sampled WITH replacement</span></span>
@@ -3429,28 +3428,28 @@ either specimens with missing data would be dropped (if
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Confidence intervals for estimates:</span></span>
 <span><span class="co">#&gt;    methodUni  center  lower_lim  upper_lim</span></span>
-<span><span class="co">#&gt; 1        SSD geomean  0.1795724  0.2252887</span></span>
-<span><span class="co">#&gt; 2        MMR geomean  0.1798128  0.2252718</span></span>
-<span><span class="co">#&gt; 3        BDI geomean  0.1771237  0.2223086</span></span>
-<span><span class="co">#&gt; 4        ERM geomean  0.1448760  0.1887641</span></span>
-<span><span class="co">#&gt; 5        FMA geomean  0.1121673  0.1215098</span></span>
-<span><span class="co">#&gt; 6        MoM geomean  0.1744214  0.2279261</span></span>
-<span><span class="co">#&gt; 7        BFM geomean  0.1720392  0.2240756</span></span>
-<span><span class="co">#&gt; 8         CV    mean 10.4463771 12.6668469</span></span>
-<span><span class="co">#&gt; 9      CVsex    mean 10.5047823 12.7139217</span></span>
-<span><span class="co">#&gt; 10     sdlog geomean  0.1045775  0.1265123</span></span>
-<span><span class="co">#&gt; 11  sdlogsex geomean  0.1050792  0.1269293</span></span>
+<span><span class="co">#&gt; 1        SSD geomean  0.1790435  0.2252768</span></span>
+<span><span class="co">#&gt; 2        MMR geomean  0.1793232  0.2256738</span></span>
+<span><span class="co">#&gt; 3        BDI geomean  0.1770936  0.2229512</span></span>
+<span><span class="co">#&gt; 4        ERM geomean  0.1450140  0.1884013</span></span>
+<span><span class="co">#&gt; 5        FMA geomean  0.1126767  0.1215098</span></span>
+<span><span class="co">#&gt; 6        MoM geomean  0.1741842  0.2278104</span></span>
+<span><span class="co">#&gt; 7        BFM geomean  0.1721160  0.2239820</span></span>
+<span><span class="co">#&gt; 8         CV    mean 10.4478498 12.6696321</span></span>
+<span><span class="co">#&gt; 9      CVsex    mean 10.5024881 12.7017777</span></span>
+<span><span class="co">#&gt; 10     sdlog geomean  0.1047123  0.1265835</span></span>
+<span><span class="co">#&gt; 11  sdlogsex geomean  0.1051341  0.1270143</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Confidence intervals for bias of estimates from sample SSD, CVsex, or sdlogsex:</span></span>
 <span><span class="co">#&gt;   methodUni  center    lower_lim    upper_lim</span></span>
-<span><span class="co">#&gt; 1       MMR geomean -0.004126886  0.004121011</span></span>
-<span><span class="co">#&gt; 2       BDI geomean -0.012241845  0.001017986</span></span>
-<span><span class="co">#&gt; 3       ERM geomean -0.045156407 -0.028896766</span></span>
-<span><span class="co">#&gt; 4       FMA geomean -0.104426534 -0.060249338</span></span>
-<span><span class="co">#&gt; 5       MoM geomean -0.011910930  0.005700959</span></span>
-<span><span class="co">#&gt; 6       BFM geomean -0.012470815  0.003621685</span></span>
-<span><span class="co">#&gt; 7        CV    mean -0.402367896  0.086797550</span></span>
-<span><span class="co">#&gt; 8     sdlog geomean -0.002438665  0.000000000</span></span></code></pre></div>
+<span><span class="co">#&gt; 1       MMR geomean -0.004126886  0.004006084</span></span>
+<span><span class="co">#&gt; 2       BDI geomean -0.011957829  0.001142069</span></span>
+<span><span class="co">#&gt; 3       ERM geomean -0.044891954 -0.029367342</span></span>
+<span><span class="co">#&gt; 4       FMA geomean -0.103964493 -0.059007923</span></span>
+<span><span class="co">#&gt; 5       MoM geomean -0.012390650  0.005450925</span></span>
+<span><span class="co">#&gt; 6       BFM geomean -0.012674411  0.003555899</span></span>
+<span><span class="co">#&gt; 7        CV    mean -0.385253802  0.086603727</span></span>
+<span><span class="co">#&gt; 8     sdlog geomean -0.002397997  0.000000000</span></span></code></pre></div>
 <p>There’s a lot of information in there. First, information about the
 data set is provided: the number of specimens, broken down by sex if
 that information is provided, and the number and name of included
@@ -3505,20 +3504,20 @@ to. Let’s take a look at the structure of <code>bootsUgor</code>.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">bootsUgor</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 4</span></span>
-<span><span class="co">#&gt;  $ estimates:'data.frame':   55000 obs. of  9 variables:</span></span>
-<span><span class="co">#&gt;   ..$ estimate                  : num [1:55000] 0.212 0.214 0.195 0.216 0.215 ...</span></span>
+<span><span class="co">#&gt;  $ estimates:'data.frame':   11000 obs. of  9 variables:</span></span>
+<span><span class="co">#&gt;   ..$ estimate                  : num [1:11000] 0.212 0.214 0.195 0.216 0.215 ...</span></span>
 <span><span class="co">#&gt;   ..$ methodUni                 : Factor w/ 11 levels "SSD","MMR","BDI",..: 1 1 1 1 1 1 1 1 1 1 ...</span></span>
 <span><span class="co">#&gt;   ..$ center                    : Factor w/ 2 levels "geomean","mean": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;   ..$ n.specimens.overall       : int [1:55000] 94 94 94 94 94 94 94 94 94 94 ...</span></span>
-<span><span class="co">#&gt;   ..$ proportion.female.overall : num [1:55000] 0.585 0.521 0.521 0.479 0.511 ...</span></span>
-<span><span class="co">#&gt;   ..$ n.specimens.realized      : int [1:55000] 94 94 94 94 94 94 94 94 94 94 ...</span></span>
-<span><span class="co">#&gt;   ..$ proportion.female.realized: num [1:55000] 0.585 0.521 0.521 0.479 0.511 ...</span></span>
-<span><span class="co">#&gt;   ..$ subsampleID               : int [1:55000] 1 2 3 4 5 6 7 8 9 10 ...</span></span>
-<span><span class="co">#&gt;   ..$ bias                      : num [1:55000] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;   ..$ n.specimens.overall       : int [1:11000] 94 94 94 94 94 94 94 94 94 94 ...</span></span>
+<span><span class="co">#&gt;   ..$ proportion.female.overall : num [1:11000] 0.585 0.521 0.521 0.479 0.511 ...</span></span>
+<span><span class="co">#&gt;   ..$ n.specimens.realized      : int [1:11000] 94 94 94 94 94 94 94 94 94 94 ...</span></span>
+<span><span class="co">#&gt;   ..$ proportion.female.realized: num [1:11000] 0.585 0.521 0.521 0.479 0.511 ...</span></span>
+<span><span class="co">#&gt;   ..$ subsampleID               : int [1:11000] 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">#&gt;   ..$ bias                      : num [1:11000] NA NA NA NA NA NA NA NA NA NA ...</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "estvalues")= chr "logged"</span></span>
 <span><span class="co">#&gt;  $ sampleADS:List of 11</span></span>
-<span><span class="co">#&gt;   ..$ nResamp    : num 5000</span></span>
-<span><span class="co">#&gt;   ..$ addresses  : int [1:94, 1:5000] 77 7 14 5 26 22 15 61 68 56 ...</span></span>
+<span><span class="co">#&gt;   ..$ nResamp    : num 1000</span></span>
+<span><span class="co">#&gt;   ..$ addresses  : int [1:94, 1:1000] 77 7 14 5 26 22 15 61 68 56 ...</span></span>
 <span><span class="co">#&gt;   ..$ adlist     : NULL</span></span>
 <span><span class="co">#&gt;   ..$ comparative:'data.frame':  94 obs. of  1 variable:</span></span>
 <span><span class="co">#&gt;   .. ..$ FHSI: num [1:94] 42.8 42 39.9 40.4 41.2 ...</span></span>
@@ -3534,13 +3533,13 @@ to. Let’s take a look at the structure of <code>bootsUgor</code>.</p>
 <span><span class="co">#&gt;  $ CI       :'data.frame':   11 obs. of  4 variables:</span></span>
 <span><span class="co">#&gt;   ..$ methodUni: Factor w/ 11 levels "SSD","MMR","BDI",..: 1 2 3 4 5 6 7 8 9 10 ...</span></span>
 <span><span class="co">#&gt;   ..$ center   : Factor w/ 2 levels "geomean","mean": 1 1 1 1 1 1 1 2 2 1 ...</span></span>
-<span><span class="co">#&gt;   ..$ lower_lim: num [1:11] 0.18 0.18 0.177 0.145 0.112 ...</span></span>
-<span><span class="co">#&gt;   ..$ upper_lim: num [1:11] 0.225 0.225 0.222 0.189 0.122 ...</span></span>
+<span><span class="co">#&gt;   ..$ lower_lim: num [1:11] 0.179 0.179 0.177 0.145 0.113 ...</span></span>
+<span><span class="co">#&gt;   ..$ upper_lim: num [1:11] 0.225 0.226 0.223 0.188 0.122 ...</span></span>
 <span><span class="co">#&gt;  $ CIbias   :'data.frame':   8 obs. of  4 variables:</span></span>
 <span><span class="co">#&gt;   ..$ methodUni: Factor w/ 11 levels "SSD","MMR","BDI",..: 2 3 4 5 6 7 8 10</span></span>
 <span><span class="co">#&gt;   ..$ center   : Factor w/ 2 levels "geomean","mean": 1 1 1 1 1 1 2 1</span></span>
-<span><span class="co">#&gt;   ..$ lower_lim: num [1:8] -0.00413 -0.01224 -0.04516 -0.10443 -0.01191 ...</span></span>
-<span><span class="co">#&gt;   ..$ upper_lim: num [1:8] 0.00412 0.00102 -0.0289 -0.06025 0.0057 ...</span></span>
+<span><span class="co">#&gt;   ..$ lower_lim: num [1:8] -0.00413 -0.01196 -0.04489 -0.10396 -0.01239 ...</span></span>
+<span><span class="co">#&gt;   ..$ upper_lim: num [1:8] 0.00401 0.00114 -0.02937 -0.05901 0.00545 ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr "dimorphResampledUni"</span></span>
 <span><span class="co">#&gt;  - attr(*, "matchvars")= logi FALSE</span></span>
 <span><span class="co">#&gt;  - attr(*, "replace")= logi TRUE</span></span>
@@ -3568,28 +3567,49 @@ also be set to <code>"bias"</code>.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">bootsUgor</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    methodUni  center lower_lim0.95 upper_lim0.95</span></span>
-<span><span class="co">#&gt; 1        SSD geomean     0.1795724     0.2252887</span></span>
-<span><span class="co">#&gt; 2        MMR geomean     0.1798128     0.2252718</span></span>
-<span><span class="co">#&gt; 3        BDI geomean     0.1771237     0.2223086</span></span>
-<span><span class="co">#&gt; 4        ERM geomean     0.1448760     0.1887641</span></span>
-<span><span class="co">#&gt; 5        FMA geomean     0.1121673     0.1215098</span></span>
-<span><span class="co">#&gt; 6        MoM geomean     0.1744214     0.2279261</span></span>
-<span><span class="co">#&gt; 7        BFM geomean     0.1720392     0.2240756</span></span>
-<span><span class="co">#&gt; 8         CV    mean    10.4463771    12.6668469</span></span>
-<span><span class="co">#&gt; 9      CVsex    mean    10.5047823    12.7139217</span></span>
-<span><span class="co">#&gt; 10     sdlog geomean     0.1045775     0.1265123</span></span>
-<span><span class="co">#&gt; 11  sdlogsex geomean     0.1050792     0.1269293</span></span></code></pre></div>
+<span><span class="co">#&gt; 1        SSD geomean     0.1790435     0.2252768</span></span>
+<span><span class="co">#&gt; 2        MMR geomean     0.1793232     0.2256738</span></span>
+<span><span class="co">#&gt; 3        BDI geomean     0.1770936     0.2229512</span></span>
+<span><span class="co">#&gt; 4        ERM geomean     0.1450140     0.1884013</span></span>
+<span><span class="co">#&gt; 5        FMA geomean     0.1126767     0.1215098</span></span>
+<span><span class="co">#&gt; 6        MoM geomean     0.1741842     0.2278104</span></span>
+<span><span class="co">#&gt; 7        BFM geomean     0.1721160     0.2239820</span></span>
+<span><span class="co">#&gt; 8         CV    mean    10.4478498    12.6696321</span></span>
+<span><span class="co">#&gt; 9      CVsex    mean    10.5024881    12.7017777</span></span>
+<span><span class="co">#&gt; 10     sdlog geomean     0.1047123     0.1265835</span></span>
+<span><span class="co">#&gt; 11  sdlogsex geomean     0.1051341     0.1270143</span></span></code></pre></div>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">bootsUgor</span>, type<span class="op">=</span><span class="st">"bias"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   methodUni  center lower_lim0.95 upper_lim0.95</span></span>
-<span><span class="co">#&gt; 1       MMR geomean  -0.004126886   0.004121011</span></span>
-<span><span class="co">#&gt; 2       BDI geomean  -0.012241845   0.001017986</span></span>
-<span><span class="co">#&gt; 3       ERM geomean  -0.045156407  -0.028896766</span></span>
-<span><span class="co">#&gt; 4       FMA geomean  -0.104426534  -0.060249338</span></span>
-<span><span class="co">#&gt; 5       MoM geomean  -0.011910930   0.005700959</span></span>
-<span><span class="co">#&gt; 6       BFM geomean  -0.012470815   0.003621685</span></span>
-<span><span class="co">#&gt; 7        CV    mean  -0.402367896   0.086797550</span></span>
-<span><span class="co">#&gt; 8     sdlog geomean  -0.002438665   0.000000000</span></span></code></pre></div>
+<span><span class="co">#&gt; 1       MMR geomean  -0.004126886   0.004006084</span></span>
+<span><span class="co">#&gt; 2       BDI geomean  -0.011957829   0.001142069</span></span>
+<span><span class="co">#&gt; 3       ERM geomean  -0.044891954  -0.029367342</span></span>
+<span><span class="co">#&gt; 4       FMA geomean  -0.103964493  -0.059007923</span></span>
+<span><span class="co">#&gt; 5       MoM geomean  -0.012390650   0.005450925</span></span>
+<span><span class="co">#&gt; 6       BFM geomean  -0.012674411   0.003555899</span></span>
+<span><span class="co">#&gt; 7        CV    mean  -0.385253802   0.086603727</span></span>
+<span><span class="co">#&gt; 8     sdlog geomean  -0.002397997   0.000000000</span></span></code></pre></div>
+<p>We can also recalculate new confidence intervals using a different
+confidence level and/or switching from two-sided to one-sided confidence
+intervals or vice-versa.</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">bootsUgor</span>, conf.level<span class="op">=</span><span class="fl">0.8</span>, alternative<span class="op">=</span><span class="st">"greater"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in confint.dimorphResampledUni(bootsUgor, conf.level = 0.8, alternative = "greater"): These intervals are for a different confidence level than</span></span>
+<span><span class="co">#&gt; originally calculated when the bootstrap was run.</span></span>
+<span><span class="co">#&gt; Warning in confint.dimorphResampledUni(bootsUgor, conf.level = 0.8, alternative = "greater"): These intervals are for a different value of 'alternative' than</span></span>
+<span><span class="co">#&gt; originally calculated when the bootstrap was run.</span></span>
+<span><span class="co">#&gt;    methodUni  center lower_lim0.8 upper_lim0.8</span></span>
+<span><span class="co">#&gt; 1        SSD geomean    0.1933710          Inf</span></span>
+<span><span class="co">#&gt; 2        MMR geomean    0.1935933          Inf</span></span>
+<span><span class="co">#&gt; 3        BDI geomean    0.1907120          Inf</span></span>
+<span><span class="co">#&gt; 4        ERM geomean    0.1570348          Inf</span></span>
+<span><span class="co">#&gt; 5        FMA geomean    0.1200313          Inf</span></span>
+<span><span class="co">#&gt; 6        MoM geomean    0.1911095          Inf</span></span>
+<span><span class="co">#&gt; 7        BFM geomean    0.1888469          Inf</span></span>
+<span><span class="co">#&gt; 8         CV    mean   11.1401505          Inf</span></span>
+<span><span class="co">#&gt; 9      CVsex    mean   11.2193538          Inf</span></span>
+<span><span class="co">#&gt; 10     sdlog geomean    0.1115949          Inf</span></span>
+<span><span class="co">#&gt; 11  sdlogsex geomean    0.1119936          Inf</span></span></code></pre></div>
 <p>The remaining list element, <code>sampleADS</code>, is itself a list.
 It preserves the resampling information, in particular the set of
 specimens sampled for each iteration of the bootstrap
@@ -3606,9 +3626,9 @@ allows bias from sample <code>"SSD"</code>, <code>"CVsex"</code>, and/or
 bootstrapped values for every method, we can visualize the distribution
 of these values and the confidence intervals. This can be done using
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUgor</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-39-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-40-1.png" width="672"></p>
 <p>A violin plot is generated for the bootstrapped values associated
 with each combination of univariate method and centering algorithm.
 These are separated into panels by the units in which estimates are
@@ -3626,22 +3646,22 @@ get a better sense of the shape of the other bootstrapped distributions,
 we can exclude one or more univariate methods from the plot by passing
 the names of those methods in a vector to the argument
 <code>exclude</code>.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUgor</span>, exclude<span class="op">=</span><span class="st">"FMA"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-40-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-41-1.png" width="672"></p>
 <p>We can now take a look at the bootstrapped confidence intervals for
 the other three species samples. Here are humans:</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUhom</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-41-1.png" width="672"></p>
-<p>Now chimpanzees:</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUpan</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUhom</span><span class="op">)</span></span></code></pre></div>
 <p><img src="dimorph_files/figure-html/unnamed-chunk-42-1.png" width="672"></p>
-<p>And finally, gibbons:</p>
+<p>Now chimpanzees:</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUhyl</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUpan</span><span class="op">)</span></span></code></pre></div>
 <p><img src="dimorph_files/figure-html/unnamed-chunk-43-1.png" width="672"></p>
+<p>And finally, gibbons:</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUhyl</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-44-1.png" width="672"></p>
 <p>These plots illustrate some of the issues to be aware of when using
 these methods; e.g., patterns of over- or under-estimation of SSD under
 certain conditions and the unusual distributions of finite mixture model
@@ -3656,28 +3676,28 @@ in illustrating the degree of systematic bias for various methods
 depending on the actual degree of dimorphism. We’ll just take a look at
 the two samples with the most and least dimorphism, gorillas and
 gibbons.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUgor</span>, type<span class="op">=</span><span class="st">"bias"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-44-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-45-1.png" width="672"></p>
 <p>For ratio-based estimates, most estimators do a pretty good job of
 matching actual sample sexual dimorphism in gorillas (confidence
 intervals include zero), although <code>"FMA"</code> and
 <code>"ERM"</code> underestimate it by quite a bit. However, all
 ratio-based estimators overestimate dimorphism in gibbons:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUhyl</span>, type<span class="op">=</span><span class="st">"bias"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-45-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-46-1.png" width="672"></p>
 <p>We can also take this opportunity to see how uneven sex ratios can
 impact dimorphism estimates. Let’s recalculate a set of confidence
 intervals for gorillas. But this time, instead of using the full data
 set which has an equal number of females and males, let’s run it for a
 subset that includes all 47 females but only 10 males, then look at bias
 from sample <code>"SSD"</code>.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bootsUgorUnbalanced</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootdimorph.html">bootdimorph</a></span><span class="op">(</span><span class="va">gor</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">47</span>, <span class="fl">71</span><span class="op">:</span><span class="fl">80</span><span class="op">)</span>, <span class="st">"FHSI"</span>, drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span>,</span>
 <span>                                   sex<span class="op">=</span><span class="va">gor</span><span class="op">$</span><span class="va">Sex</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">47</span>, <span class="fl">71</span><span class="op">:</span><span class="fl">80</span><span class="op">)</span><span class="op">]</span>, methsUni<span class="op">=</span><span class="va">meths</span>, nResamp<span class="op">=</span><span class="va">nResample</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsUgorUnbalanced</span>, type<span class="op">=</span><span class="st">"bias"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-47-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-48-1.png" width="672"></p>
 <p>Looking back at the confidence intervals based on the full, balanced
 gorilla sample, we can see that those 95% confidence intervals included
 zero bias for all methods except for <code>"ERM"</code> and
@@ -3701,7 +3721,7 @@ estimation techniques.</p>
 <p>We can also bootstrap multivariate estimates of dimorphism. Let’s do
 it.</p>
 <div class="section level4">
-<h4 id="applying-bootdimoph-to-multivariate-samples">Applying <code>bootdimoph()</code> to multivariate samples<a class="anchor" aria-label="anchor" href="#applying-bootdimoph-to-multivariate-samples"></a>
+<h4 id="applying-bootdimorph-to-multivariate-samples">Applying <code>bootdimorph()</code> to multivariate samples<a class="anchor" aria-label="anchor" href="#applying-bootdimorph-to-multivariate-samples"></a>
 </h4>
 <p>Using <code><a href="../reference/bootdimorph.html">bootdimorph()</a></code> with multivariate samples requires
 complete sets of observations for every specimen. If
@@ -3715,7 +3735,7 @@ intervals for the gorilla sample using all ten variables in the
 also simply reverts to a univariate estimate of dimorphism in the
 template variable when all specimens have data for the template variable
 because no estimation for that variable is necessary).</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bootsMgor</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootdimorph.html">bootdimorph</a></span><span class="op">(</span><span class="va">gor</span><span class="op">[</span>,<span class="va">SSDvars_apelimbart</span><span class="op">]</span>, sex<span class="op">=</span><span class="va">gor</span><span class="op">$</span><span class="va">Sex</span>, methsUni<span class="op">=</span><span class="va">meths</span>,</span>
 <span>                         methsMulti<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GMM"</span>, <span class="st">"GMsize"</span><span class="op">)</span>, nResamp<span class="op">=</span><span class="va">nResample</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -3725,7 +3745,7 @@ because no estimation for that variable is necessary).</p>
 <p>Now let’s take a look at the resulting object. It has many
 similarities with the univariate examples, but also some additional
 information.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bootsMgor</span></span>
 <span><span class="co">#&gt;         dimorphResampledMulti Object</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -3746,7 +3766,7 @@ information.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Resampling data structure:</span></span>
 <span><span class="co">#&gt;   type of resampling: Monte Carlo</span></span>
-<span><span class="co">#&gt;   number of resampled data sets: 5000</span></span>
+<span><span class="co">#&gt;   number of resampled data sets: 1000</span></span>
 <span><span class="co">#&gt;   number of individuals in each resampled data set: 94</span></span>
 <span><span class="co">#&gt;   proportion of missing data in resampling structure: 0</span></span>
 <span><span class="co">#&gt;   resampling procedure: bootstrap</span></span>
@@ -3760,74 +3780,74 @@ information.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Confidence intervals for estimates:</span></span>
 <span><span class="co">#&gt;    methodUni methodMulti  center datastructure proportionNA  lower_lim</span></span>
-<span><span class="co">#&gt; 1        SSD      GMsize geomean      complete            0  0.2084850</span></span>
-<span><span class="co">#&gt; 2        SSD         GMM geomean      complete            0  0.2084850</span></span>
-<span><span class="co">#&gt; 3        MMR      GMsize geomean      complete            0  0.2081337</span></span>
-<span><span class="co">#&gt; 4        MMR         GMM geomean      complete            0  0.2099397</span></span>
-<span><span class="co">#&gt; 5        BDI      GMsize geomean      complete            0  0.1991350</span></span>
-<span><span class="co">#&gt; 6        BDI         GMM geomean      complete            0  0.2049715</span></span>
-<span><span class="co">#&gt; 7        ERM      GMsize geomean      complete            0  0.1689682</span></span>
-<span><span class="co">#&gt; 8        ERM         GMM geomean      complete            0  0.1703679</span></span>
-<span><span class="co">#&gt; 9        FMA      GMsize geomean      complete            0  0.1019914</span></span>
-<span><span class="co">#&gt; 10       FMA         GMM geomean      complete            0  0.1265210</span></span>
-<span><span class="co">#&gt; 11       MoM      GMsize geomean      complete            0  0.2079482</span></span>
-<span><span class="co">#&gt; 12       MoM         GMM geomean      complete            0  0.1954272</span></span>
-<span><span class="co">#&gt; 13       BFM      GMsize geomean      complete            0  0.2074400</span></span>
-<span><span class="co">#&gt; 14       BFM         GMM geomean      complete            0  0.2044040</span></span>
-<span><span class="co">#&gt; 15        CV      GMsize    mean      complete            0 11.3167618</span></span>
-<span><span class="co">#&gt; 16     CVsex      GMsize    mean      complete            0 11.3840019</span></span>
-<span><span class="co">#&gt; 17     sdlog      GMsize geomean      complete            0  0.1134311</span></span>
-<span><span class="co">#&gt; 18  sdlogsex      GMsize geomean      complete            0  0.1141081</span></span>
+<span><span class="co">#&gt; 1        SSD      GMsize geomean      complete            0  0.2080057</span></span>
+<span><span class="co">#&gt; 2        SSD         GMM geomean      complete            0  0.2080057</span></span>
+<span><span class="co">#&gt; 3        MMR      GMsize geomean      complete            0  0.2076568</span></span>
+<span><span class="co">#&gt; 4        MMR         GMM geomean      complete            0  0.2090262</span></span>
+<span><span class="co">#&gt; 5        BDI      GMsize geomean      complete            0  0.1983398</span></span>
+<span><span class="co">#&gt; 6        BDI         GMM geomean      complete            0  0.2042955</span></span>
+<span><span class="co">#&gt; 7        ERM      GMsize geomean      complete            0  0.1690691</span></span>
+<span><span class="co">#&gt; 8        ERM         GMM geomean      complete            0  0.1701125</span></span>
+<span><span class="co">#&gt; 9        FMA      GMsize geomean      complete            0  0.1021038</span></span>
+<span><span class="co">#&gt; 10       FMA         GMM geomean      complete            0  0.1261076</span></span>
+<span><span class="co">#&gt; 11       MoM      GMsize geomean      complete            0  0.2070818</span></span>
+<span><span class="co">#&gt; 12       MoM         GMM geomean      complete            0  0.1944021</span></span>
+<span><span class="co">#&gt; 13       BFM      GMsize geomean      complete            0  0.2069147</span></span>
+<span><span class="co">#&gt; 14       BFM         GMM geomean      complete            0  0.2049073</span></span>
+<span><span class="co">#&gt; 15        CV      GMsize    mean      complete            0 11.2413081</span></span>
+<span><span class="co">#&gt; 16     CVsex      GMsize    mean      complete            0 11.3460021</span></span>
+<span><span class="co">#&gt; 17     sdlog      GMsize geomean      complete            0  0.1130918</span></span>
+<span><span class="co">#&gt; 18  sdlogsex      GMsize geomean      complete            0  0.1137336</span></span>
 <span><span class="co">#&gt;     upper_lim</span></span>
-<span><span class="co">#&gt; 1   0.2457518</span></span>
-<span><span class="co">#&gt; 2   0.2457518</span></span>
-<span><span class="co">#&gt; 3   0.2455912</span></span>
-<span><span class="co">#&gt; 4   0.2463640</span></span>
-<span><span class="co">#&gt; 5   0.2376113</span></span>
-<span><span class="co">#&gt; 6   0.2413813</span></span>
-<span><span class="co">#&gt; 7   0.2149604</span></span>
-<span><span class="co">#&gt; 8   0.2075787</span></span>
+<span><span class="co">#&gt; 1   0.2459296</span></span>
+<span><span class="co">#&gt; 2   0.2459296</span></span>
+<span><span class="co">#&gt; 3   0.2459296</span></span>
+<span><span class="co">#&gt; 4   0.2467955</span></span>
+<span><span class="co">#&gt; 5   0.2374517</span></span>
+<span><span class="co">#&gt; 6   0.2411226</span></span>
+<span><span class="co">#&gt; 7   0.2167133</span></span>
+<span><span class="co">#&gt; 8   0.2076303</span></span>
 <span><span class="co">#&gt; 9   0.1106578</span></span>
-<span><span class="co">#&gt; 10  0.1403489</span></span>
-<span><span class="co">#&gt; 11  0.2487895</span></span>
-<span><span class="co">#&gt; 12  0.2454951</span></span>
-<span><span class="co">#&gt; 13  0.2455443</span></span>
-<span><span class="co">#&gt; 14  0.2451287</span></span>
-<span><span class="co">#&gt; 15 13.0268716</span></span>
-<span><span class="co">#&gt; 16 13.0431259</span></span>
-<span><span class="co">#&gt; 17  0.1304401</span></span>
-<span><span class="co">#&gt; 18  0.1310351</span></span>
+<span><span class="co">#&gt; 10  0.1401092</span></span>
+<span><span class="co">#&gt; 11  0.2485689</span></span>
+<span><span class="co">#&gt; 12  0.2464056</span></span>
+<span><span class="co">#&gt; 13  0.2456982</span></span>
+<span><span class="co">#&gt; 14  0.2457452</span></span>
+<span><span class="co">#&gt; 15 13.0378313</span></span>
+<span><span class="co">#&gt; 16 13.0649189</span></span>
+<span><span class="co">#&gt; 17  0.1305403</span></span>
+<span><span class="co">#&gt; 18  0.1312075</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Confidence intervals for bias of estimates from sample SSD, CVsex, or sdlogsex:</span></span>
 <span><span class="co">#&gt;    methodUni methodMulti  center datastructure proportionNA    lower_lim</span></span>
-<span><span class="co">#&gt; 1        MMR      GMsize geomean      complete            0 -0.002211789</span></span>
-<span><span class="co">#&gt; 2        MMR         GMM geomean      complete            0 -0.002465676</span></span>
-<span><span class="co">#&gt; 3        BDI      GMsize geomean      complete            0 -0.020827670</span></span>
-<span><span class="co">#&gt; 4        BDI         GMM geomean      complete            0 -0.013628009</span></span>
-<span><span class="co">#&gt; 5        ERM      GMsize geomean      complete            0 -0.046912314</span></span>
-<span><span class="co">#&gt; 6        ERM         GMM geomean      complete            0 -0.046525349</span></span>
-<span><span class="co">#&gt; 7        FMA      GMsize geomean      complete            0 -0.137043889</span></span>
-<span><span class="co">#&gt; 8        FMA         GMM geomean      complete            0 -0.110318964</span></span>
-<span><span class="co">#&gt; 9        MoM      GMsize geomean      complete            0 -0.007488963</span></span>
-<span><span class="co">#&gt; 10       MoM         GMM geomean      complete            0 -0.023224699</span></span>
-<span><span class="co">#&gt; 11       BFM      GMsize geomean      complete            0 -0.001508778</span></span>
-<span><span class="co">#&gt; 12       BFM         GMM geomean      complete            0 -0.007148997</span></span>
-<span><span class="co">#&gt; 13        CV      GMsize    mean      complete            0 -0.481004727</span></span>
-<span><span class="co">#&gt; 14     sdlog      GMsize geomean      complete            0 -0.002765170</span></span>
+<span><span class="co">#&gt; 1        MMR      GMsize geomean      complete            0 -0.002487471</span></span>
+<span><span class="co">#&gt; 2        MMR         GMM geomean      complete            0 -0.002335030</span></span>
+<span><span class="co">#&gt; 3        BDI      GMsize geomean      complete            0 -0.021377456</span></span>
+<span><span class="co">#&gt; 4        BDI         GMM geomean      complete            0 -0.013882591</span></span>
+<span><span class="co">#&gt; 5        ERM      GMsize geomean      complete            0 -0.046192631</span></span>
+<span><span class="co">#&gt; 6        ERM         GMM geomean      complete            0 -0.046482770</span></span>
+<span><span class="co">#&gt; 7        FMA      GMsize geomean      complete            0 -0.137896400</span></span>
+<span><span class="co">#&gt; 8        FMA         GMM geomean      complete            0 -0.111536650</span></span>
+<span><span class="co">#&gt; 9        MoM      GMsize geomean      complete            0 -0.007965737</span></span>
+<span><span class="co">#&gt; 10       MoM         GMM geomean      complete            0 -0.023674064</span></span>
+<span><span class="co">#&gt; 11       BFM      GMsize geomean      complete            0 -0.001575835</span></span>
+<span><span class="co">#&gt; 12       BFM         GMM geomean      complete            0 -0.006794872</span></span>
+<span><span class="co">#&gt; 13        CV      GMsize    mean      complete            0 -0.545000836</span></span>
+<span><span class="co">#&gt; 14     sdlog      GMsize geomean      complete            0 -0.002825735</span></span>
 <span><span class="co">#&gt;        upper_lim</span></span>
 <span><span class="co">#&gt; 1   0.000000e+00</span></span>
-<span><span class="co">#&gt; 2   3.004033e-03</span></span>
-<span><span class="co">#&gt; 3  -3.430143e-03</span></span>
-<span><span class="co">#&gt; 4   5.267315e-04</span></span>
-<span><span class="co">#&gt; 5  -2.436725e-02</span></span>
-<span><span class="co">#&gt; 6  -3.357533e-02</span></span>
-<span><span class="co">#&gt; 7  -1.009368e-01</span></span>
-<span><span class="co">#&gt; 8  -7.561790e-02</span></span>
-<span><span class="co">#&gt; 9   5.647615e-03</span></span>
-<span><span class="co">#&gt; 10  4.538316e-03</span></span>
-<span><span class="co">#&gt; 11 -4.367599e-05</span></span>
-<span><span class="co">#&gt; 12  8.833804e-03</span></span>
-<span><span class="co">#&gt; 13  9.807039e-02</span></span>
+<span><span class="co">#&gt; 2   3.022034e-03</span></span>
+<span><span class="co">#&gt; 3  -3.368228e-03</span></span>
+<span><span class="co">#&gt; 4   4.944617e-04</span></span>
+<span><span class="co">#&gt; 5  -2.352917e-02</span></span>
+<span><span class="co">#&gt; 6  -3.341420e-02</span></span>
+<span><span class="co">#&gt; 7  -1.003640e-01</span></span>
+<span><span class="co">#&gt; 8  -7.619840e-02</span></span>
+<span><span class="co">#&gt; 9   5.684864e-03</span></span>
+<span><span class="co">#&gt; 10  4.719286e-03</span></span>
+<span><span class="co">#&gt; 11 -4.533795e-05</span></span>
+<span><span class="co">#&gt; 12  1.081888e-02</span></span>
+<span><span class="co">#&gt; 13  9.810928e-02</span></span>
 <span><span class="co">#&gt; 14  0.000000e+00</span></span></code></pre></div>
 <p>Just as we saw above, it reports the number of specimens, the number
 of variables and their names, and the univariate methods and centering
@@ -3863,24 +3883,24 @@ original multivariate data set.</p>
 <p>Just as we saw with univariate bootstrapped confidence intervals,
 visualizing the bootstrapped distributions is straightforward using
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsMgor</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-50-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-51-1.png" width="672"></p>
 <p>And just like in the univariate examples, we can also exclude
 specified univariate methods using <code>exclude</code>.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsMgor</span>, exclude<span class="op">=</span><span class="st">"FMA"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-51-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-52-1.png" width="672"></p>
 <p>We can also exclude multivariate methods from the plot using
 <code>excludeMulti</code>.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsMgor</span>, exclude<span class="op">=</span><span class="st">"FMA"</span>, excludeMulti<span class="op">=</span><span class="st">"GMsize"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-52-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-53-1.png" width="672"></p>
 <p>And we can also plot bias from sex-based sample values, just like in
 the univariate example.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bootsMgor</span>, type<span class="op">=</span><span class="st">"bias"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-53-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-54-1.png" width="672"></p>
 </div>
 </div>
 <div class="section level3">
@@ -3946,7 +3966,7 @@ behavior of <code><a href="../reference/SSDtest.html">SSDtest()</a></code>. Howe
 <code>replace</code> equal to <code>TRUE</code>. Any fossil specimen
 without data for the variable is removed from the sample (this happens
 regardless of the value of <code>na.rm</code>).</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_fossil_uni</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSDtest.html">SSDtest</a></span><span class="op">(</span></span>
 <span>     fossil<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"A. afarensis"</span><span class="op">=</span><span class="va">GordonAJBA</span><span class="op">[</span><span class="va">GordonAJBA</span><span class="op">$</span><span class="va">Species</span><span class="op">==</span><span class="st">"A. afarensis"</span>, <span class="st">"FEMHEAD"</span>, drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>     comp<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"G. gorilla"</span><span class="op">=</span><span class="va">GordonAJBA</span><span class="op">[</span><span class="va">GordonAJBA</span><span class="op">$</span><span class="va">Species</span><span class="op">==</span><span class="st">"Gorilla gorilla"</span>, <span class="st">"FEMHEAD"</span>, drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span>,</span>
@@ -4003,7 +4023,7 @@ samples almost always lack sex information.</p>
 <h4 id="viewing-the-resulting-object-2">Viewing the resulting object<a class="anchor" aria-label="anchor" href="#viewing-the-resulting-object-2"></a>
 </h4>
 <p>Now let’s take a look at the output.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_fossil_uni</span></span>
 <span><span class="co">#&gt;         SSDtest Object</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -4024,9 +4044,9 @@ samples almost always lack sex information.</p>
 <span><span class="co">#&gt; Resampling data structure:</span></span>
 <span><span class="co">#&gt;          sample n resampled data sets resampling type            sampling</span></span>
 <span><span class="co">#&gt;    A. afarensis                     1           exact without replacement</span></span>
-<span><span class="co">#&gt;      G. gorilla                  5000     Monte Carlo without replacement</span></span>
-<span><span class="co">#&gt;      H. sapiens                  5000     Monte Carlo without replacement</span></span>
-<span><span class="co">#&gt;  P. troglodytes                  5000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;      G. gorilla                  1000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;      H. sapiens                  1000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;  P. troglodytes                  1000     Monte Carlo without replacement</span></span>
 <span><span class="co">#&gt;   number of individuals in each resampled data set: 4</span></span>
 <span><span class="co">#&gt;   other resampling parameters:</span></span>
 <span><span class="co">#&gt;     ratio variables (if present): natural log of ratio</span></span>
@@ -4035,33 +4055,33 @@ samples almost always lack sex information.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Median resampled estimates for each combination of methods:</span></span>
 <span><span class="co">#&gt;   methodUni  center A. afarensis G. gorilla H. sapiens P. troglodytes</span></span>
-<span><span class="co">#&gt; 1       SSD geomean           NA     0.2125     0.1268         0.0459</span></span>
-<span><span class="co">#&gt; 2       MMR geomean       0.2393     0.1991     0.1261         0.0881</span></span>
-<span><span class="co">#&gt; 3       BDI geomean       0.2322     0.1723     0.1114         0.0789</span></span>
+<span><span class="co">#&gt; 1       SSD geomean           NA     0.2152     0.1287         0.0483</span></span>
+<span><span class="co">#&gt; 2       MMR geomean       0.2393     0.1996     0.1265         0.0893</span></span>
+<span><span class="co">#&gt; 3       BDI geomean       0.2322     0.1736     0.1115         0.0803</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; p-values (one-sided; null: first sample less or equally dimorphic as second sample):</span></span>
 <span><span class="co">#&gt;                               SSD:geomean MMR:geomean BDI:geomean</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla              NA      0.2680      0.1114</span></span>
-<span><span class="co">#&gt; A. afarensis - H. sapiens              NA      0.0306      0.0064</span></span>
-<span><span class="co">#&gt; A. afarensis - P. troglodytes          NA      0.0068      0.0000</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens            0.1422      0.2186      0.2139</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes        0.0276      0.1135      0.1069</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes        0.1652      0.2973      0.2904</span></span>
-<span><span class="co">#&gt; G. gorilla - A. afarensis              NA      0.7320      0.8886</span></span>
-<span><span class="co">#&gt; H. sapiens - A. afarensis              NA      0.9694      0.9936</span></span>
-<span><span class="co">#&gt; P. troglodytes - A. afarensis          NA      0.9932      1.0000</span></span>
-<span><span class="co">#&gt; H. sapiens - G. gorilla            0.8578      0.7814      0.7861</span></span>
-<span><span class="co">#&gt; P. troglodytes - G. gorilla        0.9724      0.8865      0.8931</span></span>
-<span><span class="co">#&gt; P. troglodytes - H. sapiens        0.8348      0.7027      0.7096</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla              NA      0.2810      0.1110</span></span>
+<span><span class="co">#&gt; A. afarensis - H. sapiens              NA      0.0330      0.0080</span></span>
+<span><span class="co">#&gt; A. afarensis - P. troglodytes          NA      0.0060      0.0000</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens            0.1392      0.2296      0.2306</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes        0.0306      0.1231      0.1208</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes        0.1698      0.2829      0.2797</span></span>
+<span><span class="co">#&gt; G. gorilla - A. afarensis              NA      0.7190      0.8890</span></span>
+<span><span class="co">#&gt; H. sapiens - A. afarensis              NA      0.9670      0.9920</span></span>
+<span><span class="co">#&gt; P. troglodytes - A. afarensis          NA      0.9940      1.0000</span></span>
+<span><span class="co">#&gt; H. sapiens - G. gorilla            0.8608      0.7704      0.7694</span></span>
+<span><span class="co">#&gt; P. troglodytes - G. gorilla        0.9694      0.8769      0.8792</span></span>
+<span><span class="co">#&gt; P. troglodytes - H. sapiens        0.8302      0.7171      0.7203</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; p-values (two-sided):</span></span>
 <span><span class="co">#&gt;                               SSD:geomean MMR:geomean BDI:geomean</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla              NA      0.5290      0.2472</span></span>
-<span><span class="co">#&gt; A. afarensis - H. sapiens              NA      0.0328      0.0064</span></span>
-<span><span class="co">#&gt; A. afarensis - P. troglodytes          NA      0.0068      0.0000</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens            0.2853      0.4426      0.4342</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes        0.0492      0.2157      0.1957</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes        0.3310      0.5983      0.5857</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla              NA      0.5460      0.2550</span></span>
+<span><span class="co">#&gt; A. afarensis - H. sapiens              NA      0.0370      0.0080</span></span>
+<span><span class="co">#&gt; A. afarensis - P. troglodytes          NA      0.0060      0.0000</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens            0.2787      0.4654      0.4726</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes        0.0547      0.2327      0.2193</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes        0.3428      0.5708      0.5671</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Warning: The following comparisons contain NAs that were</span></span>
 <span><span class="co">#&gt; dropped in the calculation of p-values:</span></span>
@@ -4110,7 +4130,7 @@ identifies the p-values for which that is the case.</p>
 <code>SSDtest</code> object contains multiple
 <code>dimorphResampledUni</code> objects, one for each taxon sample, as
 well as other information. Let’s take a look.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "estimates"  "methcombos" "pvalues"</span></span></code></pre></div>
 <p>The <code>SSDtest</code> object is a list containing three
@@ -4125,24 +4145,24 @@ and two-sided p-values.</p>
 <code>pvals()</code>. <code>centers()</code> provides a data frame with
 mean and median resampled values for every sample for each method
 combination.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">centers</span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   methodUni  center median.A. afarensis mean.A. afarensis median.G. gorilla</span></span>
-<span><span class="co">#&gt; 1       SSD geomean                  NA                NA         0.2124633</span></span>
-<span><span class="co">#&gt; 2       MMR geomean           0.2392566         0.2392566         0.1990785</span></span>
-<span><span class="co">#&gt; 3       BDI geomean           0.2322377         0.2322377         0.1722730</span></span>
+<span><span class="co">#&gt; 1       SSD geomean                  NA                NA         0.2152390</span></span>
+<span><span class="co">#&gt; 2       MMR geomean           0.2392566         0.2392566         0.1996344</span></span>
+<span><span class="co">#&gt; 3       BDI geomean           0.2322377         0.2322377         0.1735998</span></span>
 <span><span class="co">#&gt;   mean.G. gorilla median.H. sapiens mean.H. sapiens median.P. troglodytes</span></span>
-<span><span class="co">#&gt; 1       0.2140611         0.1267858       0.1279168            0.04590631</span></span>
-<span><span class="co">#&gt; 2       0.1962144         0.1260593       0.1297642            0.08808577</span></span>
-<span><span class="co">#&gt; 3       0.1684665         0.1114163       0.1138409            0.07886737</span></span>
+<span><span class="co">#&gt; 1       0.2150319         0.1286750       0.1275414            0.04826586</span></span>
+<span><span class="co">#&gt; 2       0.1954749         0.1265215       0.1310581            0.08934482</span></span>
+<span><span class="co">#&gt; 3       0.1671952         0.1115247       0.1156241            0.08034616</span></span>
 <span><span class="co">#&gt;   mean.P. troglodytes</span></span>
-<span><span class="co">#&gt; 1          0.04885744</span></span>
-<span><span class="co">#&gt; 2          0.09533623</span></span>
-<span><span class="co">#&gt; 3          0.08393418</span></span></code></pre></div>
+<span><span class="co">#&gt; 1          0.04945883</span></span>
+<span><span class="co">#&gt; 2          0.09534067</span></span>
+<span><span class="co">#&gt; 3          0.08465606</span></span></code></pre></div>
 <p><code>pvals()</code> pulls out one of the p-value data frames, and
 the argument <code>alternative</code> has two options:
 <code>"two.sided"</code> (the default) and <code>"one.sided"</code>.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pvals</span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in pvals(test_fossil_uni): The following comparisons contain NAs that were</span></span>
 <span><span class="co">#&gt; dropped in the calculation of p-values:</span></span>
@@ -4153,34 +4173,34 @@ the argument <code>alternative</code> has two options:
 <span><span class="co">#&gt;   SSD:geomean: P. troglodytes - G. gorilla</span></span>
 <span><span class="co">#&gt;   SSD:geomean: P. troglodytes - H. sapiens</span></span>
 <span><span class="co">#&gt;                                   SSD:geomean MMR:geomean BDI:geomean</span></span>
-<span><span class="co">#&gt; H0: A. afarensis = G. gorilla              NA   0.5290000   0.2472000</span></span>
-<span><span class="co">#&gt; H0: A. afarensis = H. sapiens              NA   0.0328000   0.0064000</span></span>
-<span><span class="co">#&gt; H0: A. afarensis = P. troglodytes          NA   0.0068000   0.0000000</span></span>
-<span><span class="co">#&gt; H0: G. gorilla = H. sapiens        0.28530542   0.4425884   0.4342208</span></span>
-<span><span class="co">#&gt; H0: G. gorilla = P. troglodytes    0.04922726   0.2156509   0.1956675</span></span>
-<span><span class="co">#&gt; H0: H. sapiens = P. troglodytes    0.33099415   0.5982979   0.5857246</span></span></code></pre></div>
+<span><span class="co">#&gt; H0: A. afarensis = G. gorilla              NA    0.546000    0.255000</span></span>
+<span><span class="co">#&gt; H0: A. afarensis = H. sapiens              NA    0.037000    0.008000</span></span>
+<span><span class="co">#&gt; H0: A. afarensis = P. troglodytes          NA    0.006000    0.000000</span></span>
+<span><span class="co">#&gt; H0: G. gorilla = H. sapiens        0.27872074    0.465417    0.472602</span></span>
+<span><span class="co">#&gt; H0: G. gorilla = P. troglodytes    0.05470744    0.232732    0.219298</span></span>
+<span><span class="co">#&gt; H0: H. sapiens = P. troglodytes    0.34277140    0.570753    0.567096</span></span></code></pre></div>
 <p><code>pvals()</code> returns the data frame, but it also generates
 the same warning we saw earlier. We can suppress that warning if we want
 to.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu">pvals</span><span class="op">(</span><span class="va">test_fossil_uni</span>, alternative<span class="op">=</span><span class="st">"one.sided"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                    SSD:geomean MMR:geomean BDI:geomean</span></span>
-<span><span class="co">#&gt; H0: A. afarensis &lt;= G. gorilla              NA   0.2680000   0.1114000</span></span>
-<span><span class="co">#&gt; H0: A. afarensis &lt;= H. sapiens              NA   0.0306000   0.0064000</span></span>
-<span><span class="co">#&gt; H0: A. afarensis &lt;= P. troglodytes          NA   0.0068000   0.0000000</span></span>
-<span><span class="co">#&gt; H0: G. gorilla &lt;= H. sapiens        0.14221337   0.2186031   0.2139227</span></span>
-<span><span class="co">#&gt; H0: G. gorilla &lt;= P. troglodytes    0.02757475   0.1135224   0.1068574</span></span>
-<span><span class="co">#&gt; H0: H. sapiens &lt;= P. troglodytes    0.16519551   0.2973175   0.2903688</span></span>
-<span><span class="co">#&gt; H0: G. gorilla &lt;= A. afarensis              NA   0.7320000   0.8886000</span></span>
-<span><span class="co">#&gt; H0: H. sapiens &lt;= A. afarensis              NA   0.9694000   0.9936000</span></span>
-<span><span class="co">#&gt; H0: P. troglodytes &lt;= A. afarensis          NA   0.9932000   1.0000000</span></span>
-<span><span class="co">#&gt; H0: H. sapiens &lt;= G. gorilla        0.85778663   0.7813969   0.7860773</span></span>
-<span><span class="co">#&gt; H0: P. troglodytes &lt;= G. gorilla    0.97242525   0.8864776   0.8931426</span></span>
-<span><span class="co">#&gt; H0: P. troglodytes &lt;= H. sapiens    0.83480449   0.7026825   0.7096312</span></span></code></pre></div>
+<span><span class="co">#&gt; H0: A. afarensis &lt;= G. gorilla              NA    0.281000    0.111000</span></span>
+<span><span class="co">#&gt; H0: A. afarensis &lt;= H. sapiens              NA    0.033000    0.008000</span></span>
+<span><span class="co">#&gt; H0: A. afarensis &lt;= P. troglodytes          NA    0.006000    0.000000</span></span>
+<span><span class="co">#&gt; H0: G. gorilla &lt;= H. sapiens        0.13917415    0.229599    0.230576</span></span>
+<span><span class="co">#&gt; H0: G. gorilla &lt;= P. troglodytes    0.03055402    0.123114    0.120824</span></span>
+<span><span class="co">#&gt; H0: H. sapiens &lt;= P. troglodytes    0.16977326    0.282938    0.279688</span></span>
+<span><span class="co">#&gt; H0: G. gorilla &lt;= A. afarensis              NA    0.719000    0.889000</span></span>
+<span><span class="co">#&gt; H0: H. sapiens &lt;= A. afarensis              NA    0.967000    0.992000</span></span>
+<span><span class="co">#&gt; H0: P. troglodytes &lt;= A. afarensis          NA    0.994000    1.000000</span></span>
+<span><span class="co">#&gt; H0: H. sapiens &lt;= G. gorilla        0.86082585    0.770401    0.769424</span></span>
+<span><span class="co">#&gt; H0: P. troglodytes &lt;= G. gorilla    0.96944598    0.876886    0.879176</span></span>
+<span><span class="co">#&gt; H0: P. troglodytes &lt;= H. sapiens    0.83022674    0.717062    0.720312</span></span></code></pre></div>
 <p>The remaining element of a <code>SSDtest</code> object,
 <code>estimates</code>, is a list containing elements corresponding to
 each taxon sample:</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">$</span><span class="va">estimates</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "A. afarensis"   "G. gorilla"     "H. sapiens"     "P. troglodytes"</span></span></code></pre></div>
 <p>These list components are all objects of class
@@ -4192,7 +4212,7 @@ the objects produced by <code><a href="../reference/bootdimorph.html">bootdimorp
 contain all of the resampled estimates; a summary of the information
 contained in them can be generated by typing their names. Here’s that
 information for the fossil sample:</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_fossil_uni</span><span class="op">$</span><span class="va">estimates</span><span class="op">[[</span><span class="st">"A. afarensis"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;         dimorphResampledUni Object</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -4217,7 +4237,7 @@ information for the fossil sample:</p>
 <span><span class="co">#&gt;     matchvars = FALSE</span></span>
 <span><span class="co">#&gt;     na.rm = TRUE</span></span></code></pre></div>
 <p>And here’s the information for one of the comparative samples:</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_fossil_uni</span><span class="op">$</span><span class="va">estimates</span><span class="op">[[</span><span class="st">"G. gorilla"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;         dimorphResampledUni Object</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -4233,7 +4253,7 @@ information for the fossil sample:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Resampling data structure:</span></span>
 <span><span class="co">#&gt;   type of resampling: Monte Carlo</span></span>
-<span><span class="co">#&gt;   number of resampled data sets: 5000</span></span>
+<span><span class="co">#&gt;   number of resampled data sets: 1000</span></span>
 <span><span class="co">#&gt;   number of individuals in each resampled data set: 4</span></span>
 <span><span class="co">#&gt;   subsamples sampled WITHOUT replacement</span></span>
 <span><span class="co">#&gt;   other resampling parameters:</span></span>
@@ -4244,9 +4264,9 @@ information for the fossil sample:</p>
 <p>Because these parts of the <code>SSDtest</code> object are
 <code>dimorphResampledUni</code> objects just like the output of
 <code><a href="../reference/bootdimorph.html">bootdimorph()</a></code>, we can plot them if we want to:</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">$</span><span class="va">estimates</span><span class="op">[[</span><span class="st">"G. gorilla"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-64-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-65-1.png" width="672"></p>
 <p>Notice that no confidence intervals are drawn - that’s because this
 object doesn’t have any. Now let’s look into plotting the whole
 <code>SSDtest</code> object.</p>
@@ -4260,8 +4280,9 @@ object doesn’t have any. Now let’s look into plotting the whole
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> with no other arguments will plot histograms of the
 resampled distributions for all taxon samples for the first combination
 of univariate and multivariate methods.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-66-1.png" width="672"></p>
 <p>Note that the fossil sample is not included here. That’s because the
 first method combination is plotted by default; in this case, that’s
 <code>"SSD"</code> using the <code>"geomean"</code> centering algorithm,
@@ -4273,18 +4294,20 @@ the second method combination generates resampled values of
 <code>"MMR"</code> using the <code>"geomean"</code> centering algorithm,
 and it includes the observed value for the fossil sample. Let’s plot
 that.</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_uni</span>, est<span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># plots second method (MMR)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-67-1.png" width="672"></p>
 <p>The fossil sample is included as a vertical line because it’s a
 single point estimate and is not resampled.</p>
 <p>We also might want to adjust the colors for each resampled
 distribution. We can do that by using the argument
 <code>groupcols</code>, specifying a vector of colors with names for
 each element corresponding to the taxon sample names.</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">speciescolors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A. afarensis"</span><span class="op">=</span><span class="st">"#352A87"</span>, <span class="st">"A. africanus"</span><span class="op">=</span><span class="st">"#F9FB0E"</span>, <span class="st">"G. gorilla"</span><span class="op">=</span><span class="st">"#EABA4B"</span>,</span>
 <span>                   <span class="st">"H. sapiens"</span><span class="op">=</span><span class="st">"#09A9C0"</span>, <span class="st">"P. troglodytes"</span><span class="op">=</span><span class="st">"#78BE7C"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_uni</span>, est<span class="op">=</span><span class="fl">2</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span> <span class="co"># change the colors</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-68-1.png" width="672"></p>
 <p>We might further want to visualize the resampled difference in
 estimates for any given pair of samples. We can do this by setting the
 argument <code>type</code> to <code>"diff"</code> (the default is
@@ -4297,19 +4320,19 @@ number of iterations was used by <code><a href="../reference/SSDtest.html">SSDte
 <p>By default, these histograms are plotted in a single grid of plots.
 However, we’ll plot them individually here to keep them legible using
 the arguments <code>gridplot</code> and <code>useradvance</code>.</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_uni</span>, est<span class="op">=</span><span class="fl">2</span>, type<span class="op">=</span><span class="st">"diff"</span>, <span class="co"># plots differences for all pairs of samples</span></span>
 <span>     gridplot<span class="op">=</span><span class="cn">FALSE</span>, useradvance<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="co"># prints each plot separately without waiting for user input</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-68-1.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-68-2.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-68-3.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-68-4.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-68-5.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-68-6.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-69-1.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-69-2.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-69-3.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-69-4.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-69-5.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-69-6.png" width="672"></p>
 <p>Alternatively, we might want to plot the difference for a single pair
 of samples. In that case, a vector of two integers specifying the
 samples to include is passed to the argument <code>diffs</code>. These
 integers are the order in which the samples were given to
 <code><a href="../reference/SSDtest.html">SSDtest()</a></code>, and are the order that the samples appear in
 when the <code>SSDtest</code> object is printed.</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_uni</span>, type<span class="op">=</span><span class="st">"diff"</span>, est<span class="op">=</span><span class="fl">2</span>, diffs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="co"># plots diffs between first pair of samples</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-69-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-70-1.png" width="672"></p>
 </div>
 <div class="section level4">
 <h4 id="using-ssdtest-with-multiple-fossil-samples-univariate">Using <code>SSDtest()</code> with multiple fossil samples
@@ -4327,7 +4350,7 @@ all of the fossil samples (argument <code>exactfossil = TRUE</code>),
 switching to Monte Carlo resampling if the number of unique combinations
 of resampled data sets for a fossil taxon exceeds
 <code>limit</code>.</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_2fossil_uni</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSDtest.html">SSDtest</a></span><span class="op">(</span></span>
 <span>     fossil<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"A. afarensis"</span><span class="op">=</span><span class="va">GordonAJBA</span><span class="op">[</span><span class="va">GordonAJBA</span><span class="op">$</span><span class="va">Species</span><span class="op">==</span><span class="st">"A. afarensis"</span>, <span class="st">"FEMHEAD"</span><span class="op">]</span>,</span>
 <span>                   <span class="st">"A. africanus"</span><span class="op">=</span><span class="va">GordonAJBA</span><span class="op">[</span><span class="va">GordonAJBA</span><span class="op">$</span><span class="va">Species</span><span class="op">==</span><span class="st">"A. africanus"</span>, <span class="st">"FEMHEAD"</span><span class="op">]</span><span class="op">)</span>,</span>
@@ -4342,7 +4365,7 @@ of resampled data sets for a fossil taxon exceeds
 <span>     exactcomp<span class="op">=</span><span class="cn">FALSE</span>,</span>
 <span>     nResamp<span class="op">=</span><span class="va">nResample</span><span class="op">)</span></span></code></pre></div>
 <p>As with the one fossil sample case we can print the output.</p>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_2fossil_uni</span></span>
 <span><span class="co">#&gt;         SSDtest Object</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -4365,9 +4388,9 @@ of resampled data sets for a fossil taxon exceeds
 <span><span class="co">#&gt;          sample n resampled data sets resampling type            sampling</span></span>
 <span><span class="co">#&gt;    A. afarensis                     1           exact without replacement</span></span>
 <span><span class="co">#&gt;    A. africanus                   715           exact without replacement</span></span>
-<span><span class="co">#&gt;      G. gorilla                  5000     Monte Carlo without replacement</span></span>
-<span><span class="co">#&gt;      H. sapiens                  5000     Monte Carlo without replacement</span></span>
-<span><span class="co">#&gt;  P. troglodytes                  5000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;      G. gorilla                  1000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;      H. sapiens                  1000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;  P. troglodytes                  1000     Monte Carlo without replacement</span></span>
 <span><span class="co">#&gt;   number of individuals in each resampled data set: 4</span></span>
 <span><span class="co">#&gt;   other resampling parameters:</span></span>
 <span><span class="co">#&gt;     ratio variables (if present): natural log of ratio</span></span>
@@ -4376,63 +4399,65 @@ of resampled data sets for a fossil taxon exceeds
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Median resampled estimates for each combination of methods:</span></span>
 <span><span class="co">#&gt;   methodUni  center A. afarensis A. africanus G. gorilla H. sapiens</span></span>
-<span><span class="co">#&gt; 1       MMR geomean       0.2393       0.1179     0.1978     0.1249</span></span>
-<span><span class="co">#&gt; 2       BDI geomean       0.2322       0.1063     0.1717     0.1108</span></span>
+<span><span class="co">#&gt; 1       MMR geomean       0.2393       0.1179     0.2028     0.1239</span></span>
+<span><span class="co">#&gt; 2       BDI geomean       0.2322       0.1063     0.1719     0.1096</span></span>
 <span><span class="co">#&gt;   P. troglodytes</span></span>
-<span><span class="co">#&gt; 1         0.0895</span></span>
-<span><span class="co">#&gt; 2         0.0803</span></span>
+<span><span class="co">#&gt; 1         0.0894</span></span>
+<span><span class="co">#&gt; 2         0.0787</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; p-values (one-sided; null: first sample less or equally dimorphic as second sample):</span></span>
 <span><span class="co">#&gt;                               MMR:geomean BDI:geomean</span></span>
 <span><span class="co">#&gt; A. afarensis - A. africanus        0.0112      0.0000</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla          0.2700      0.1126</span></span>
-<span><span class="co">#&gt; A. afarensis - H. sapiens          0.0294      0.0070</span></span>
-<span><span class="co">#&gt; A. afarensis - P. troglodytes      0.0072      0.0004</span></span>
-<span><span class="co">#&gt; A. africanus - G. gorilla          0.8036      0.7983</span></span>
-<span><span class="co">#&gt; A. africanus - H. sapiens          0.5271      0.5184</span></span>
-<span><span class="co">#&gt; A. africanus - P. troglodytes      0.3290      0.3251</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens            0.2193      0.2141</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes        0.1191      0.1131</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes        0.3089      0.3055</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla          0.2810      0.1190</span></span>
+<span><span class="co">#&gt; A. afarensis - H. sapiens          0.0260      0.0050</span></span>
+<span><span class="co">#&gt; A. afarensis - P. troglodytes      0.0060      0.0010</span></span>
+<span><span class="co">#&gt; A. africanus - G. gorilla          0.8050      0.8009</span></span>
+<span><span class="co">#&gt; A. africanus - H. sapiens          0.5191      0.5106</span></span>
+<span><span class="co">#&gt; A. africanus - P. troglodytes      0.3218      0.3164</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens            0.2103      0.2062</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes        0.1146      0.1083</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes        0.3045      0.3028</span></span>
 <span><span class="co">#&gt; A. africanus - A. afarensis        0.9888      1.0000</span></span>
-<span><span class="co">#&gt; G. gorilla - A. afarensis          0.7300      0.8874</span></span>
-<span><span class="co">#&gt; H. sapiens - A. afarensis          0.9706      0.9930</span></span>
-<span><span class="co">#&gt; P. troglodytes - A. afarensis      0.9928      0.9996</span></span>
-<span><span class="co">#&gt; G. gorilla - A. africanus          0.1964      0.2017</span></span>
-<span><span class="co">#&gt; H. sapiens - A. africanus          0.4729      0.4816</span></span>
-<span><span class="co">#&gt; P. troglodytes - A. africanus      0.6710      0.6749</span></span>
-<span><span class="co">#&gt; H. sapiens - G. gorilla            0.7807      0.7859</span></span>
-<span><span class="co">#&gt; P. troglodytes - G. gorilla        0.8809      0.8869</span></span>
-<span><span class="co">#&gt; P. troglodytes - H. sapiens        0.6911      0.6945</span></span>
+<span><span class="co">#&gt; G. gorilla - A. afarensis          0.7190      0.8810</span></span>
+<span><span class="co">#&gt; H. sapiens - A. afarensis          0.9740      0.9950</span></span>
+<span><span class="co">#&gt; P. troglodytes - A. afarensis      0.9940      0.9990</span></span>
+<span><span class="co">#&gt; G. gorilla - A. africanus          0.1950      0.1991</span></span>
+<span><span class="co">#&gt; H. sapiens - A. africanus          0.4809      0.4894</span></span>
+<span><span class="co">#&gt; P. troglodytes - A. africanus      0.6782      0.6836</span></span>
+<span><span class="co">#&gt; H. sapiens - G. gorilla            0.7897      0.7938</span></span>
+<span><span class="co">#&gt; P. troglodytes - G. gorilla        0.8854      0.8917</span></span>
+<span><span class="co">#&gt; P. troglodytes - H. sapiens        0.6955      0.6972</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; p-values (two-sided):</span></span>
 <span><span class="co">#&gt;                               MMR:geomean BDI:geomean</span></span>
 <span><span class="co">#&gt; A. afarensis - A. africanus        0.0112      0.0000</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla          0.5282      0.2462</span></span>
-<span><span class="co">#&gt; A. afarensis - H. sapiens          0.0310      0.0070</span></span>
-<span><span class="co">#&gt; A. afarensis - P. troglodytes      0.0072      0.0004</span></span>
-<span><span class="co">#&gt; A. africanus - G. gorilla          0.3943      0.4076</span></span>
-<span><span class="co">#&gt; A. africanus - H. sapiens          0.9367      0.9619</span></span>
-<span><span class="co">#&gt; A. africanus - P. troglodytes      0.6724      0.6568</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens            0.4450      0.4355</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes        0.2270      0.2094</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes        0.6222      0.6157</span></span></code></pre></div>
+<span><span class="co">#&gt; A. afarensis - G. gorilla          0.5610      0.2610</span></span>
+<span><span class="co">#&gt; A. afarensis - H. sapiens          0.0270      0.0050</span></span>
+<span><span class="co">#&gt; A. afarensis - P. troglodytes      0.0060      0.0010</span></span>
+<span><span class="co">#&gt; A. africanus - G. gorilla          0.3907      0.4019</span></span>
+<span><span class="co">#&gt; A. africanus - H. sapiens          0.9512      0.9741</span></span>
+<span><span class="co">#&gt; A. africanus - P. troglodytes      0.6544      0.6398</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens            0.4257      0.4178</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes        0.2164      0.1975</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes        0.6090      0.6076</span></span></code></pre></div>
 <p>We can also plot the output in the same way as we did earlier.</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_uni</span>, est<span class="op">=</span><span class="fl">1</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-74-1.png" width="672"></p>
 <p>In this case we have a resampled distribution for one of the fossil
 samples in addition to all of the comparative samples. If we want to
 better distinguish overlapping distributions, we can give a vector of
 one or more integer values to the argument <code>invert</code>. This
 will flip the histograms of the corresponding sample(s) in the plot (and
 move those sample names to the bottom of the legend).</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_uni</span>, invert<span class="op">=</span><span class="fl">2</span>, est<span class="op">=</span><span class="fl">1</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-75-1.png" width="672"></p>
 <p>And just as we did earlier, we can plot histograms for the difference
 in estimates for pairs of samples.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_uni</span>, type<span class="op">=</span><span class="st">"diff"</span>, est<span class="op">=</span><span class="fl">2</span>, diffs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-75-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-76-1.png" width="672"></p>
 </div>
 </div>
 <div class="section level3">
@@ -4445,7 +4470,7 @@ those outlined in Gordon et al. (2008), Gordon (2025a), and Gordon
 (2025b). Please refer to those articles for more specific details.</p>
 <p>To begin with, let’s specify a vector containing the names of all of
 the variables we’ll include in our data sets.</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">SSDvars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"HUMHEAD"</span>, <span class="st">"ELBOW0.5"</span>, <span class="st">"RADTV"</span>, <span class="st">"FEMHEAD"</span>,    </span>
 <span>             <span class="st">"FEMSHAFT0.5"</span>, <span class="st">"DISTFEM0.5"</span>, <span class="st">"PROXTIB0.5"</span>, <span class="st">"DISTTIB0.5"</span><span class="op">)</span></span></code></pre></div>
 <p>Now let’s run some tests.</p>
@@ -4475,7 +4500,7 @@ remember that it’s highly flawed - <em>don’t use it!</em> (But if you
 really, really want to, the function will allow you to do it. Just
 remember that <code>"GMM"</code> and <code>"TM"</code> are estimating
 dimorphism for different size variables.)</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_fossil_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSDtest.html">SSDtest</a></span><span class="op">(</span></span>
 <span>     fossil<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"A. afarensis"</span><span class="op">=</span><span class="va">GordonAJBA</span><span class="op">[</span><span class="va">GordonAJBA</span><span class="op">$</span><span class="va">Species</span><span class="op">==</span><span class="st">"A. afarensis"</span>, <span class="va">SSDvars</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>     comp<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"G. gorilla"</span><span class="op">=</span><span class="va">GordonAJBA</span><span class="op">[</span><span class="va">GordonAJBA</span><span class="op">$</span><span class="va">Species</span><span class="op">==</span><span class="st">"Gorilla gorilla"</span>, <span class="va">SSDvars</span><span class="op">]</span>,</span>
@@ -4515,7 +4540,7 @@ sets of estimates (and analyzes them separately).</p>
 <p>Now let’s take a look at the resulting object. It will look very
 similar to the object produced in the univariate case with a few
 additional pieces of information.</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_fossil_multi</span></span>
 <span><span class="co">#&gt;         SSDtest Object</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -4541,9 +4566,9 @@ additional pieces of information.</p>
 <span><span class="co">#&gt; Resampling data structure:</span></span>
 <span><span class="co">#&gt;          sample n resampled data sets resampling type            sampling</span></span>
 <span><span class="co">#&gt;    A. afarensis                     1           exact without replacement</span></span>
-<span><span class="co">#&gt;      G. gorilla                  5000     Monte Carlo without replacement</span></span>
-<span><span class="co">#&gt;      H. sapiens                  5000     Monte Carlo without replacement</span></span>
-<span><span class="co">#&gt;  P. troglodytes                  5000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;      G. gorilla                  1000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;      H. sapiens                  1000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;  P. troglodytes                  1000     Monte Carlo without replacement</span></span>
 <span><span class="co">#&gt;   missing data resampling structure: </span></span>
 <span><span class="co">#&gt;     sampling individuals, then imposing missing data pattern</span></span>
 <span><span class="co">#&gt;   number of individuals in each resampled data set: 20</span></span>
@@ -4555,59 +4580,59 @@ additional pieces of information.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Median resampled estimates for each combination of methods:</span></span>
 <span><span class="co">#&gt;   methodUni methodMulti  center datastructure A. afarensis G. gorilla</span></span>
-<span><span class="co">#&gt; 1       MMR         GMM geomean      complete           NA     0.2299</span></span>
-<span><span class="co">#&gt; 2       MMR         GMM geomean       missing       0.2476     0.1882</span></span>
-<span><span class="co">#&gt; 3       BDI         GMM geomean      complete           NA     0.2135</span></span>
-<span><span class="co">#&gt; 4       BDI         GMM geomean       missing       0.2311     0.1648</span></span>
+<span><span class="co">#&gt; 1       MMR         GMM geomean      complete           NA     0.2300</span></span>
+<span><span class="co">#&gt; 2       MMR         GMM geomean       missing       0.2476     0.1888</span></span>
+<span><span class="co">#&gt; 3       BDI         GMM geomean      complete           NA     0.2133</span></span>
+<span><span class="co">#&gt; 4       BDI         GMM geomean       missing       0.2311     0.1655</span></span>
 <span><span class="co">#&gt;   H. sapiens P. troglodytes</span></span>
-<span><span class="co">#&gt; 1     0.1387         0.1021</span></span>
-<span><span class="co">#&gt; 2     0.1184         0.0881</span></span>
-<span><span class="co">#&gt; 3     0.1348         0.1004</span></span>
-<span><span class="co">#&gt; 4     0.1078         0.0809</span></span>
+<span><span class="co">#&gt; 1     0.1394         0.1030</span></span>
+<span><span class="co">#&gt; 2     0.1183         0.0876</span></span>
+<span><span class="co">#&gt; 3     0.1355         0.1010</span></span>
+<span><span class="co">#&gt; 4     0.1080         0.0810</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; p-values (one-sided; null: first sample less or equally dimorphic as second sample):</span></span>
 <span><span class="co">#&gt;                               MMR:GMM:geomean:complete MMR:GMM:geomean:missing</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0274</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0280</span></span>
 <span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0000</span></span>
 <span><span class="co">#&gt; A. afarensis - P. troglodytes                       NA                  0.0000</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0000                  0.0299</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0030</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0061                  0.1486</span></span>
-<span><span class="co">#&gt; G. gorilla - A. afarensis                           NA                  0.9726</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0000                  0.0297</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0036</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0069                  0.1413</span></span>
+<span><span class="co">#&gt; G. gorilla - A. afarensis                           NA                  0.9720</span></span>
 <span><span class="co">#&gt; H. sapiens - A. afarensis                           NA                  1.0000</span></span>
 <span><span class="co">#&gt; P. troglodytes - A. afarensis                       NA                  1.0000</span></span>
-<span><span class="co">#&gt; H. sapiens - G. gorilla                         1.0000                  0.9701</span></span>
-<span><span class="co">#&gt; P. troglodytes - G. gorilla                     1.0000                  0.9970</span></span>
-<span><span class="co">#&gt; P. troglodytes - H. sapiens                     0.9939                  0.8514</span></span>
+<span><span class="co">#&gt; H. sapiens - G. gorilla                         1.0000                  0.9703</span></span>
+<span><span class="co">#&gt; P. troglodytes - G. gorilla                     1.0000                  0.9964</span></span>
+<span><span class="co">#&gt; P. troglodytes - H. sapiens                     0.9931                  0.8587</span></span>
 <span><span class="co">#&gt;                               BDI:GMM:geomean:complete BDI:GMM:geomean:missing</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0080</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0060</span></span>
 <span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0000</span></span>
 <span><span class="co">#&gt; A. afarensis - P. troglodytes                       NA                  0.0000</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0002                  0.0414</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0048</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0083                  0.1548</span></span>
-<span><span class="co">#&gt; G. gorilla - A. afarensis                           NA                  0.9920</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0003                  0.0388</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0052</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0089                  0.1497</span></span>
+<span><span class="co">#&gt; G. gorilla - A. afarensis                           NA                  0.9940</span></span>
 <span><span class="co">#&gt; H. sapiens - A. afarensis                           NA                  1.0000</span></span>
 <span><span class="co">#&gt; P. troglodytes - A. afarensis                       NA                  1.0000</span></span>
-<span><span class="co">#&gt; H. sapiens - G. gorilla                         0.9998                  0.9586</span></span>
-<span><span class="co">#&gt; P. troglodytes - G. gorilla                     1.0000                  0.9952</span></span>
-<span><span class="co">#&gt; P. troglodytes - H. sapiens                     0.9917                  0.8452</span></span>
+<span><span class="co">#&gt; H. sapiens - G. gorilla                         0.9997                  0.9612</span></span>
+<span><span class="co">#&gt; P. troglodytes - G. gorilla                     1.0000                  0.9948</span></span>
+<span><span class="co">#&gt; P. troglodytes - H. sapiens                     0.9911                  0.8503</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; p-values (two-sided):</span></span>
 <span><span class="co">#&gt;                               MMR:GMM:geomean:complete MMR:GMM:geomean:missing</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0482</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0530</span></span>
 <span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0000</span></span>
 <span><span class="co">#&gt; A. afarensis - P. troglodytes                       NA                  0.0000</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0000                  0.0600</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0050</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0113                  0.2971</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0000                  0.0562</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0052</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0134                  0.2830</span></span>
 <span><span class="co">#&gt;                               BDI:GMM:geomean:complete BDI:GMM:geomean:missing</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0126</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0100</span></span>
 <span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0000</span></span>
 <span><span class="co">#&gt; A. afarensis - P. troglodytes                       NA                  0.0000</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0002                  0.0838</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0088</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0145                  0.3096</span></span></code></pre></div>
+<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0003                  0.0770</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0081</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0160                  0.3002</span></span></code></pre></div>
 <p>There is some notable additional information beyond what we saw with
 a univariate <code>SSDtest</code> object, especially in relation to the
 resampling data structure. In that section, the missing data resampling
@@ -4627,9 +4652,9 @@ data. The one difference is that it contains multiple
 <code>dimorphResampledMulti</code> objects rather than
 <code>dimorphResampledUni</code> objects. As before, we can plot those
 objects if we want to.</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_multi</span><span class="op">$</span><span class="va">estimates</span><span class="op">[[</span><span class="st">"G. gorilla"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-80-1.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-81-1.png" width="672"></p>
 <p>In the above plot we can see the effect on the distributions of
 resampled estimates of imposing the missing data structure onto the
 comparative sample. Now let’s plot the whole <code>SSDtest</code>
@@ -4642,8 +4667,9 @@ object.</p>
 it is for the univariate case. Using <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> generates
 histograms for the resampled values using the first methods combination
 in the <code>SSDtest</code> object.</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_multi</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-82-1.png" width="672"></p>
 <p>Note that the x-axis label reports the univariate method, the
 multivariate method as a subscript, and whether or not the missing data
 structure was imposed in parentheses. This first method combination uses
@@ -4652,15 +4678,16 @@ dimorphism isn’t estimated for the fossil sample in this case. We can
 take a look at the resampled distributions using the missing data
 structure by changing the estimate that’s plotted (argument
 <code>est</code>).</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_multi</span>, est<span class="op">=</span><span class="fl">2</span>, <span class="co"># plot the 2nd method combination: MMR, GMM, "missing" datastructure</span></span>
 <span>     groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span> <span class="co"># use our previously specified color vector</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-83-1.png" width="672"></p>
 <p>As in the univariate case, the distributions of differences in
 resampled values can also be plotted.</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_multi</span>, est<span class="op">=</span><span class="fl">2</span>, type<span class="op">=</span><span class="st">"diff"</span>,</span>
 <span>     gridplot<span class="op">=</span><span class="cn">FALSE</span>, useradvance<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-83-1.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-83-2.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-83-3.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-83-4.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-83-5.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-83-6.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-84-1.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-84-2.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-84-3.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-84-4.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-84-5.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-84-6.png" width="672"></p>
 </div>
 <div class="section level4">
 <h4 id="using-ssdtest-with-missing-data-in-multiple-fossil-samples-multivariate">Using <code>SSDtest()</code> with missing data in multiple fossil
@@ -4674,7 +4701,7 @@ follows the procedure developed in Gordon (2025b), which downsamples
 within each variable to the sample size for that variable in the fossil
 sample with the smallest sample for that particular variable. See Gordon
 (2025b) for a more detailed explanation of this procedure.</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_2fossil_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SSDtest.html">SSDtest</a></span><span class="op">(</span></span>
 <span>     fossil<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"A. afarensis"</span><span class="op">=</span><span class="va">GordonAJBA</span><span class="op">[</span><span class="va">GordonAJBA</span><span class="op">$</span><span class="va">Species</span><span class="op">==</span><span class="st">"A. afarensis"</span>, <span class="va">SSDvars</span><span class="op">]</span>,</span>
 <span>                 <span class="st">"A. africanus"</span><span class="op">=</span><span class="va">GordonAJBA</span><span class="op">[</span><span class="va">GordonAJBA</span><span class="op">$</span><span class="va">Species</span><span class="op">==</span><span class="st">"A. africanus"</span>, <span class="va">SSDvars</span><span class="op">]</span><span class="op">)</span>,</span>
@@ -4692,7 +4719,7 @@ sample with the smallest sample for that particular variable. See Gordon
 <span>     datastruc<span class="op">=</span><span class="st">"both"</span>,</span>
 <span>     nResamp<span class="op">=</span><span class="va">nResample</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s take a look at <code>test_2fossil_multi</code>.</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_2fossil_multi</span></span>
 <span><span class="co">#&gt;         SSDtest Object</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -4720,9 +4747,9 @@ sample with the smallest sample for that particular variable. See Gordon
 <span><span class="co">#&gt;          sample n resampled data sets resampling type            sampling</span></span>
 <span><span class="co">#&gt;    A. afarensis                   336           exact without replacement</span></span>
 <span><span class="co">#&gt;    A. africanus                 12870           exact without replacement</span></span>
-<span><span class="co">#&gt;      G. gorilla                  5000     Monte Carlo without replacement</span></span>
-<span><span class="co">#&gt;      H. sapiens                  5000     Monte Carlo without replacement</span></span>
-<span><span class="co">#&gt;  P. troglodytes                  5000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;      G. gorilla                  1000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;      H. sapiens                  1000     Monte Carlo without replacement</span></span>
+<span><span class="co">#&gt;  P. troglodytes                  1000     Monte Carlo without replacement</span></span>
 <span><span class="co">#&gt;   missing data resampling structure: </span></span>
 <span><span class="co">#&gt;     sampling variable-specific number of individuals for each variable</span></span>
 <span><span class="co">#&gt;   number of resampled individuals by variable in each resampled data set:</span></span>
@@ -4744,78 +4771,78 @@ sample with the smallest sample for that particular variable. See Gordon
 <span><span class="co">#&gt; 3       BDI         GMM geomean      complete           NA           NA</span></span>
 <span><span class="co">#&gt; 4       BDI         GMM geomean       missing       0.2374       0.1668</span></span>
 <span><span class="co">#&gt;   G. gorilla H. sapiens P. troglodytes</span></span>
-<span><span class="co">#&gt; 1     0.2268     0.1336         0.1027</span></span>
-<span><span class="co">#&gt; 2     0.1612     0.1022         0.0807</span></span>
-<span><span class="co">#&gt; 3     0.2059     0.1287         0.0998</span></span>
-<span><span class="co">#&gt; 4     0.1513     0.0969         0.0766</span></span>
+<span><span class="co">#&gt; 1     0.2267     0.1327         0.1039</span></span>
+<span><span class="co">#&gt; 2     0.1617     0.1009         0.0801</span></span>
+<span><span class="co">#&gt; 3     0.2059     0.1277         0.1003</span></span>
+<span><span class="co">#&gt; 4     0.1525     0.0955         0.0769</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; p-values (one-sided; null: first sample less or equally dimorphic as second sample):</span></span>
 <span><span class="co">#&gt;                               MMR:GMM:geomean:complete MMR:GMM:geomean:missing</span></span>
 <span><span class="co">#&gt; A. afarensis - A. africanus                         NA                  0.0174</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0500</span></span>
-<span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0001</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0488</span></span>
+<span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0000</span></span>
 <span><span class="co">#&gt; A. afarensis - P. troglodytes                       NA                  0.0000</span></span>
-<span><span class="co">#&gt; A. africanus - G. gorilla                           NA                  0.3752</span></span>
-<span><span class="co">#&gt; A. africanus - H. sapiens                           NA                  0.0103</span></span>
-<span><span class="co">#&gt; A. africanus - P. troglodytes                       NA                  0.0002</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0017                  0.1154</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0001                  0.0382</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0719                  0.2503</span></span>
+<span><span class="co">#&gt; A. africanus - G. gorilla                           NA                  0.3846</span></span>
+<span><span class="co">#&gt; A. africanus - H. sapiens                           NA                  0.0089</span></span>
+<span><span class="co">#&gt; A. africanus - P. troglodytes                       NA                  0.0010</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0003                  0.1134</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0391</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0806                  0.2663</span></span>
 <span><span class="co">#&gt; A. africanus - A. afarensis                         NA                  0.9826</span></span>
-<span><span class="co">#&gt; G. gorilla - A. afarensis                           NA                  0.9500</span></span>
-<span><span class="co">#&gt; H. sapiens - A. afarensis                           NA                  0.9999</span></span>
+<span><span class="co">#&gt; G. gorilla - A. afarensis                           NA                  0.9512</span></span>
+<span><span class="co">#&gt; H. sapiens - A. afarensis                           NA                  1.0000</span></span>
 <span><span class="co">#&gt; P. troglodytes - A. afarensis                       NA                  1.0000</span></span>
-<span><span class="co">#&gt; G. gorilla - A. africanus                           NA                  0.6248</span></span>
-<span><span class="co">#&gt; H. sapiens - A. africanus                           NA                  0.9897</span></span>
-<span><span class="co">#&gt; P. troglodytes - A. africanus                       NA                  0.9998</span></span>
-<span><span class="co">#&gt; H. sapiens - G. gorilla                         0.9983                  0.8846</span></span>
-<span><span class="co">#&gt; P. troglodytes - G. gorilla                     0.9999                  0.9618</span></span>
-<span><span class="co">#&gt; P. troglodytes - H. sapiens                     0.9281                  0.7497</span></span>
+<span><span class="co">#&gt; G. gorilla - A. africanus                           NA                  0.6154</span></span>
+<span><span class="co">#&gt; H. sapiens - A. africanus                           NA                  0.9911</span></span>
+<span><span class="co">#&gt; P. troglodytes - A. africanus                       NA                  0.9990</span></span>
+<span><span class="co">#&gt; H. sapiens - G. gorilla                         0.9997                  0.8866</span></span>
+<span><span class="co">#&gt; P. troglodytes - G. gorilla                     1.0000                  0.9609</span></span>
+<span><span class="co">#&gt; P. troglodytes - H. sapiens                     0.9194                  0.7337</span></span>
 <span><span class="co">#&gt;                               BDI:GMM:geomean:complete BDI:GMM:geomean:missing</span></span>
 <span><span class="co">#&gt; A. afarensis - A. africanus                         NA                  0.0146</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0371</span></span>
-<span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0001</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0357</span></span>
+<span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0000</span></span>
 <span><span class="co">#&gt; A. afarensis - P. troglodytes                       NA                  0.0000</span></span>
-<span><span class="co">#&gt; A. africanus - G. gorilla                           NA                  0.3424</span></span>
-<span><span class="co">#&gt; A. africanus - H. sapiens                           NA                  0.0091</span></span>
-<span><span class="co">#&gt; A. africanus - P. troglodytes                       NA                  0.0002</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0041                  0.1271</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0003                  0.0437</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0752                  0.2510</span></span>
+<span><span class="co">#&gt; A. africanus - G. gorilla                           NA                  0.3525</span></span>
+<span><span class="co">#&gt; A. africanus - H. sapiens                           NA                  0.0077</span></span>
+<span><span class="co">#&gt; A. africanus - P. troglodytes                       NA                  0.0009</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0020                  0.1216</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0432</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.0841                  0.2698</span></span>
 <span><span class="co">#&gt; A. africanus - A. afarensis                         NA                  0.9854</span></span>
-<span><span class="co">#&gt; G. gorilla - A. afarensis                           NA                  0.9629</span></span>
-<span><span class="co">#&gt; H. sapiens - A. afarensis                           NA                  0.9999</span></span>
+<span><span class="co">#&gt; G. gorilla - A. afarensis                           NA                  0.9643</span></span>
+<span><span class="co">#&gt; H. sapiens - A. afarensis                           NA                  1.0000</span></span>
 <span><span class="co">#&gt; P. troglodytes - A. afarensis                       NA                  1.0000</span></span>
-<span><span class="co">#&gt; G. gorilla - A. africanus                           NA                  0.6576</span></span>
-<span><span class="co">#&gt; H. sapiens - A. africanus                           NA                  0.9909</span></span>
-<span><span class="co">#&gt; P. troglodytes - A. africanus                       NA                  0.9998</span></span>
-<span><span class="co">#&gt; H. sapiens - G. gorilla                         0.9959                  0.8729</span></span>
-<span><span class="co">#&gt; P. troglodytes - G. gorilla                     0.9997                  0.9563</span></span>
-<span><span class="co">#&gt; P. troglodytes - H. sapiens                     0.9248                  0.7490</span></span>
+<span><span class="co">#&gt; G. gorilla - A. africanus                           NA                  0.6475</span></span>
+<span><span class="co">#&gt; H. sapiens - A. africanus                           NA                  0.9923</span></span>
+<span><span class="co">#&gt; P. troglodytes - A. africanus                       NA                  0.9991</span></span>
+<span><span class="co">#&gt; H. sapiens - G. gorilla                         0.9980                  0.8784</span></span>
+<span><span class="co">#&gt; P. troglodytes - G. gorilla                     1.0000                  0.9568</span></span>
+<span><span class="co">#&gt; P. troglodytes - H. sapiens                     0.9159                  0.7302</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; p-values (two-sided):</span></span>
 <span><span class="co">#&gt;                               MMR:GMM:geomean:complete MMR:GMM:geomean:missing</span></span>
 <span><span class="co">#&gt; A. afarensis - A. africanus                         NA                  0.0314</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0985</span></span>
-<span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0001</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0981</span></span>
+<span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0000</span></span>
 <span><span class="co">#&gt; A. afarensis - P. troglodytes                       NA                  0.0000</span></span>
-<span><span class="co">#&gt; A. africanus - G. gorilla                           NA                  0.7543</span></span>
-<span><span class="co">#&gt; A. africanus - H. sapiens                           NA                  0.0162</span></span>
-<span><span class="co">#&gt; A. africanus - P. troglodytes                       NA                  0.0002</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0017                  0.2305</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0001                  0.0784</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.1409                  0.4980</span></span>
+<span><span class="co">#&gt; A. africanus - G. gorilla                           NA                  0.7644</span></span>
+<span><span class="co">#&gt; A. africanus - H. sapiens                           NA                  0.0131</span></span>
+<span><span class="co">#&gt; A. africanus - P. troglodytes                       NA                  0.0010</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0004                  0.2220</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0777</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.1598                  0.5298</span></span>
 <span><span class="co">#&gt;                               BDI:GMM:geomean:complete BDI:GMM:geomean:missing</span></span>
 <span><span class="co">#&gt; A. afarensis - A. africanus                         NA                  0.0262</span></span>
-<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0720</span></span>
-<span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0001</span></span>
+<span><span class="co">#&gt; A. afarensis - G. gorilla                           NA                  0.0704</span></span>
+<span><span class="co">#&gt; A. afarensis - H. sapiens                           NA                  0.0000</span></span>
 <span><span class="co">#&gt; A. afarensis - P. troglodytes                       NA                  0.0000</span></span>
-<span><span class="co">#&gt; A. africanus - G. gorilla                           NA                  0.6900</span></span>
-<span><span class="co">#&gt; A. africanus - H. sapiens                           NA                  0.0140</span></span>
-<span><span class="co">#&gt; A. africanus - P. troglodytes                       NA                  0.0002</span></span>
-<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0044                  0.2544</span></span>
-<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0003                  0.0898</span></span>
-<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.1463                  0.4995</span></span></code></pre></div>
+<span><span class="co">#&gt; A. africanus - G. gorilla                           NA                  0.7047</span></span>
+<span><span class="co">#&gt; A. africanus - H. sapiens                           NA                  0.0112</span></span>
+<span><span class="co">#&gt; A. africanus - P. troglodytes                       NA                  0.0009</span></span>
+<span><span class="co">#&gt; G. gorilla - H. sapiens                         0.0023                  0.2396</span></span>
+<span><span class="co">#&gt; G. gorilla - P. troglodytes                     0.0000                  0.0870</span></span>
+<span><span class="co">#&gt; H. sapiens - P. troglodytes                     0.1648                  0.5368</span></span></code></pre></div>
 <p>Here we can see that we have different numbers of resampled data sets
 for our two fossil samples because exact resampling was used for them,
 sampling each unique resampled data set exactly once. All comparative
@@ -4829,20 +4856,22 @@ procedure.</p>
 <p>Aside from those differences, the type of information reported is the
 same as in the single fossil sample example, and the structure of the
 object is the same. We can also plot it in the same way:</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_multi</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-88-1.png" width="672"></p>
 <p>However, because both fossil samples are resampled, we now have
 distributions for both of them when we plot estimates based on missing
 data.</p>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_multi</span>, est<span class="op">=</span><span class="fl">2</span>,</span>
 <span>     groupcols<span class="op">=</span><span class="va">speciescolors</span>, invert<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="co"># invert first and second sample distributions</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-89-1.png" width="672"></p>
 <p>And finally, we can again plot differences in resampled
 estimates.</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_multi</span>, est<span class="op">=</span><span class="fl">2</span>, type<span class="op">=</span><span class="st">"diff"</span>,</span>
 <span>     gridplot<span class="op">=</span><span class="cn">FALSE</span>, useradvance<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dimorph_files/figure-html/unnamed-chunk-89-1.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-89-2.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-89-3.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-89-4.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-89-5.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-89-6.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-89-7.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-89-8.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-89-9.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-89-10.png" width="672"></p>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-90-1.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-90-2.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-90-3.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-90-4.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-90-5.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-90-6.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-90-7.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-90-8.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-90-9.png" width="672"><img src="dimorph_files/figure-html/unnamed-chunk-90-10.png" width="672"></p>
 </div>
 </div>
 </div>
@@ -4851,10 +4880,10 @@ estimates.</p>
 </h2>
 <p>Further information about all of these functions can be found in
 their help pages. To get the full index of help pages for this package,
-use <code><a href="https://rdrr.io/pkg/dimorph/man" class="external-link">help(package="dimorph")</a></code>.</p>
+use <code><a href="https://adamdgordon.github.io/dimorph/reference">help(package="dimorph")</a></code>.</p>
 <p>Also, if you use this package in your work, please use the following
 citations:</p>
-<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"dimorph"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'dimorph' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -4943,7 +4972,7 @@ Human Evolution</em>. 36:423-458. <a href="https://doi.org/10.1006/jhev.1998.028
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
