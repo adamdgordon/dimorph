@@ -2,7 +2,6 @@
 
 S3method(confint,dimorphResampledMulti)
 S3method(confint,dimorphResampledUni)
-S3method(hist,dimorphResampledMulti)
 S3method(plot,SSDtest)
 S3method(plot,dimorphResampledMulti)
 S3method(plot,dimorphResampledUni)

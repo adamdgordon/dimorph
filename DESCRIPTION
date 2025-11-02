@@ -1,7 +1,7 @@
 Package: dimorph
 Type: Package
 Title: Dimorphism Calculation and Estimation
-Version: 0.1.12
+Version: 0.1.13
 Authors@R: 
     person("Adam", "Gordon",
            email = "agordon@albany.edu",

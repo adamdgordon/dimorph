@@ -98,6 +98,8 @@ bootdimorph <- function(x,
                                             "CV", "CVsex", "sdlog", "sdlogsex"), several.ok=T)
   methsMulti <- match.arg(methsMulti, choices=c("GMsize", "GMM", "TM"), several.ok=T)
   center <- match.arg(center, choices=c("geomean", "mean"))
+  if (class(conf.level)!="numeric") stop("'conf.level' must be a number between 0 and 1.")
+  if (conf.level <= 0 | conf.level >= 1) stop("'conf.level' must be a number between 0 and 1.")
   # code to check that x is either a vector of values or a data.frame or matrix of values
   uni <- NA
   {if (class(x)[1]=="data.frame" | class(x)[1]=="matrix") {
@@ -172,7 +174,7 @@ bootdimorph <- function(x,
     attr(res$estimates, "estvalues") <- "raw"
     res$estimates <- dimorph:::logandcalcbiasUni(res$estimates)
     CI <- tapply(res$estimates$estimate, INDEX=res$estimates$methodUni:res$estimates$center,
-	             FUN=dimorph:::getCI, alternative=alternative)
+	             FUN=dimorph:::getCI, alternative=alternative, conf.level=conf.level)
 	CI <- do.call(rbind, CI)
 	CImeta <- do.call(rbind, strsplit(rownames(CI), ":"))
 	CI <- data.frame(methodUni=CImeta[,1], center=CImeta[,2],
@@ -183,7 +185,7 @@ bootdimorph <- function(x,
 	res$CI <- CI
 	if (sum(is.na(res$estimates$bias)) != length(res$estimates$bias)) {
       CIbias <- tapply(res$estimates$bias, INDEX=res$estimates$methodUni:res$estimates$center,
-	                   FUN=dimorph:::getCI, alternative=alternative)
+	                   FUN=dimorph:::getCI, alternative=alternative, conf.level=conf.level)
 	  CIbias <- do.call(rbind, CIbias)
 	  CImeta <- do.call(rbind, strsplit(rownames(CIbias), ":"))
 	  CIbias <- data.frame(methodUni=CImeta[,1], center=CImeta[,2],
@@ -227,7 +229,7 @@ bootdimorph <- function(x,
     res$estimates <- dimorph:::logandcalcbiasMulti(res$estimates)
     CI <- tapply(res$estimates$estimate,
 	             INDEX=res$estimates$methodUni:res$estimates$methodMulti:res$estimates$center:res$estimates$datastructure,
-				 FUN=dimorph:::getCI, alternative=alternative)
+				 FUN=dimorph:::getCI, alternative=alternative, conf.level=conf.level)
 	CI <- do.call(rbind, CI)
 	CImeta <- do.call(rbind, strsplit(rownames(CI), ":"))
 	CI <- data.frame(methodUni=CImeta[,1], methodMulti=CImeta[,2], center=CImeta[,3],
@@ -242,7 +244,7 @@ bootdimorph <- function(x,
 	if (sum(is.na(res$estimates$bias)) != length(res$estimates$bias)) {
       CIbias <- tapply(res$estimates$bias,
 	                   INDEX=res$estimates$methodUni:res$estimates$methodMulti:res$estimates$center:res$estimates$datastructure,
-					   FUN=dimorph:::getCI, alternative=alternative)
+					   FUN=dimorph:::getCI, alternative=alternative, conf.level=conf.level)
 	  CIbias <- do.call(rbind, CIbias)
 	  CImeta <- do.call(rbind, strsplit(rownames(CIbias), ":"))
 	  CIbias <- data.frame(methodUni=CImeta[,1], methodMulti=CImeta[,2], center=CImeta[,3],

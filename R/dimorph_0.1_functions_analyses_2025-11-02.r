@@ -1293,7 +1293,7 @@ logandcalcbiasMulti <- function(resDF) {
   return(resDF)
 }
 
-#' Get confidence intervals for full ape data set
+#' Get confidence intervals
 #' @noRd
 getCI <- function(x, conf.level=0.95, alternative="two.sided", na.rm=T) {
   if (!na.rm & sum(is.na(x)) > 0) {

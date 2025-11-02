@@ -371,10 +371,10 @@ pan <- apelimbart[apelimbart$Species=="Pan troglodytes",]
 hyl <- apelimbart[apelimbart$Species=="Hylobates lar",]
 ```
 
-Now we'll specify the number of resampling iterations we'll use for all of the iterative procedures in the rest of this vignette. In `bootdimorph()` this is specified by the argument `nResamp`, which defaults to 1,000.  For this vignette we'll bump it up to 5,000; in order to only have to specify this value once, we'll set the value of an object `nResample` to 5,000 and we'll pass `nResample` to `nResamp` in all later code.  If you're cutting and pasting code to run these examples on your own just to make sure they work, reducing the value of `nResample` to a small number (like 10 or 100) will let these functions run much faster on your computer.
+Now we'll specify the number of resampling iterations we'll use for all of the iterative procedures in the rest of this vignette. In `bootdimorph()` this is specified by the argument `nResamp`, which defaults to 1,000.  For this vignette we'll keep it at 1,000; in order to only have to specify this value once, we'll set the value of an object `nResample` to 1,000 and we'll pass `nResample` to `nResamp` in all later code.  If you're cutting and pasting code to run these examples on your own just to make sure they work, reducing the value of `nResample` to a small number (like 10 or 100) will let these functions run much faster on your computer.
 
 ```{r}
-nResample <- 5000
+nResample <- 1000
 ```
 
 `bootdimorph()` can generate confidence intervals for multiple estimation methods at the same time, so we'll create a vector `meths` that we'll pass to the argument `methsUni` in `bootdimorph()`.  Let's just do all of the univariate methods.
@@ -445,6 +445,12 @@ confint(bootsUgor)
 
 ```{r}
 confint(bootsUgor, type="bias")
+```
+
+We can also recalculate new confidence intervals using a different confidence level and/or switching from two-sided to one-sided confidence intervals or vice-versa.
+
+```{r}
+confint(bootsUgor, conf.level=0.8, alternative="greater")
 ```
 
 The remaining list element, `sampleADS`, is itself a list.  It preserves the resampling information, in particular the set of specimens sampled for each iteration of the bootstrap (`sampleADS$addresses`), as well as the original data set (`sampleADS$comparative`).  An important point to note here is that all methods draw on the same set of resampled values, which is what allows bias from sample `"SSD"`, `"CVsex"`, and/or `"sdlogsex"` to be calculated.
