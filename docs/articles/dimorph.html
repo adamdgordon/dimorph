@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dimorph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,11 +52,12 @@
 
 
 <script src="dimorph_files/kePrint-0.0.1/kePrint.js"></script><link href="dimorph_files/lightable-0.0.1/lightable.css" rel="stylesheet">
-<div class="row">
+<link href="dimorph_files/bsTable-3.3.7/bootstrapTable.min.css" rel="stylesheet">
+<script src="dimorph_files/bsTable-3.3.7/bootstrapTable.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Size dimorphism estimation, confidence intervals, and significance tests with `dimorph`</h1>
             
-            <h4 data-toc-skip class="date">2025-10-26</h4>
+            <h4 data-toc-skip class="date">2025-11-01</h4>
       
 
       <div class="d-none name"><code>dimorph.Rmd</code></div>
@@ -168,7 +169,7 @@ only one specimen includes both of the plotted variables (that warning
 message is reporting the number of specimens that don’t record both
 measurements in the plot). Here’s a look at the first few fossil
 specimens in that data set:</p>
-<table class="table table table-condensed" style="font-size: 10px; margin-left: auto; margin-right: auto;">
+<table class="table table table-condensed" style="font-size: 12px; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
 </th>
@@ -3343,7 +3344,7 @@ methods.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">meths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SSD"</span>, <span class="st">"MMR"</span>, <span class="st">"BDI"</span>, <span class="st">"ERM"</span>, <span class="st">"FMA"</span>, <span class="st">"MoM"</span>, <span class="st">"BFM"</span>, <span class="st">"CV"</span>, <span class="st">"CVsex"</span>, <span class="st">"sdlog"</span>, <span class="st">"sdlogsex"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
-<h4 id="applying-bootdimoph-to-univariate-samples">Applying <code>bootdimoph()</code> to univariate samples<a class="anchor" aria-label="anchor" href="#applying-bootdimoph-to-univariate-samples"></a>
+<h4 id="applying-bootdimorph-to-univariate-samples">Applying <code>bootdimorph()</code> to univariate samples<a class="anchor" aria-label="anchor" href="#applying-bootdimorph-to-univariate-samples"></a>
 </h4>
 <p>Now we can run <code><a href="../reference/bootdimorph.html">bootdimorph()</a></code> on our four species. Let’s
 use the variable FHSI again. Note that we can pass that variable to
@@ -3701,7 +3702,7 @@ estimation techniques.</p>
 <p>We can also bootstrap multivariate estimates of dimorphism. Let’s do
 it.</p>
 <div class="section level4">
-<h4 id="applying-bootdimoph-to-multivariate-samples">Applying <code>bootdimoph()</code> to multivariate samples<a class="anchor" aria-label="anchor" href="#applying-bootdimoph-to-multivariate-samples"></a>
+<h4 id="applying-bootdimorph-to-multivariate-samples">Applying <code>bootdimorph()</code> to multivariate samples<a class="anchor" aria-label="anchor" href="#applying-bootdimorph-to-multivariate-samples"></a>
 </h4>
 <p>Using <code><a href="../reference/bootdimorph.html">bootdimorph()</a></code> with multivariate samples requires
 complete sets of observations for every specimen. If
@@ -4262,6 +4263,7 @@ resampled distributions for all taxon samples for the first combination
 of univariate and multivariate methods.</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_uni</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-65-1.png" width="672"></p>
 <p>Note that the fossil sample is not included here. That’s because the
 first method combination is plotted by default; in this case, that’s
 <code>"SSD"</code> using the <code>"geomean"</code> centering algorithm,
@@ -4275,6 +4277,7 @@ and it includes the observed value for the fossil sample. Let’s plot
 that.</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_uni</span>, est<span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># plots second method (MMR)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-66-1.png" width="672"></p>
 <p>The fossil sample is included as a vertical line because it’s a
 single point estimate and is not resampled.</p>
 <p>We also might want to adjust the colors for each resampled
@@ -4285,6 +4288,7 @@ each element corresponding to the taxon sample names.</p>
 <code class="sourceCode R"><span><span class="va">speciescolors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A. afarensis"</span><span class="op">=</span><span class="st">"#352A87"</span>, <span class="st">"A. africanus"</span><span class="op">=</span><span class="st">"#F9FB0E"</span>, <span class="st">"G. gorilla"</span><span class="op">=</span><span class="st">"#EABA4B"</span>,</span>
 <span>                   <span class="st">"H. sapiens"</span><span class="op">=</span><span class="st">"#09A9C0"</span>, <span class="st">"P. troglodytes"</span><span class="op">=</span><span class="st">"#78BE7C"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_uni</span>, est<span class="op">=</span><span class="fl">2</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span> <span class="co"># change the colors</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-67-1.png" width="672"></p>
 <p>We might further want to visualize the resampled difference in
 estimates for any given pair of samples. We can do this by setting the
 argument <code>type</code> to <code>"diff"</code> (the default is
@@ -4420,6 +4424,7 @@ of resampled data sets for a fossil taxon exceeds
 <p>We can also plot the output in the same way as we did earlier.</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_uni</span>, est<span class="op">=</span><span class="fl">1</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-73-1.png" width="672"></p>
 <p>In this case we have a resampled distribution for one of the fossil
 samples in addition to all of the comparative samples. If we want to
 better distinguish overlapping distributions, we can give a vector of
@@ -4428,6 +4433,7 @@ will flip the histograms of the corresponding sample(s) in the plot (and
 move those sample names to the bottom of the legend).</p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_uni</span>, invert<span class="op">=</span><span class="fl">2</span>, est<span class="op">=</span><span class="fl">1</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-74-1.png" width="672"></p>
 <p>And just as we did earlier, we can plot histograms for the difference
 in estimates for pairs of samples.</p>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
@@ -4644,6 +4650,7 @@ histograms for the resampled values using the first methods combination
 in the <code>SSDtest</code> object.</p>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_multi</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-81-1.png" width="672"></p>
 <p>Note that the x-axis label reports the univariate method, the
 multivariate method as a subscript, and whether or not the missing data
 structure was imposed in parentheses. This first method combination uses
@@ -4655,6 +4662,7 @@ structure by changing the estimate that’s plotted (argument
 <div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_fossil_multi</span>, est<span class="op">=</span><span class="fl">2</span>, <span class="co"># plot the 2nd method combination: MMR, GMM, "missing" datastructure</span></span>
 <span>     groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span> <span class="co"># use our previously specified color vector</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-82-1.png" width="672"></p>
 <p>As in the univariate case, the distributions of differences in
 resampled values can also be plotted.</p>
 <div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
@@ -4831,12 +4839,14 @@ same as in the single fossil sample example, and the structure of the
 object is the same. We can also plot it in the same way:</p>
 <div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_multi</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-87-1.png" width="672"></p>
 <p>However, because both fossil samples are resampled, we now have
 distributions for both of them when we plot estimates based on missing
 data.</p>
 <div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_2fossil_multi</span>, est<span class="op">=</span><span class="fl">2</span>,</span>
 <span>     groupcols<span class="op">=</span><span class="va">speciescolors</span>, invert<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="co"># invert first and second sample distributions</span></span></code></pre></div>
+<p><img src="dimorph_files/figure-html/unnamed-chunk-88-1.png" width="672"></p>
 <p>And finally, we can again plot differences in resampled
 estimates.</p>
 <div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
@@ -4851,7 +4861,7 @@ estimates.</p>
 </h2>
 <p>Further information about all of these functions can be found in
 their help pages. To get the full index of help pages for this package,
-use <code><a href="https://rdrr.io/pkg/dimorph/man" class="external-link">help(package="dimorph")</a></code>.</p>
+use <code><a href="https://adamdgordon.github.io/dimorph/reference">help(package="dimorph")</a></code>.</p>
 <p>Also, if you use this package in your work, please use the following
 citations:</p>
 <div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
