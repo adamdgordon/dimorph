@@ -76,7 +76,7 @@ displayvars <- c("Species", "Sex", "HUMHEAD", "ELBOW0.5", "RADTV", "FEMHEAD",
 kableExtra::kable_styling(knitr::kable(
   head(GordonAJBA[GordonAJBA$Species %in% c("A. afarensis"),
              displayvars])),
-  bootstrap_options = "condensed", font_size=10)
+  bootstrap_options = "condensed", font_size=12)
 ```
 
 The function `dimorph()` has two procedures for estimating dimorphism in multivariate data sets with missing data, although one of those procedures has been argued to be highly flawed (more on this below).
@@ -382,7 +382,7 @@ nResample <- 5000
 meths <- c("SSD", "MMR", "BDI", "ERM", "FMA", "MoM", "BFM", "CV", "CVsex", "sdlog", "sdlogsex")
 ```
 
-### Applying `bootdimoph()` to univariate samples
+### Applying `bootdimorph()` to univariate samples
 
 Now we can run `bootdimorph()` on our four species.  Let's use the variable FHSI again.  Note that we can pass that variable to `bootdimorph()` (and `dimorph()`) in various ways.  All of the following will work (as will pulling a single vector from a matrix instead of a data frame, or just giving the function any numeric vector):
 ```{r eval=FALSE}
@@ -513,7 +513,7 @@ Looking back at the confidence intervals based on the full, balanced gorilla sam
 
 We can also bootstrap multivariate estimates of dimorphism.  Let's do it.
 
-### Applying `bootdimoph()` to multivariate samples
+### Applying `bootdimorph()` to multivariate samples
 
 Using `bootdimorph()` with multivariate samples requires complete sets of observations for every specimen.  If `na.rm=TRUE` (the default), any specimen that is missing data will be removed from the analysis.  An error is returned if there are missing data and `na.rm=FALSE`. Let's bootstrap confidence intervals for the gorilla sample using all ten variables in the `apelimbart` data set, all univariate methods, and both the `"GMsize"` and `"GMM"` multivariate methods (*N.B.*: not only is the use of `"TM"` discouraged, it also simply reverts to a univariate estimate of dimorphism in the template variable when all specimens have data for the template variable because no estimation for that variable is necessary).
 

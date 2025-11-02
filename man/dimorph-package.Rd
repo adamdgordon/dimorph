@@ -5,7 +5,16 @@
 \alias{dimorph-package}
 \title{dimorph: Dimorphism Calculation and Estimation}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 A system for estimating size dimorphism based on metric data using multiple published estimation techniques for univariate data and incomplete multivariate data, storing information related to the calculation of those estimates, and performing resampling-based significance tests for pairwise comparison of dimorphism estimates.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://adamdgordon.github.io/dimorph/}
+}
+
 }
 \author{
 \strong{Maintainer}: Adam Gordon \email{agordon@albany.edu} (\href{https://orcid.org/0000-0002-1807-4644}{ORCID})

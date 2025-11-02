@@ -1,0 +1,29 @@
+Package: dimorph
+Type: Package
+Title: Dimorphism Calculation and Estimation
+Version: 0.1.4
+Authors@R: 
+    person("Adam", "Gordon",
+           email = "agordon@albany.edu",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-1807-4644"))
+Encoding: UTF-8
+Description: A system for estimating size dimorphism based on metric data using
+    multiple published estimation techniques for univariate data and incomplete
+    multivariate data, storing information related to the calculation of those 
+    estimates, and performing resampling-based significance tests for pairwise 
+    comparison of dimorphism estimates.
+LazyData: true
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 4.3.1)
+Imports:
+    mclust,
+    ggplot2,
+    graphics,
+    gridExtra,
+    pals,
+    RcppAlgos,
+    stats,
+    utils
+License: GPL (>= 3)

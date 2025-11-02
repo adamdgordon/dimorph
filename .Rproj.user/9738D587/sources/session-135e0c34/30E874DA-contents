@@ -1,0 +1,133 @@
+---
+title: 'AANT 600 HW #6 Completed'
+geometry: margin=0.75in
+output:
+  pdf_document: default
+  html_document:
+    css: homework.css
+    includes:
+      in_header: favicon.html
+  word_document: default
+fontsize: 10.5pt
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# (Adam Gordon, Fall 2024)
+
+Please write your name on a piece of paper and answer the following questions.  This assignment is due at the __beginning of class on Wednesday, Oct. 9^th^__.
+
+1.Using a ruler (or calipers if you've got them), measure the diameter of a penny, nickel, dime, and quarter (which is to say, just re-use the data set you collected last week).  __Showing all of your work__, calculate the standard deviation and __standard error of the mean__ of that data set.
+
+>__Answer:__
+>We already calculated most of what this question asks for in the last homework assignment, with the one new component being the standard error of the mean.  Calculating that requires calculating the mean and standard deviation first.  As before, the measurements for these coins are ${19.05, 21.21, 17.91, 24.26}$ for the diameters in millimeters.  First, let's calculate the mean:
+>$$ \overline{x}=\sum_{i=1}^{n}\frac{x_i}{n}=\frac{19.05+21.21+17.91+24.46}{4}=\frac{82.43}{4}=20.61 $$
+>Next let's get the standard deviation:
+>$$ s=\sqrt{\frac{\sum_{i=1}^{n}(x_i-\overline{x})^2}{n-1}}=\sqrt{\frac{(19.05-20.61)^2+(21.21-20.61)^2+(17.91-20.61)^2+(24.46-20.61)^2}{3}} $$
+>$$ =\sqrt{\frac{23.41}{3}}=2.79 $$
+>The new piece is calculating the standard error of the mean.  This is a function of the standard deviation and sample size, as follows:
+>$$ s_{\overline{x}}=\frac{s}{\sqrt{n}}=\frac{2.79}{\sqrt{4}}=1.40 $$
+>
+>As before, we can do this more simply in R.  First, let's create an object with the coin diameters in it.
+>```{r, echo=T}
+>coins <- c(cent=19.05, nickel=21.21, dime=17.91, quarter=24.26) # diameters in mm
+>coins
+>```
+>Refer to last week's homework to see how to calculate each component step by step.  Here we'll just use `sd()` to get the standard deviation and `length()` to get the sample size.
+>```{r, echo=T}
+>sd(coins)/sqrt(length(coins))
+>```
+>Just like last week, these values are slightly different from what we calculated by hand because of rounding errors at each step in the hand calculation, but both answers round to $1.40$.
+>
+>This is a good opportunity to write our own custom function to do the same thing, then apply it to the coins data set.
+>```{r, echo=T}
+>sem <- function(x, na.rm=F) {
+>  if (na.rm) result <- sd(x, na.rm=T)/sqrt(sum(!is.na(x)))
+>  else result <- sd(x)/sqrt(length(x))
+>  return(result)
+>}
+>sem(coins)
+>```
+>You'll notice I modified a few things for the function.  That's because we might try to apply this to a vector that includes missing data (`NA` values).  The `sd()` function has an argument `na.rm` which ignores `NA` values if set to `TRUE`, and returns `NA` if set to `FALSE` and the vector includes `NA` values.  We could just pass the value for `na.rm` on to the `sd()` function, but instead I've dealt with it explicitly in this function.  In order to preserve that same property in our new function, I've added the same argument and included an `if-else` statement to calculate the standard error differently depending on `na.rm`.  We can add an `NA` to our coins vector to see how this would play out:
+>```{r, echo=T}
+>values <- c(coins, dollar=NA)
+>values
+>class(values) # It's still numeric despite having an NA in it
+>sem(values)
+>sem(values, na.rm=T)
+>```
+>What I'm trying to illustrate here is that when writing functions for general use, it's important to anticipate different types of input that might be encountered and how you'd like the function to respond to those inputs.
+
+2. Briefly describe what the standard error of the mean is measuring and how it differs from the standard deviation.  I'm not looking for a description of the differences in the equations, but rather the conceptual difference between these two measures of dispersion.
+
+>__Answer:__
+>The standard deviation is a measure of dispersion of values from their mean; it is essentially the square root of the average squared difference of each value from the mean.  The standard error of the mean is not a measure of how far measurements are from the mean on average, but rather how far the sample mean for samples of size $n$ are from the true population mean on average.  Thus the standard deviation is a measure of dispersion of individual values from the mean, and the standard error of the mean is a measure of dispersion of sample means from the population mean.  Therefore it's the standard error of the mean that tells us something about the degree of uncertainty associated with our estimate of a mean value, so that's what we use in calculating confidence intervals for the mean.
+
+3. Now, again __showing all of your work__, calculate the following confidence intervals (CI) for the mean of your coin data set (hint: you'll need to identify and write down the appropriate critical *t*-value for each CI; you may want to use the *t*-table I included in the homework folder on Brightspace):
+
+a. A two-sided 95% CI
+
+>__Answer:__ In general, we use the *t* distribution to determine the number of standard deviations away from the mean (the critical *t*-value) that encompass a certain percentage of the overall distribution.  That value is dependent on the number of degrees of freedom (df) of our data set, which is equal to $n-1$ for confidence intervals of the mean.  That means we'll be using the df=$3$ row highlighted in red in the table below.
+>
+>```{r echo=FALSE, out.width = 782}
+>knitr::include_graphics("t-table top.png")
+>```
+>
+>If we're calculating a two-sided $C\times 100\%$ confidence interval where the population mean has a probability of $C$ of falling within the interval, then we want the *t*-critical values that exclude the upper and lower parts of the distribution that each encompass $p$ of the overall probability of the distribution, where $p=\frac{1-C}{2}$.  In the case of a 95% confidence interval, this means excluding the upper and lower 2.5% of the distribution, so $p=0.025$.  Looking at the table above, the *t*-critical values are $3.182$ and $-3.182$ (because the *t* distribution is symmetrical).
+>
+>In order to calculate the 95% confidence interval, we need to calculate the values that are $3.182$ standard errors away from the measured mean in both directions.  Remember that we're using standard error of the mean, not standard deviation, because we're calculating a confidence interval for the mean, and standard error of the mean is the measure of dispersion associated with the mean. So our 95% confidence interval for the mean of coin diameters is calculated as
+>$$ \left[\overline{x}-t^*_p\frac{s}{\sqrt{n}},\overline{x}+t^*_p\frac{s}{\sqrt{n}} \right]=\left[20.61-3.182\times 1.40,20.61+3.182\times 1.40 \right]= $$
+>$$ \left[20.61-4.45,20.61+4.45 \right]=\left[16.16,25.06 \right] $$
+>So the 95% confidence interval for the mean diameter of the coins is $[16.16, 25.06]$, meaning that we are 95% confident that the population mean for the diameter of coins falls between $16.16$ and $25.06$ mm.
+
+b. A one-sided 80% CI bounded on the upper end
+
+>__Answer:__ One-sided confidence intervals are a bit different from two-sided confidence intervals.  Here we're asking, "What is the value that I am 80% sure that the population mean is equal to or less than?"  In this case, for a $C\times 100\%$ confidence interval, we are simply excluding the upper portion of the distribution that has $1-C$ probability of occuring.  So in the case of an 80% confidence interval, we want to look for the *t*-critical value associated with an upper tail probability of $p=0.2$; *i.e.*, we don't split that probability between the upper and lower tails, but just put it all into the upper tail.  This gives us a *t*-critical value of $0.978$.  Because it's a one-sided confidence interval we're not putting any limit on the other end of the confidence interval, so the interval is
+>$$ \left(-\infty,\overline{x}+t^*_p\frac{s}{\sqrt{n}} \right]=\left(-\infty,20.61+0.978\times 1.40 \right]=\left(-\infty,20.61+2.38 \right]=\left(-\infty,22.99 \right] $$
+>So the one-sided 80% confidence interval for the upper limit of the mean diameter of the coins is $(-\infty, 22.99]$, meaning that we are 80% confident that the population mean for the diameter of coins is less than or equal to $22.99$ mm, but we're not saying anything about how low the population mean might be.  Of course, in reality we can replace $-\infty$ with $0$ since coins can't have a negative diameter.
+
+c. A one-sided 75% CI bounded on the lower end
+
+>__Answer:__ The difference here is simply that we're putting a lower limit on the population mean rather than an upper limit.  Here we'll look for the *t*-critical value associated with a *lower* tail probability of $p=0.25$, which is simply the negative of the *t*-critical value for an upper tail probability of $p=0.25$.  This gives us a *t*-critical value of $0.765$.  Again, because it's a one-sided confidence interval we're not putting any limit on the other end of the confidence interval, so the interval is
+>$$ \left[\overline{x}-t^*_p\frac{s}{\sqrt{n}},\infty \right)=\left[20.61-0.765\times 1.40,\infty \right)=\left[20.61-1.07,\infty \right)=\left[19.54,\infty \right) $$
+>So the one-sided 75% confidence interval for the lower limit of the mean diameter of the coins is $[19.54,\infty)$, meaning that we are 75% confident that the population mean for the diameter of coins is greater than or equal to $19.54$ mm, but we're not saying anything about how high the population mean might be.  Also, in this case we can't replace $\infty$ with any other value since coins might have any positive diameter.
+
+d. A two-sided 99% CI
+
+>__Answer:__
+>We use the same procedure we did for question 3a, the only difference being we'll use the *t*-critical values associated with $p=\frac{1-C}{2}=0.005$.  That gives us *t*-critical values of $5.841$ and $-5.841$. So our two-sided 99% confidence interval for the mean of coin diameters is calculated as
+>$$ \left[\overline{x}-t^*_p\frac{s}{\sqrt{n}},\overline{x}+t^*_p\frac{s}{\sqrt{n}} \right]=\left[20.61-5.841\times 1.40,20.61+5.841\times 1.40 \right]= $$
+>$$ \left[20.61-8.18,20.61+8.18 \right]=\left[12.43,28.79 \right] $$
+>So the 99% confidence interval for the mean diameter of the coins is $[12.43, 28.79]$, meaning that we are 99% confident that the population mean for the diameter of coins falls between $12.43$ and $28.79$ mm.  Remember that the 95% confidence interval was $[16.16, 25.06]$.  In general, the more certain we are that the population mean falls within a certain range, the wider that range is.  Put another way, the narrower a range of values, the less sure we are that it actually contains the population mean.
+>
+>What about doing all of this in R? As always, there are a couple of ways we could do this.
+>
+>First, let's figure out how to have R produce *t*-critical values for us.  Type `?TDist` to get the help file for the the functions associated with the *t* distribution.  We'll use `qt()` (the quantile function for the *t* distribution) to get our critical values. For example,
+>```{r, echo=T}
+>qt(p=0.025, df=3, lower.tail=FALSE)
+>```
+>Note that this is the same value presented in the *t*-table for $p=0.025$ and df=$3$, although the value from R has more significant digits.  Using the standard error function we wrote earlier, we can use this to calculate our upper and lower limits for a two-sided 95% confidence interval:
+>```{r, echo=T}
+>tcrit.95.2side <- qt(p=0.025, df=3, lower.tail=FALSE)
+># Two-sided 95% confidence interval
+>mean(coins) + c(-tcrit.95.2side*sem(coins), tcrit.95.2side*sem(coins))
+>```
+>You'll notice that this range of $\left[16.16,25.05 \right]$ is slightly different from the range of $\left[16.16,25.06 \right]$ calculated by hand; this is due to rounding error.  You'll notice that the rounding error effect is more pronounced for some of the other confidence interval values:
+>```{r, echo=T}
+>tcrit.80.1side <- qt(p=0.2, df=3, lower.tail=FALSE)
+>mean(coins) + tcrit.80.1side*sem(coins) # Upper limit for one-sided 80% confidence interval
+>tcrit.75.1side <- qt(p=0.25, df=3, lower.tail=FALSE)
+>mean(coins) - tcrit.75.1side*sem(coins) # Lower limit for one-sided 75% confidence interval
+>tcrit.99.2side <- qt(p=0.005, df=3, lower.tail=FALSE)
+># Two-sided 99% confidence interval
+>mean(coins) + c(-tcrit.99.2side*sem(coins), tcrit.99.2side*sem(coins))
+>```
+>
+>We can also calculate confidence intervals of the mean the *very* easy way, which uses the function `t.test()`. Type `?t.test` to see the help page for this and pay particular attention to the arguments.  If we only give it one vector of values then it will generate a confidence interval for the mean (it'll also give us a *p* value, but we'll talk about *p* values in the next section of the course).  The argument `alternative` is specified as `"two.sided"`, `"less"`, or `"greater"` to identify the type of confidence interval, and the argument `conf.level` specifies the value of $C$ for the  confidence interval.  So we can use the following four lines of code to get the four confidence intervals:
+>```{r, echo=T}
+>t.test(coins, alternative="two.sided", conf.level=0.95)
+>t.test(coins, alternative="less", conf.level=0.8)
+>t.test(coins, alternative="greater", conf.level=0.75)
+>t.test(coins, alternative="two.sided", conf.level=0.99)
+>```
+>Notice that all of the results report the same *t* value: this is the number of standard errors that the mean is away from a particular value (the default is zero), not the critical *t*-value.  We'll talk about this more when we talk about hypothesis testing.

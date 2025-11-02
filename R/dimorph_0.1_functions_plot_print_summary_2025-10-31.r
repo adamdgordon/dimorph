@@ -1445,6 +1445,7 @@ plot.SSDtest <- function(x, est=1, type="est", diffs=NULL, nbins=100,
 	                                 plot.title=ggplot2::element_text(face="bold", size=ggplot2::rel(titlesize)))}
 	# remove y-axis ticks and labels
 	#plt <- plt + ggplot2::theme(axis.text.y=ggplot2::element_blank(), axis.ticks.y=ggplot2::element_blank()) 
+  return(plt)
   } # end 'est'
   ########################################################################
   else if (type=="diff") {

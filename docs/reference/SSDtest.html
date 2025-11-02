@@ -17,7 +17,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dimorph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -440,14 +440,17 @@ if template method is not used.  Defaults to <code>NULL</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:geomean: H. lar - H. sapiens</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:geomean: H. lar - P. troglodytes</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_uni</span><span class="op">)</span> <span class="co"># plots first method by default (SSD) - warning due to known ggplot issue</span></span></span>
+<span class="r-plt img"><img src="SSDtest-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_uni</span>, est<span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># plots second method (MMR)</span></span></span>
+<span class="r-plt img"><img src="SSDtest-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">speciescolors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Fauxil sp. 1"</span><span class="op">=</span><span class="st">"#352A87"</span>, <span class="st">"Fauxil sp. 2"</span><span class="op">=</span><span class="st">"#F9FB0E"</span>, <span class="st">"G. gorilla"</span><span class="op">=</span><span class="st">"#EABA4B"</span>,</span></span>
 <span class="r-in"><span>                   <span class="st">"H. sapiens"</span><span class="op">=</span><span class="st">"#09A9C0"</span>, <span class="st">"P. troglodytes"</span><span class="op">=</span><span class="st">"#78BE7C"</span>, <span class="st">"H. lar"</span><span class="op">=</span><span class="st">"#0D77DA"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_uni</span>, est<span class="op">=</span><span class="fl">2</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span> <span class="co"># change the colors</span></span></span>
+<span class="r-plt img"><img src="SSDtest-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_uni</span>, type<span class="op">=</span><span class="st">"diff"</span>, est<span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># plots differences between samples</span></span></span>
-<span class="r-plt img"><img src="SSDtest-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="SSDtest-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_uni</span>, type<span class="op">=</span><span class="st">"diff"</span>, est<span class="op">=</span><span class="fl">2</span>, diffs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="co"># plots diffs between first pair of samples</span></span></span>
-<span class="r-plt img"><img src="SSDtest-2.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="SSDtest-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Same as above, but variable name information is preserved</span></span></span>
 <span class="r-in"><span><span class="va">test_faux_uni2</span> <span class="op">&lt;-</span> <span class="fu">SSDtest</span><span class="op">(</span></span></span>
@@ -570,6 +573,7 @@ if template method is not used.  Defaults to <code>NULL</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:geomean: H. lar - H. sapiens</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:geomean: H. lar - P. troglodytes</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_uni2</span>, est<span class="op">=</span><span class="fl">2</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="SSDtest-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Same as above except that null distributions are generated WITH replacement rather than WITHOUT</span></span></span>
 <span class="r-in"><span><span class="va">test_faux_uni3</span> <span class="op">&lt;-</span> <span class="fu">SSDtest</span><span class="op">(</span></span></span>
@@ -693,6 +697,7 @@ if template method is not used.  Defaults to <code>NULL</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:geomean: H. lar - H. sapiens</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:geomean: H. lar - P. troglodytes</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_uni3</span>, est<span class="op">=</span><span class="fl">2</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="SSDtest-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Instead of standard test, each comparative and fossil sample is bootstrapped (sampled </span></span></span>
 <span class="r-in"><span><span class="co">#   with replacement to that sample's full sample size) by setting 'fullsamplesboot' to</span></span></span>
@@ -804,6 +809,7 @@ if template method is not used.  Defaults to <code>NULL</code>.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_uni4</span>, est<span class="op">=</span><span class="fl">2</span>, <span class="co"># plots the second estimation method (MMR)</span></span></span>
 <span class="r-in"><span>     invert<span class="op">=</span><span class="fl">1</span>, <span class="co"># inverts the histogram for the first group in 'test_afar_uni4'</span></span></span>
 <span class="r-in"><span>     groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="SSDtest-8.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Multivariate examples</span></span></span>
 <span class="r-in"><span><span class="co"># GMM significance tests with a fossil sample for multiple estimators using both complete</span></span></span>
@@ -2509,11 +2515,13 @@ if template method is not used.  Defaults to <code>NULL</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:GMM:geomean:missing: H. lar - H. sapiens</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:GMM:geomean:missing: H. lar - P. troglodytes</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi1</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="SSDtest-9.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi1</span>, est<span class="op">=</span><span class="fl">4</span>, <span class="co"># plot the 4th method combination: MMR, GMM, missing datastructure</span></span></span>
 <span class="r-in"><span>     groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="SSDtest-10.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi1</span>, est<span class="op">=</span><span class="fl">4</span>,</span></span>
 <span class="r-in"><span>     type<span class="op">=</span><span class="st">"diff"</span><span class="op">)</span> <span class="co"># plot the diffs between samples for estimates using the 4th method combination</span></span></span>
-<span class="r-plt img"><img src="SSDtest-3.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="SSDtest-11.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># As above but with a different fossil sample.</span></span></span>
 <span class="r-in"><span><span class="va">test_faux_multi2</span> <span class="op">&lt;-</span> <span class="fu">SSDtest</span><span class="op">(</span></span></span>
@@ -4538,9 +4546,11 @@ if template method is not used.  Defaults to <code>NULL</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:GMM:geomean:missing: H. lar - H. sapiens</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:GMM:geomean:missing: H. lar - P. troglodytes</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi2</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="SSDtest-12.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi2</span>, est<span class="op">=</span><span class="fl">4</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="SSDtest-13.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi2</span>, est<span class="op">=</span><span class="fl">4</span>, type<span class="op">=</span><span class="st">"diff"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="SSDtest-4.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="SSDtest-14.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Now the same data using a much more conservative approach by setting 'rebootstrap' to TRUE.</span></span></span>
 <span class="r-in"><span><span class="va">test_faux_multi3</span> <span class="op">&lt;-</span> <span class="fu">SSDtest</span><span class="op">(</span></span></span>
@@ -4737,6 +4747,7 @@ if template method is not used.  Defaults to <code>NULL</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> H. sapiens - H. lar                            0.0813</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> P. troglodytes - H. lar                        0.2606</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi3</span>, est<span class="op">=</span><span class="fl">3</span>, invert<span class="op">=</span><span class="fl">1</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="SSDtest-15.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

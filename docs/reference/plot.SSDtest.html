@@ -17,7 +17,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dimorph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -1926,21 +1926,25 @@ waits two seconds between plots. Defaults to <code>TRUE</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:GMM:geomean:missing: H. lar - H. sapiens</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   SSD:GMM:geomean:missing: H. lar - P. troglodytes</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi1</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.SSDtest-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">speciescolors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Fauxil sp. 1"</span><span class="op">=</span><span class="st">"#352A87"</span>, <span class="st">"G. gorilla"</span><span class="op">=</span><span class="st">"#EABA4B"</span>,</span></span>
 <span class="r-in"><span>                   <span class="st">"H. sapiens"</span><span class="op">=</span><span class="st">"#09A9C0"</span>, <span class="st">"P. troglodytes"</span><span class="op">=</span><span class="st">"#78BE7C"</span>,</span></span>
 <span class="r-in"><span>                   <span class="st">"H. lar"</span><span class="op">=</span><span class="st">"#0D77DA"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># change colors of sample distributions                   </span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi1</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.SSDtest-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># plot estimates for the fourth methcombo (GMM and MMR)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi1</span>, est<span class="op">=</span><span class="fl">4</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.SSDtest-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># invert second and fourth sample distributions</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi1</span>, est<span class="op">=</span><span class="fl">4</span>, groupcols<span class="op">=</span><span class="va">speciescolors</span>, invert<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.SSDtest-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># plot distributions of differences among sample estimates for method combination 4</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi1</span>, est<span class="op">=</span><span class="fl">4</span>, type<span class="op">=</span><span class="st">"diff"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.SSDtest-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.SSDtest-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># plot differences between second and third samples</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">test_faux_multi1</span>, est<span class="op">=</span><span class="fl">4</span>, type<span class="op">=</span><span class="st">"diff"</span>, diffs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span> </span></span>
-<span class="r-plt img"><img src="plot.SSDtest-2.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.SSDtest-6.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
