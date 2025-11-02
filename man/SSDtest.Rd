@@ -253,17 +253,17 @@ test_faux_multi1 <- SSDtest(
                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("SSD", "MMR", "BDI"),
+     methsUni=c("MMR", "BDI"),
      methsMulti=c("GMM"),
      datastruc="both",
      nResamp=100,
      templatevar="FHSI")
 test_faux_multi1
 plot(test_faux_multi1, groupcols=speciescolors)
-plot(test_faux_multi1, est=4, # plot the 4th method combination: MMR, GMM, missing datastructure
+plot(test_faux_multi1, est=2, # plot the 2nd method combination: MMR, GMM, missing datastructure
      groupcols=speciescolors)
-plot(test_faux_multi1, est=4,
-     type="diff") # plot the diffs between samples for estimates using the 4th method combination
+plot(test_faux_multi1, est=2,
+     type="diff") # plot the diffs between samples for estimates using the 2nd method combination
 
 # As above but with a different fossil sample.
 test_faux_multi2 <- SSDtest(
@@ -277,15 +277,15 @@ test_faux_multi2 <- SSDtest(
                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("SSD", "MMR", "BDI"),
+     methsUni=c("MMR", "BDI"),
      methsMulti=c("GMM"),
      datastruc="both",
      nResamp=100,
      templatevar="FHSI")
 test_faux_multi2
 plot(test_faux_multi2, groupcols=speciescolors)
-plot(test_faux_multi2, est=4, groupcols=speciescolors)
-plot(test_faux_multi2, est=4, type="diff")
+plot(test_faux_multi2, est=2, groupcols=speciescolors)
+plot(test_faux_multi2, est=2, type="diff")
 
 # Now the same data using a much more conservative approach by setting 'rebootstrap' to TRUE.
 test_faux_multi3 <- SSDtest(
@@ -299,14 +299,14 @@ test_faux_multi3 <- SSDtest(
                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-     methsUni=c("SSD", "MMR", "BDI"),
+     methsUni=c("MMR", "BDI"),
      methsMulti=c("GMM"),
      datastruc="both",
      nResamp=100,
      rebootstrap=TRUE,
      templatevar="FHSI")
 test_faux_multi3
-plot(test_faux_multi3, est=3, invert=1, groupcols=speciescolors)
+plot(test_faux_multi3, est=2, invert=1, groupcols=speciescolors)
 }
 \references{
 Gordon AD, Green DJ, Richmond BG. (2008) Strong postcranial size dimorphism in 

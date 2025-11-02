@@ -64,6 +64,8 @@
 #' outcomeUpan <- bootdimorph(pan[,"FHSI", drop=FALSE], sex=pan$Sex, nResamp=100)
 #' outcomeUhyl <- bootdimorph(hyl[,"FHSI", drop=FALSE], sex=hyl$Sex, nResamp=100)
 #' outcomeUgor
+#' confint(outcomeUgor)
+#' confint(outcomeUgor, conf.level=0.8, alternative="greater")
 #' plot(outcomeUgor)
 #' outcomeUhom
 #' plot(outcomeUhom)
@@ -71,6 +73,7 @@
 #' plot(outcomeUpan)
 #' outcomeUhyl
 #' plot(outcomeUhyl)
+#' confint(outcomeUgor, type="bias")
 #' plot(outcomeUgor, type="bias")
 #' plot(outcomeUhom, type="bias")
 #' plot(outcomeUpan, type="bias")
@@ -567,17 +570,17 @@ bootsampleaddresses <- function(x,
 #'                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
 #'                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
 #'                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-#'      methsUni=c("SSD", "MMR", "BDI"),
+#'      methsUni=c("MMR", "BDI"),
 #'      methsMulti=c("GMM"),
 #'      datastruc="both",
 #'      nResamp=100,
 #'      templatevar="FHSI")
 #' test_faux_multi1
 #' plot(test_faux_multi1, groupcols=speciescolors)
-#' plot(test_faux_multi1, est=4, # plot the 4th method combination: MMR, GMM, missing datastructure
+#' plot(test_faux_multi1, est=2, # plot the 2nd method combination: MMR, GMM, missing datastructure
 #'      groupcols=speciescolors)
-#' plot(test_faux_multi1, est=4,
-#'      type="diff") # plot the diffs between samples for estimates using the 4th method combination
+#' plot(test_faux_multi1, est=2,
+#'      type="diff") # plot the diffs between samples for estimates using the 2nd method combination
 #' 
 #' # As above but with a different fossil sample.
 #' test_faux_multi2 <- SSDtest(
@@ -591,15 +594,15 @@ bootsampleaddresses <- function(x,
 #'                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
 #'                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
 #'                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-#'      methsUni=c("SSD", "MMR", "BDI"),
+#'      methsUni=c("MMR", "BDI"),
 #'      methsMulti=c("GMM"),
 #'      datastruc="both",
 #'      nResamp=100,
 #'      templatevar="FHSI")
 #' test_faux_multi2
 #' plot(test_faux_multi2, groupcols=speciescolors)
-#' plot(test_faux_multi2, est=4, groupcols=speciescolors)
-#' plot(test_faux_multi2, est=4, type="diff")
+#' plot(test_faux_multi2, est=2, groupcols=speciescolors)
+#' plot(test_faux_multi2, est=2, type="diff")
 #' 
 #' # Now the same data using a much more conservative approach by setting 'rebootstrap' to TRUE.
 #' test_faux_multi3 <- SSDtest(
@@ -613,14 +616,14 @@ bootsampleaddresses <- function(x,
 #'                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
 #'                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
 #'                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
-#'      methsUni=c("SSD", "MMR", "BDI"),
+#'      methsUni=c("MMR", "BDI"),
 #'      methsMulti=c("GMM"),
 #'      datastruc="both",
 #'      nResamp=100,
 #'      rebootstrap=TRUE,
 #'      templatevar="FHSI")
 #' test_faux_multi3
-#' plot(test_faux_multi3, est=3, invert=1, groupcols=speciescolors)
+#' plot(test_faux_multi3, est=2, invert=1, groupcols=speciescolors)
 #' @export
 SSDtest <- function(fossil=NULL,
                     comp=NULL,

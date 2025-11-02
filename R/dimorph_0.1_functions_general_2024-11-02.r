@@ -41,6 +41,32 @@ geomean <- function(x, na.rm=FALSE) {
   return(exp(mean(log(x))))
 }
 
+#' p-Values for \code{SSDtest} Object
+#' 
+#' Function for extracting the two-sided or one-sided p-values in a \code{SSDtest} object as a matrix.
+#' @param x An object of class \code{SSDtest}.
+#' @param alternative a character value indicating whether two-sided or one-sided p-values should be extracted. 
+#'    Takes \code{"two.sided"} or \code{"one.sided"}, defaulting to \code{"two.sided"}.  If \code{"one.sided"} 
+#'    then both sets of one-sided p-values are returned.
+#' @return A matrix containing the corresponding p-values in \code{x}.
+#' @examples
+#' # Standard significance test with one fossil sample, sampling without replacement
+#' test_faux_uni <- SSDtest(
+#'      fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI"]),
+#'      comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI"],
+#'                "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI"],
+#'                "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "FHSI"],
+#'                "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI"]),
+#'      fossilsex=NULL,
+#'      compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+#'                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+#'                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+#'                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+#'      methsUni=c("MMR", "BDI"),
+#'      limit=1000,
+#'      nResamp=100)
+#' pvals(test_faux_uni) # defaults to two-sided
+#' pvals(test_faux_uni, alternative="one.sided")
 #' @export
 pvals <- function(x, alternative="two.sided") {
   if (!inherits(x, "SSDtest")) stop("'x' must be an object of class 'SSDtest'.")
@@ -61,6 +87,28 @@ pvals <- function(x, alternative="two.sided") {
   return(out)
 }
 
+#' Central Tendencies for Resampled Distributions in \code{SSDtest} Object
+#' 
+#' Function for extracting the means and medians of resampled values from a \code{SSDtest} object as a matrix.
+#' @param x An object of class \code{SSDtest}.
+#' @return A matrix containing the means and medians of resampled distributions in \code{x}.
+#' @examples
+#' # Standard significance test with one fossil sample, sampling without replacement
+#' test_faux_uni <- SSDtest(
+#'      fossil=list("Fauxil sp. 1"=fauxil[fauxil$Species=="Fauxil sp. 1", "FHSI"]),
+#'      comp=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "FHSI"],
+#'                "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "FHSI"],
+#'                "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "FHSI"],
+#'                "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "FHSI"]),
+#'      fossilsex=NULL,
+#'      compsex=list("G. gorilla"=apelimbart[apelimbart$Species=="Gorilla gorilla", "Sex"],
+#'                   "H. sapiens"=apelimbart[apelimbart$Species=="Homo sapiens", "Sex"],
+#'                   "P. troglodytes"=apelimbart[apelimbart$Species=="Pan troglodytes", "Sex"],
+#'                   "H. lar"=apelimbart[apelimbart$Species=="Hylobates lar", "Sex"]),
+#'      methsUni=c("MMR", "BDI"),
+#'      limit=1000,
+#'      nResamp=100)
+#' centers(test_faux_uni)
 #' @export
 centers <- function(x) {
   if (!inherits(x, "SSDtest")) stop("'x' must be an object of class 'SSDtest'.")

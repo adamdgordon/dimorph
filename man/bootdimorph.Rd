@@ -109,6 +109,8 @@ outcomeUhom <- bootdimorph(hom[,"FHSI", drop=FALSE], sex=hom$Sex, nResamp=100)
 outcomeUpan <- bootdimorph(pan[,"FHSI", drop=FALSE], sex=pan$Sex, nResamp=100)
 outcomeUhyl <- bootdimorph(hyl[,"FHSI", drop=FALSE], sex=hyl$Sex, nResamp=100)
 outcomeUgor
+confint(outcomeUgor)
+confint(outcomeUgor, conf.level=0.8, alternative="greater")
 plot(outcomeUgor)
 outcomeUhom
 plot(outcomeUhom)
@@ -116,6 +118,7 @@ outcomeUpan
 plot(outcomeUpan)
 outcomeUhyl
 plot(outcomeUhyl)
+confint(outcomeUgor, type="bias")
 plot(outcomeUgor, type="bias")
 plot(outcomeUhom, type="bias")
 plot(outcomeUpan, type="bias")
