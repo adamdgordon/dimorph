@@ -68,7 +68,7 @@
 #' confint(outcomeUgor)
 #' confint(outcomeUgor, conf.level=0.8, alternative="greater")
 #' plot(outcomeUgor)
-#' plot(bootsUgor, exclude="FMA") # exclude one or more methods from plot
+#' plot(outcomeUgor, exclude="FMA") # exclude one or more methods from plot
 #' outcomeUhom
 #' plot(outcomeUhom)
 #' outcomeUpan
