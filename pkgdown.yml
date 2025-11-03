@@ -3,7 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   dimorph: dimorph.html
-last_built: 2025-11-02T23:06Z
+last_built: 2025-11-03T02:48Z
 urls:
   reference: https://adamdgordon.github.io/dimorph/reference
   article: https://adamdgordon.github.io/dimorph/articles
